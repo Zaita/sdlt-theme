@@ -15,7 +15,7 @@ export default class SecurityRiskAssessmentUtil {
   static isSiblingTaskPending(allTaskSubmissions) {
     const status = ['start', 'in_progress', 'waiting_for_approval'];
     return allTaskSubmissions.filter(
-      (ts) => ts.taskType !== 'security risk assessment' && status.includes(ts.status)
+      (ts) => ts.taskType !== 'security risk assessment' && ts.taskType == 'control validation audit' && status.includes(ts.status)
     ).length > 0;
   };
 
