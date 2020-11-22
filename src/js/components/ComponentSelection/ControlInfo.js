@@ -1,6 +1,7 @@
 // @flow
 import React, {Component} from "react";
 import { Icon } from 'react-fa'
+import { Editor } from "@tinymce/tinymce-react";
 
 type Props = {
   id: string,
@@ -30,7 +31,7 @@ export default class ControlInfo extends React.Component<Props> {
 
   handleOnBlurForImplementationEvidence(event) {
     if (this.props.isCVATaskEditable) {
-      this.props.updateEvidenceTextareaData(event.target.value);
+      this.props.updateEvidenceTextareaData(event.target.getContent());
     }
   }
 
@@ -113,12 +114,19 @@ export default class ControlInfo extends React.Component<Props> {
                 >
                 </div>
                 <div>
-                  <textarea
+                  <Editor
                     className="form-control"
-                    rows="5"
-                    defaultValue={implementationEvidenceUserInput}
+                    initialValue={implementationEvidenceUserInput}
+                    disabled={!isCVATaskEditable}
+                    init={{
+                      selector: 'textarea',
+                      height: 250,
+                      menubar: false,
+                      toolbar: false,
+                      statusbar: false,
+                      skin_url: 'resources/vendor/silverstripe/admin/thirdparty/tinymce/skins/silverstripe'
+                    }}
                     onBlur={(event) => this.handleOnBlurForImplementationEvidence(event)}
-                    readOnly={!isCVATaskEditable}
                   />
                 </div>
                 </div>
