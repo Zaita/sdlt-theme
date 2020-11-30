@@ -116,7 +116,7 @@ class ControlValidationAuditContainer extends Component<Props, State> {
     const selectedComponents = this.props.cvaSelectedComponents;
     const componentTarget =this.props.controlValidationAuditData.componentTarget;
 
-    if (componentTarget !== 'DefaultComponent' && productAspects.length > 0 && selectedComponents.length > 0) {
+    if (productAspects.length > 0 && selectedComponents.length > 0) {
       return (
         this.renderComponentGroupByProductAspect(productAspects, selectedComponents, isCVATaskEditable)
       );
