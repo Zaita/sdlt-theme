@@ -25,9 +25,9 @@ export default class ControlInfo extends React.Component<Props> {
     super(props);
     this.state = {
       isExpanded: false,
-      isImplementationEvidenceExpaned: false
-    };
-  }
+      isImplementationEvidenceExpaned: true
+  };
+}
 
   handleOnBlurForImplementationEvidence(event) {
     if (this.props.isCVATaskEditable) {
@@ -120,7 +120,7 @@ export default class ControlInfo extends React.Component<Props> {
                     disabled={!isCVATaskEditable}
                     init={{
                       selector: 'textarea',
-                      height: 250,
+                      height: 120,
                       menubar: false,
                       toolbar: false,
                       statusbar: false,
