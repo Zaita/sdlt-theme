@@ -6,6 +6,7 @@
   padding: 45px;
   font-size: 14px;
   color: $black;
+  position: relative;
 
   .heading {
     font-size: 24px;
@@ -17,6 +18,17 @@
 
   .description {
     margin-bottom: 1rem;
+  }
+
+  .saveText {
+    position: absolute;
+    bottom: 2rem;
+  }
+
+  .saveMessage {
+    font-size: 12px;
+    font-weight: 400;
+    margin-left: 5px;
   }
 
   td {
