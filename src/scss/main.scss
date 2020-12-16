@@ -47,5 +47,7 @@ body {
 // Include all styles for other layout (SilverStripe templates)
 @import "layout/site-alert";
 
+@import "icon/Icon";
+
 // Include all styles for other pages (SilverStripe templates)
 @import "pages/login";

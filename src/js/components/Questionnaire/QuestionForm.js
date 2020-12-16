@@ -8,6 +8,7 @@ import DarkButton from "../Button/DarkButton";
 import moment from "moment";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
 
 type Props = {
   question: Question,
@@ -36,6 +37,10 @@ class QuestionForm extends Component<Props> {
 
         {this.renderActions(question)}
         {this.renderInputsForm(question)}
+        <div className="saveText">
+          <InfoOutlinedIcon className="icon-blue"/>
+          <span className="saveMessage">Your answers will be saved when you continue to the next question.</span>
+        </div>
       </div>
     );
   }
