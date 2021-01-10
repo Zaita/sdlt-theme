@@ -68,25 +68,47 @@ class QuestionForm extends Component<Props> {
       );
     }
 
-    return (
-      <div>
-        <div className="actions">
-          {actions.map((action, index) => {
-            switch (index) {
-              case 0:
-                return <DarkButton title={action.label} key={action.id} classes={["mr-3"]} onClick={() => {
-                  handleActionClick(action);
-                }}/>;
-              default:
-                return <LightButton title={action.label} key={action.id} classes={["mr-3"]} onClick={() => {
-                  handleActionClick(action);
-                }}/>;
-            }
-          })}
+    if (!chosenAction) {
+      return (
+        <div>
+          <div className="actions">
+            {actions.map((action, index) => {
+              switch (index) {
+                case 0:
+                  return <DarkButton title={action.label} key={action.id} classes={["mr-3"]} onClick={() => {
+                    handleActionClick(action);
+                  }}/>;
+                default:
+                  return <LightButton title={action.label} key={action.id} classes={["mr-3"]} onClick={() => {
+                    handleActionClick(action);
+                  }}/>;
+              }
+            })}
+          </div>
+          {message}
         </div>
-        {message}
-      </div>
-    );
+      );
+    } else {
+      return (
+        <div>
+          <div className="actions">
+            {actions.map((action) => {
+              switch (action.isChose) {
+                case true:
+                  return <DarkButton title={action.label} key={action.id} classes={["mr-3"]} onClick={() => {
+                    handleActionClick(action);
+                  }}/>;
+                default:
+                  return <LightButton title={action.label} key={action.id} classes={["mr-3"]} onClick={() => {
+                    handleActionClick(action);
+                  }}/>;
+              }
+            })}
+          </div>
+          {message}
+        </div>
+      );
+    }
   }
 
   renderInputsForm(question: Question) {
