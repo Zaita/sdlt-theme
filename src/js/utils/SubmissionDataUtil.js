@@ -160,8 +160,8 @@ export default class SubmissionDataUtil {
         }
       }
 
-      if (isLastQuestion) {
-        // Mark complete if this is the last question
+      if (isLastQuestion && !returnPackage.terminate) {
+        // Mark complete if this is the last question and not terminated
         returnPackage.complete = true;
       }
       return returnPackage;
