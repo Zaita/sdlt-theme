@@ -1,6 +1,8 @@
 // @flow
 import React, {Component} from "react";
-import { Icon } from 'react-fa'
+import { Icon } from 'react-fa';
+import tinymce from "tinymce";
+import 'tinymce/themes/modern';
 import { Editor } from "@tinymce/tinymce-react";
 
 type Props = {
@@ -25,7 +27,7 @@ export default class ControlInfo extends React.Component<Props> {
     super(props);
     this.state = {
       isExpanded: false,
-      isImplementationEvidenceExpaned: true
+      isImplementationEvidenceExpaned: false
   };
 }
 

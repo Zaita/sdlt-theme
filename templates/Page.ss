@@ -20,5 +20,4 @@
 </body>
 <% require themedJavascript('dist/js/vendors.bundle') %>
 <% require themedJavascript('dist/js/common.bundle') %>
-<% require javascript('silverstripe/admin:thirdparty/tinymce/tinymce.min.js') %>
 </html>
