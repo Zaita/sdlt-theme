@@ -106,10 +106,10 @@ class SecurityRiskAssessmentContainer extends Component<Props> {
     );
 
     const isSiblingTaskPending = SecurityRiskAssessmentUtil.isSiblingTaskPending(taskSubmissions);
-
     const isSubmitter = securityRiskAssessmentData.submitterID === currentUser.id;
+    const canFinalise = isSubmitter || securityRiskAssessmentData.isTaskCollborator;
 
-    const finaliseButton = !isSRATaskFinalised && !isSiblingTaskPending && isSubmitter
+    const finaliseButton = !isSRATaskFinalised && !isSiblingTaskPending && canFinalise
       ? (
         <DarkButton title="FINALISE"
           classes={["button ml-3"]}

@@ -121,9 +121,6 @@ export default class QuestionParser {
         });
       }
 
-
-
-
       if (actionSchemas && Array.isArray(actionSchemas) && actionSchemas.length > 0) {
         actions = actionSchemas.map((actionSchema) => {
           // Schema of action

@@ -307,8 +307,9 @@ class ControlValidationAuditContainer extends Component<Props, State> {
     }
 
     const isSubmitter = controlValidationAuditData.submitterID === currentUser.id;
+    const canEdit = (isSubmitter || controlValidationAuditData.isTaskCollborator);
     const isSRATaskFinalised = SecurityRiskAssessmentUtil.isSRATaskFinalised(controlValidationAuditData.siblingSubmissions);
-    const isCVATaskEditable = (isSubmitter && !isSRATaskFinalised);
+    const isCVATaskEditable = (canEdit && !isSRATaskFinalised);
 
     const submitButton = isCVATaskEditable && cvaSelectedComponents.length > 0 ? (
       <LightButton
@@ -357,13 +358,13 @@ class ControlValidationAuditContainer extends Component<Props, State> {
                 <h3>Have These Controls Been Implemented?</h3>
                 {
                   ['start','in_progress'].includes(controlValidationAuditData.status)
-                  && !isSubmitter
+                  && !canEdit
                   && (
                         <SubmissionNotCompleted/>
                     )
                 }
                 {
-                  (isSubmitter || controlValidationAuditData.status == "complete") &&
+                  (canEdit || controlValidationAuditData.status == "complete") &&
                   (
                     <div>
                       {isSRATaskFinalised ? SecurityRiskAssessmentUtil.getSraIsFinalisedAlert() : false}

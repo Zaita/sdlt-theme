@@ -114,10 +114,15 @@ class TaskSubmissionContainer extends Component<Props> {
 
     // As logged-in user, only submitter and SA can edit answers
     const isCurrentUserSubmitter = parseInt(currentUser.id) === parseInt(taskSubmission.submitter.id);
-    const canUpdateAnswers = (taskSubmission.status === "in_progress" || taskSubmission.status === "start" ) && (currentUser.isSA || isCurrentUserSubmitter);
+
+    const canUpdateAnswers = (taskSubmission.status === "in_progress" ||
+      taskSubmission.status === "start" ) && (currentUser.isSA || isCurrentUserSubmitter || taskSubmission.isTaskCollborator);
     const showEditButton =
-      (taskSubmission.status === "complete" || taskSubmission.status === "waiting_for_approval" ||taskSubmission.status === "denied") && (taskSubmission.questionnaireSubmissionStatus === "submitted")&&
-      (currentUser.isSA || (isCurrentUserSubmitter && !taskSubmission.lockWhenComplete));
+      (taskSubmission.status === "complete" || taskSubmission.status === "waiting_for_approval"
+      || taskSubmission.status === "denied")
+      && (taskSubmission.questionnaireSubmissionStatus === "submitted")
+      && (currentUser.isSA || ((isCurrentUserSubmitter || taskSubmission.isTaskCollborator)
+      && !taskSubmission.lockWhenComplete));
 
     return (
       <div className="TaskSubmissionContainer">

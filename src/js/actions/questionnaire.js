@@ -18,6 +18,7 @@ import _ from "lodash";
 import SubmissionDataUtil from "../utils/SubmissionDataUtil";
 import URLUtil from "../utils/URLUtil";
 import TaskDataService from "../services/TaskDataService";
+import type {Collaborator} from "../types/User";
 
 export function loadQuestionnaireStartState(questionnaireID: string): ThunkAction {
   return async (dispatch) => {
@@ -404,6 +405,23 @@ export function loadMyProductList(): ThunkAction {
     }
 
   };
+}
+
+// add collaborator
+export function addCollaboratorAction (submissionID: string, selectedCollaborators: Array<Collaborator>): ThunkAction {
+  return async (dispatch: any, getState: () => RootState) => {
+    const csrfToken = await CSRFTokenService.getCSRFToken();
+    try {
+      // Call addCollaborator data api
+      const {uuid} = await QuestionnaireDataService.addCollaborator(submissionID, selectedCollaborators, csrfToken);
+
+      dispatch(loadQuestionnaireSubmissionState(uuid));
+    }
+    catch (error) {
+      // TODO: errors
+      alert(error);
+    }
+  }
 }
 
 // Commons

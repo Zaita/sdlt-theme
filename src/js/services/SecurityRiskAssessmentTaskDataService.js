@@ -25,6 +25,7 @@ query {
         TaskType
       }
     }
+    IsTaskCollborator
     Submitter {
       ID
     }
@@ -46,6 +47,7 @@ query {
       taskName: toString(get(submissionJSONObject, "TaskName", "")),
       status: toString(get(submissionJSONObject, "Status", "")),
       submitterID: toString(get(submissionJSONObject, "Submitter.ID", "")),
+      isTaskCollborator: get(submissionJSONObject, "IsTaskCollborator", "false") === "true",
       questionnaireSubmissionUUID: toString(get(submissionJSONObject, "QuestionnaireSubmission.UUID", "")),
       taskSubmissions: TaskParser.parseAlltaskSubmissionforQuestionnaire(submissionJSONObject),
       sraData: securityRiskAssessmentData

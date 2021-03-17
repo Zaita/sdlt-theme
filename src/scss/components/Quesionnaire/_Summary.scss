@@ -18,8 +18,27 @@
         }
 
         .request-info {
-            @extend .base-section;
-            word-break: break-word;
+          background-color: $white-background;
+          margin-bottom: 1rem;
+          padding: 20px;
+          word-break: break-word;
+          border: none
+        }
+
+        .add-collaborators-btn {
+          color: $blue;
+          font-size: 14px ;
+          font-weight: bold;
+          margin-left: -15px;
+          margin-top: 10px;
+          &:focus,
+          &:active {
+            box-shadow: none !important;
+          }
+        }
+
+        .collaborators-name-container {
+          margin-top: 10px;
         }
 
         .AnswersPreview {
@@ -61,7 +80,9 @@
     }
 
     .ReactModal__Content {
-        width: 960px;
+        width: 500px;
+        height: auto;
+        overflow: visible !important;
 
         .content {
             margin-bottom: 40px;
@@ -72,4 +93,16 @@
             margin-right: 16px;
         }
     }
+
+  .collaborator-model-title {
+    position: relative;
+    border-bottom: 1px solid #adb5bd;
+    margin: 0 -20px 15px -20px;
+    padding: 0 20px 10px;
+    .collaborator-model-close {
+      position: absolute;
+      top: -7px;
+      right: 7px;
+    }
+  }
 }
