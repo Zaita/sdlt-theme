@@ -123,11 +123,12 @@ class ComponentSelectionContainer extends Component<Props> {
       return null;
     }
     const isCurrentUserSubmitter = parseInt(currentUser.id) === parseInt(taskSubmission.submitter.id);
+    const canEdit =  isCurrentUserSubmitter || currentUser.isSA || taskSubmission.isTaskCollborator;
     const isSRATaskFinalised = SecurityRiskAssessmentUtil.isSRATaskFinalised(taskSubmission.siblingSubmissions);
     const showEditControlButton =
       (taskSubmission.status === "complete" || taskSubmission.status === "waiting_for_approval" ||taskSubmission.status === "denied") &&
       (taskSubmission.questionnaireSubmissionStatus === "submitted") &&
-      (currentUser.isSA || isCurrentUserSubmitter) && !taskSubmission.lockWhenComplete;
+      (canEdit) && !taskSubmission.lockWhenComplete;
     const backButton = (
       <DarkButton key="back"
         title={"BACK TO QUESTIONNAIRE SUMMARY"}
@@ -149,7 +150,7 @@ class ComponentSelectionContainer extends Component<Props> {
     switch (taskSubmission.status) {
       case "start":
       case "in_progress":
-         if (!isCurrentUserSubmitter){
+         if (!canEdit){
            body = (
             <div className="ComponentSelectionReview">
               <div className="section">
@@ -195,7 +196,7 @@ class ComponentSelectionContainer extends Component<Props> {
         body = (
           <div>
             <div className="ComponentSelectionReview">
-                {isSRATaskFinalised ? SecurityRiskAssessmentUtil.getSraIsFinalisedAlert() : false}
+              {isSRATaskFinalised ? SecurityRiskAssessmentUtil.getSraIsFinalisedAlert() : false}
             </div>
 
           <ComponentSelectionReview

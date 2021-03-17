@@ -35,6 +35,7 @@ query {
     Status
     Result
     LockAnswersWhenComplete
+    IsTaskCollborator
     QuestionnaireSubmission {
       ID
       UUID
@@ -115,6 +116,7 @@ query {
       productAspects:  _.has(submissionJSONObject, 'ProductAspects') ? JSON.parse(get(submissionJSONObject, "ProductAspects", [])) : [],
       componentTarget: toString(get(submissionJSONObject, "ComponentTarget", "")),
       hideWeightsAndScore: _.get(submissionJSONObject, "HideWeightsAndScore", "false") === "true",
+      isTaskCollborator: _.get(submissionJSONObject, "IsTaskCollborator", "false") === "true",
       siblingSubmissions: TaskParser.parseAlltaskSubmissionforQuestionnaire(submissionJSONObject)
     };
     return data;

@@ -7,6 +7,7 @@ import {Dispatch} from "redux";
 import Header from "../Header/Header";
 import Footer from "../Footer/Footer";
 import type {QuestionnaireSubmissionState} from "../../store/QuestionnaireState";
+import type {MemberState} from "../../store/MemberState";
 import {
   approveQuestionnaireSubmission,
   denyQuestionnaireSubmission,
@@ -16,18 +17,22 @@ import {
   approveQuestionnaireSubmissionAsBusinessOwner,
   denyQuestionnaireSubmissionAsBusinessOwner,
   assignToSecurityArchitectQuestionnaireSubmission,
+  addCollaboratorAction
 } from "../../actions/questionnaire";
+import {loadMember} from "../../actions/user";
 import Summary from "./Summary";
 import PDFUtil from "../../utils/PDFUtil";
 import ReactModal from "react-modal";
 import DarkButton from "../Button/DarkButton";
 import LightButton from "../Button/LightButton";
 import CSRFTokenService from "../../services/CSRFTokenService";
+import type {Collaborator} from "../../types/User";
 
 const mapStateToProps = (state: RootState) => {
   return {
     submissionState: state.questionnaireState.submissionState,
-    loadingState: state.loadingState
+    loadingState: state.loadingState,
+    members: state.memberState
   };
 };
 
@@ -37,7 +42,9 @@ const mapDispatchToProps = (dispatch: Dispatch, props: *) => {
     dispatchLoadSubmissionAction(submissionHash: string, secureToken: string) {
       dispatch(loadQuestionnaireSubmissionState(submissionHash, secureToken));
     },
-
+    dispatchLoadMembersAction() {
+      dispatch(loadMember());
+    },
     // as a BO approve/ deny the submission
     dispatchBusinessOwnerApproveSubmissionAction(submissionID: string, secureToken: string) {
       dispatch(approveQuestionnaireSubmissionAsBusinessOwner(submissionID, secureToken));
@@ -66,6 +73,11 @@ const mapDispatchToProps = (dispatch: Dispatch, props: *) => {
     dispatchAssignToMeAction(submissionID: string) {
       dispatch(assignToSecurityArchitectQuestionnaireSubmission(submissionID));
     },
+
+    dispatchAddCollaboratorAction(submissionID: string, selectedCollaborators:Array<Collaborator>)
+    {
+      dispatch(addCollaboratorAction(submissionID, selectedCollaborators));
+    }
   };
 };
 
@@ -76,6 +88,7 @@ type ownProps = {
 
 type reduxProps = {
   submissionState: QuestionnaireSubmissionState,
+  members: MemberState,
   dispatchLoadSubmissionAction: (submissionHash: string, secureToken: string) => void,
   dispatchSubmitForApprovalAction: (submissionID: string) => void,
   dispatchApproveSubmissionAction: (submissionID: string) => void,
@@ -104,10 +117,12 @@ class SummaryContainer extends Component<Props, State> {
   componentDidMount() {
     const {submissionHash, dispatchLoadSubmissionAction, secureToken} = {...this.props};
     dispatchLoadSubmissionAction(submissionHash, secureToken);
+    this.props.dispatchLoadMembersAction();
+
   }
 
   render() {
-    const {secureToken, loadingState} = {...this.props};
+    const {secureToken, loadingState, members} = {...this.props};
     const {
       location,
       title,
@@ -118,7 +133,7 @@ class SummaryContainer extends Component<Props, State> {
       siteConfig
       } = {...this.props.submissionState};
 
-    if (!user || !submission || !siteConfig) {
+    if (!user || !submission || !siteConfig || !members) {
       return null;
     }
 
@@ -159,9 +174,11 @@ class SummaryContainer extends Component<Props, State> {
                  handleDenyButtonClick={this.handleDenyButtonClick.bind(this)}
                  handleEditButtonClick={this.handleOpenModal.bind(this)}
                  handleAssignToMeButtonClick={this.handleAssignToMeButtonClick.bind(this)}
+                 handleCollaboratorAddButtonClick={this.handleCollaboratorAddButtonClick.bind(this)}
                  viewAs={viewAs}
                  user={user}
                  token={secureToken}
+                 members={members}
         />
         <Footer footerCopyrightText={siteConfig.footerCopyrightText}/>
         <ReactModal
@@ -276,12 +293,25 @@ class SummaryContainer extends Component<Props, State> {
     this.props.dispatchEditSubmissionAction(submission.submissionID);
   }
 
+  // open a edit confirmation modal when user click on questionnaire edit button
+  // on the questionnaire summary screen
   handleOpenModal() {
     this.setState({showModal: true});
   }
 
+  // close a modal when user click on "No button" on the edit confirmation modal
   handleCloseModal() {
     this.setState({showModal: false});
+  }
+
+  handleCollaboratorAddButtonClick (selectedCollaborators: Array<Collaborator>) {
+    const {user, submission} = {...this.props.submissionState};
+
+    if (!user || !submission) {
+      return;
+    }
+
+    this.props.dispatchAddCollaboratorAction(submission.submissionID, selectedCollaborators);
   }
 }
 

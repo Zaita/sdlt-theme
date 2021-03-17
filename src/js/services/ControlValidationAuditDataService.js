@@ -27,6 +27,7 @@ query {
     ProductAspects
     CVATaskDataSource
     Status
+    IsTaskCollborator
     Submitter {
       ID
     }
@@ -57,6 +58,7 @@ query {
       selectedComponents: components,
       submitterID: toString(get(submissionJSONObject, "Submitter.ID", "")),
       componentTarget: toString(get(submissionJSONObject, "CVATaskDataSource", "")),
+      isTaskCollborator: get(submissionJSONObject, "IsTaskCollborator", "false") === "true",
       productAspects:  _.has(submissionJSONObject, 'ProductAspects') ? JSON.parse(get(submissionJSONObject, "ProductAspects", [])) : [],
       siblingSubmissions: TaskParser.parseAlltaskSubmissionforQuestionnaire(submissionJSONObject)
     };

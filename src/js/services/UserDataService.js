@@ -10,7 +10,7 @@ export default class UserDataService {
   static async fetchCurrentUser(): Promise<User> {
     const query = `
 query {
-  readCurrentMember {
+  readMember(Type: "Current") {
     ID
     Email
     FirstName
@@ -21,7 +21,7 @@ query {
 }`;
     const responseJSONObject = await GraphQLRequestHelper.request({query});
 
-    const currentMemberJSONObject = _.get(responseJSONObject, "data.readCurrentMember.0", null);
+    const currentMemberJSONObject = _.get(responseJSONObject, "data.readMember.0", null);
     if (!currentMemberJSONObject) {
       throw new Error("Authenticate error");
     }
@@ -32,5 +32,25 @@ query {
     }
 
     return user;
+  }
+
+  static async fetchMembers(): Promise<User> {
+    const query = `
+query {
+  readMember(Type: "All") {
+    ID
+    FirstName
+    Surname
+  }
+}`;
+    const responseJSONObject = await GraphQLRequestHelper.request({query});
+
+    const memberJSONObject = _.get(responseJSONObject, "data.readMember", null);
+    if (!memberJSONObject) {
+      throw new Error("Authenticate error");
+    }
+
+    const members = UserParser.parserMemberFromJSON(memberJSONObject);
+    return members;
   }
 }
