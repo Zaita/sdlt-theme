@@ -35,6 +35,15 @@
         margin-bottom: 5px;
       }
    }
+
+  .implementation-evidence {
+    @extend .form-control;
+    height: 120px;
+    color: black;
+    font-family: Arial;
+    font-size: 14px;
+    overflow-y: auto;
+  }
 }
 
 .control-cs {
