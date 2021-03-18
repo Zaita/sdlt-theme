@@ -498,18 +498,18 @@ class Summary extends Component<Props> {
     let securityArchitectApprovalStatus = prettifyStatus(approvalStatus.securityArchitect);
 
     if (securityArchitectApprovalStatus == "Approved") {
-      securityArchitectApprovalStatus = securityArchitectApprover.FirstName + " " +
-        securityArchitectApprover.Surname + " - " + securityArchitectApprovalStatus;
+      securityArchitectApprovalStatus = securityArchitectApprover.firstName + " " +
+        securityArchitectApprover.surname + " - " + securityArchitectApprovalStatus;
     }
 
     if (submission.status === "waiting_for_security_architect_approval") {
-      securityArchitectApprovalStatus = "Being Reviewed by " + securityArchitectApprover.FirstName + " " +
-        securityArchitectApprover.Surname;
+      securityArchitectApprovalStatus = "Being Reviewed by " + securityArchitectApprover.firstName + " " +
+        securityArchitectApprover.surname;
     }
 
     let cisoApprovalStatus = prettifyStatus(approvalStatus.chiefInformationSecurityOfficer);
     if (cisoApprovalStatus !== "Pending" && cisoApprovalStatus !== "Not Required") {
-      cisoApprovalStatus = cisoApprover.FirstName + " " + cisoApprover.Surname + " - " + cisoApprovalStatus;
+      cisoApprovalStatus = cisoApprover.firstName + " " + cisoApprover.surname + " - " + cisoApprovalStatus;
     }
 
     let businessOwnerApprovalStatus = prettifyStatus(approvalStatus.businessOwner)
