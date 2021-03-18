@@ -186,8 +186,8 @@ query {
           surname: _.toString(_.get(submissionJSON, "SecurityArchitectApprover.Surname", "")),
         },
         cisoApprover: {
-          FirstName: _.toString(_.get(submissionJSON, "CisoApprover.FirstName", "")),
-          Surname: _.toString(_.get(submissionJSON, "CisoApprover.Surname", "")),
+          firstName: _.toString(_.get(submissionJSON, "CisoApprover.FirstName", "")),
+          surname: _.toString(_.get(submissionJSON, "CisoApprover.Surname", "")),
         },
         questions: QuestionParser.parseQuestionsFromJSON({
           schemaJSON: _.toString(_.get(submissionJSON, "QuestionnaireData", "")),
