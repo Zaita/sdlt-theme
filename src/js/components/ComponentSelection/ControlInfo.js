@@ -27,7 +27,7 @@ export default class ControlInfo extends React.Component<Props> {
     super(props);
     this.state = {
       isExpanded: false,
-      isImplementationEvidenceExpaned: false
+      isImplementationEvidenceExpaned: this.props.isCVATaskEditable ? false : true
   };
 }
 
