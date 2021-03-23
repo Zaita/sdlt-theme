@@ -170,13 +170,19 @@ export default class QuestionParser {
       const question: Question = {
         id: questionID,
         title: _.toString(_.get(questionSchema, "Title", "")),
-        heading: _.toString(_.get(questionSchema, "Question", "")),
+        heading: _.toString(_.get(questionSchema, "QuestionHeading", "")),
         description: _.toString(_.get(questionSchema, "Description", "")),
         type: _.toString(_.get(questionSchema, "AnswerFieldType", "")).toLowerCase() === "input" ? "input" : "action",
         isCurrent: isCurrent,
         hasAnswer: hasAnswer,
         isApplicable: isApplicable,
       };
+
+      // to fix the old submission where json key was "Question" not the "QuestionHeading"
+      if ( _.isEmpty(_.get(question, "heading"))) {
+         const heading = _.toString(_.get(questionSchema, "Question", ""));
+         _.set(question, "heading", heading);
+      }
 
       if (inputs) {
         question.inputs = inputs;
