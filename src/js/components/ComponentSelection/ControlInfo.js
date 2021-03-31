@@ -27,13 +27,21 @@ export default class ControlInfo extends React.Component<Props> {
     super(props);
     this.state = {
       isExpanded: false,
-      isImplementationEvidenceExpaned: this.props.isCVATaskEditable ? false : true
+      isImplementationEvidenceExpaned: !this.props.isCVATaskEditable
   };
 }
 
   handleOnBlurForImplementationEvidence(event) {
     if (this.props.isCVATaskEditable) {
       this.props.updateEvidenceTextareaData(event.target.getContent());
+    }
+  }
+
+  componentDidUpdate(prevProps) {
+    if(prevProps.isCVATaskEditable !== this.props.isCVATaskEditable) {
+      this.setState({
+        isImplementationEvidenceExpaned: !this.props.isCVATaskEditable
+      })
     }
   }
 
