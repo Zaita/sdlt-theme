@@ -7,3 +7,8 @@ export type User = {
   isSA: boolean,
   isCISO: boolean,
 };
+
+export type Collaborator = {
+  value: string, // email
+  labe: string,  // name
+};

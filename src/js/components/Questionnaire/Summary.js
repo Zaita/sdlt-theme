@@ -11,12 +11,18 @@ import _ from "lodash";
 import URLUtil from "../../utils/URLUtil";
 import SubmissionDataUtil from "../../utils/SubmissionDataUtil";
 import type {User} from "../../types/User";
+import type {Collaborator} from "../../types/User";
 import RiskResultContainer from "../Common/RiskResultContainer";
 import {
   DEFAULT_SRA_UNFINISHED_TASKS_MESSAGE
 } from "../../constants/values";
 import SecurityRiskAssessmentUtil from "../../utils/SecurityRiskAssessmentUtil";
 import {SubmissionExpired} from "../Common/SubmissionExpired";
+import AddIcon from '@material-ui/icons/AddCircleOutline';
+import CloseIcon from '@material-ui/icons/Close';
+import ReactModal from "react-modal";
+import IconButton from '@material-ui/core/IconButton';
+import Select from 'react-select'
 
 type Props = {
   submission: Submission | null,
@@ -26,9 +32,15 @@ type Props = {
   handleApproveButtonClick: (skipBoAndCisoApproval: boolean) => void,
   handleDenyButtonClick: (skipBoAndCisoApproval: boolean) => void,
   handleEditButtonClick: () => void,
+  handleCollaboratorAddButtonClick: (selectedCollaborators: Array<Collaborator>) => void,
   viewAs: "submitter" | "approver" | "others",
   token: string,
-  user: User | null
+  user: User | null,
+  members: Array<User> | null
+};
+
+type State = {
+  showModal: boolean
 };
 
 const prettifyStatus = (status: string) => {
@@ -53,16 +65,20 @@ class Summary extends Component<Props> {
     handleDenyButtonClick: () => {},
     handleEditButtonClick: () => {},
     handleAssignToMeButtonClick: () => {},
+    handleCollaboratorAddButtonClick: () => {},
     viewAs: "others",
     token: "",
-    user: null
+    user: null,
+    members: null
   };
 
   constructor(props) {
     super(props);
     this.state = {
-      skipBoAndCisoApproval: false
-    };
+      skipBoAndCisoApproval: false,
+      showModal: false,
+      selectedCollaborators: props.submission.collaborators
+    }
   }
 
   unfinishedTaskSubmissionMessage()
@@ -100,9 +116,29 @@ class Summary extends Component<Props> {
     return hasSelectableComponents;
   }
 
+  // when click add button in modal, add in the database
+  handleAddCollaboratorsModalButtonClick() {
+    this.props.handleCollaboratorAddButtonClick(this.state.selectedCollaborators);
+    this.handleCloseModalForCollaborators();
+  }
+
+  // Open the collaborators modal when click on add collaborators link on summary page
+  handleOpenModalForCollaborators() {
+    this.setState({showModal: true});
+  }
+
+  handleCloseModalForCollaborators() {
+    this.setState({showModal: false});
+    this.setState({selectedCollaborators: this.props.submission.collaborators});
+  }
+
+  handleChangeForCollaborators(selectedCollaborators: Array<Collaborator>) {
+    this.setState({selectedCollaborators: selectedCollaborators});
+  }
+
   render() {
-    const {submission, viewAs, user} = {...this.props};
-    if (!submission) {
+    const {submission, viewAs, user, members} = {...this.props};
+    if (!submission || !members) {
       return null;
     }
 
@@ -124,7 +160,7 @@ class Summary extends Component<Props> {
 
     return (
       <div className="Summary">
-        {this.renderSubmitterInfo(submission)}
+        {this.renderSubmitterAndCollaboratorInfo(submission, members)}
         {this.renderTasks(submission)}
         {this.renderApprovals(submission)}
         <RiskResultContainer
@@ -137,16 +173,94 @@ class Summary extends Component<Props> {
     );
   }
 
+  renderCollboratorsModal(submission, members) {
+    return (
+      <ReactModal
+        isOpen={this.state.showModal}
+        ariaHideApp={false}
+        parentSelector={() => {return document.querySelector(".Summary");}}
+      >
+        <div className="collaborator-model-title">
+          <span><h3>Add Collaborators</h3></span>
+          <IconButton
+            aria-label="close"
+            component="span"
+            className="collaborator-model-close icon-gray"
+            onClick={this.handleCloseModalForCollaborators.bind(this)}
+          >
+            <CloseIcon />
+          </IconButton>
+        </div>
+        <div className="content">
+          Start typing names, to add them as collaborators for your submission.
+        </div>
+        <div className="content">
+          <Select
+            options={members}
+            defaultValue={submission.collaborators}
+            isMulti={true}
+            maxMenuHeight={200}
+            onChange={this.handleChangeForCollaborators.bind(this)}
+          />
+        </div>
+        <div>
+          <DarkButton title="Add" onClick={this.handleAddCollaboratorsModalButtonClick.bind(this)}/>
+        </div>
+      </ReactModal>
+    )
+  }
+
+  renderCollboratorsInfo(submission: Submission, members) {
+    return (
+      <div>
+        <h3>Collaborators</h3>
+        <div><b>Add people to help complete your submission.</b></div>
+        {submission.collaborators.length > 0 && (
+          <div className="collaborators-name-container">
+            {submission.collaborators.map(({label}, index) =>
+              {
+                return(<div key={index}>{label}</div>)
+              }
+            )}
+          </div>
+        )}
+        {this.props.viewAs === "submitter" && (
+          <div>
+            <button className="btn add-collaborators-btn" onClick={this.handleOpenModalForCollaborators.bind(this)}>
+              <AddIcon className="icon-blue"/>
+              Add collaborators
+            </button>
+          </div>
+        )}
+        {this.renderCollboratorsModal(submission, members)}
+      </div>
+    );
+  }
+
   renderSubmitterInfo(submission: Submission) {
     const submitter = submission.submitter;
-
     return (
-      <div className="request-info">
+      <div>
         <h3>Request Information</h3>
         <div><b>Product Name:</b> {submission.productName} </div>
         <div><b>Submitted by:</b> {submitter.name}</div>
         <div><b>Email:</b> {submitter.email}</div>
         <div><b>Status:</b> {prettifyStatus(submission.status)}</div>
+      </div>
+    );
+  }
+
+  renderSubmitterAndCollaboratorInfo(submission: Submission, members) {
+    return (
+      <div>
+        <div className="card-group">
+          <div className="card mr-2 request-info">
+            {this.renderSubmitterInfo(submission)}
+          </div>
+          <div className="card ml-2 request-info">
+            {this.renderCollboratorsInfo(submission, members)}
+          </div>
+        </div>
       </div>
     );
   }
@@ -384,18 +498,18 @@ class Summary extends Component<Props> {
     let securityArchitectApprovalStatus = prettifyStatus(approvalStatus.securityArchitect);
 
     if (securityArchitectApprovalStatus == "Approved") {
-      securityArchitectApprovalStatus = securityArchitectApprover.FirstName + " " +
-        securityArchitectApprover.Surname + " - " + securityArchitectApprovalStatus;
+      securityArchitectApprovalStatus = securityArchitectApprover.firstName + " " +
+        securityArchitectApprover.surname + " - " + securityArchitectApprovalStatus;
     }
 
     if (submission.status === "waiting_for_security_architect_approval") {
-      securityArchitectApprovalStatus = "Being Reviewed by " + securityArchitectApprover.FirstName + " " +
-        securityArchitectApprover.Surname;
+      securityArchitectApprovalStatus = "Being Reviewed by " + securityArchitectApprover.firstName + " " +
+        securityArchitectApprover.surname;
     }
 
     let cisoApprovalStatus = prettifyStatus(approvalStatus.chiefInformationSecurityOfficer);
     if (cisoApprovalStatus !== "Pending" && cisoApprovalStatus !== "Not Required") {
-      cisoApprovalStatus = cisoApprover.FirstName + " " + cisoApprover.Surname + " - " + cisoApprovalStatus;
+      cisoApprovalStatus = cisoApprover.firstName + " " + cisoApprover.surname + " - " + cisoApprovalStatus;
     }
 
     let businessOwnerApprovalStatus = prettifyStatus(approvalStatus.businessOwner)

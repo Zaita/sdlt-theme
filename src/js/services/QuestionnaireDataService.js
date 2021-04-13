@@ -1,5 +1,4 @@
 // @flow
-
 import type {QuestionnaireStartState, QuestionnaireSubmissionState} from "../store/QuestionnaireState";
 import GraphQLRequestHelper from "../utils/GraphQLRequestHelper";
 import _ from "lodash";
@@ -9,6 +8,7 @@ import type {TaskSubmissionDisplay} from "../types/Task";
 import QuestionParser from "../utils/QuestionParser";
 import UserParser from "../utils/UserParser";
 import SiteConfigParser from "../utils/SiteConfigParser";
+import type {Collaborator} from "../types/User";
 
 export default class QuestionnaireDataService {
 
@@ -33,7 +33,7 @@ mutation {
   static async fetchStartData(questionnaireID: string): Promise<QuestionnaireStartState> {
     const query = `
 query {
-  readCurrentMember {
+  readMember(Type: "Current")  {
     ID
     Email
     FirstName
@@ -58,7 +58,8 @@ query {
 `;
 
     const json = await GraphQLRequestHelper.request({query});
-    const memberData = _.get(json, "data.readCurrentMember.0", null);
+
+    const memberData = _.get(json, "data.readMember.0", null);
     const questionnaireData = _.get(json, "data.readQuestionnaire", null);
     const siteData = _.get(json, "data.readSiteConfig.0", null);
 
@@ -79,7 +80,7 @@ query {
   static async fetchSubmissionData(submissionHash: string, secureToken:string): Promise<QuestionnaireSubmissionState> {
     const query = `
 query {
-  readCurrentMember {
+  readMember(Type: "Current") {
     ID
     Email
     FirstName
@@ -132,6 +133,7 @@ query {
       Surname
     }
     ApprovalOverrideBySecurityArchitect
+    CollaboratorList
   }
   readSiteConfig {
     Title
@@ -143,7 +145,7 @@ query {
   }
 }`;
     const json = await GraphQLRequestHelper.request({query});
-    const memberData = _.get(json, "data.readCurrentMember.0", {});
+    const memberData = _.get(json, "data.readMember.0", {});
     const submissionJSON = _.get(json, "data.readQuestionnaireSubmission.0", {});
     const siteData = _.get(json, "data.readSiteConfig.0", null);
 
@@ -180,12 +182,12 @@ query {
           securityArchitect: _.toString(_.get(submissionJSON, "SecurityArchitectApprovalStatus", "")),
         },
         securityArchitectApprover: {
-          FirstName: _.toString(_.get(submissionJSON, "SecurityArchitectApprover.FirstName", "")),
-          Surname: _.toString(_.get(submissionJSON, "SecurityArchitectApprover.Surname", "")),
+          firstName: _.toString(_.get(submissionJSON, "SecurityArchitectApprover.FirstName", "")),
+          surname: _.toString(_.get(submissionJSON, "SecurityArchitectApprover.Surname", "")),
         },
         cisoApprover: {
-          FirstName: _.toString(_.get(submissionJSON, "CisoApprover.FirstName", "")),
-          Surname: _.toString(_.get(submissionJSON, "CisoApprover.Surname", "")),
+          firstName: _.toString(_.get(submissionJSON, "CisoApprover.FirstName", "")),
+          surname: _.toString(_.get(submissionJSON, "CisoApprover.Surname", "")),
         },
         questions: QuestionParser.parseQuestionsFromJSON({
           schemaJSON: _.toString(_.get(submissionJSON, "QuestionnaireData", "")),
@@ -204,6 +206,7 @@ query {
             };
             return taskSubmission;
           }),
+        collaborators: UserParser.parserCollaboratorsFromJSON(_.get(submissionJSON, "CollaboratorList", [])),
         riskResults: _.has(submissionJSON, 'RiskResultData') ? JSON.parse(_.get(submissionJSON, "RiskResultData", "[]")) : "[]"
       },
     };
@@ -473,6 +476,30 @@ mutation {
     const status = _.toString(_.get(json, "data.updateQuestionnaireStatusToDenied.QuestionnaireStatus", null));
     const uuid = _.toString(_.get(json, "data.updateQuestionnaireStatusToDenied.UUID", null));
     if (!status || !uuid) {
+      throw DEFAULT_NETWORK_ERROR;
+    }
+    return {uuid};
+  }
+
+  static async addCollaborator(submissionID: string, selectedCollaborators: Array<Collaborator>, csrfToken: string) {
+    let selectedCollaboratorIDs = [];
+    if (selectedCollaborators && selectedCollaborators.length > 0) {
+      selectedCollaboratorIDs = selectedCollaborators.map((collaborator) => {
+        return _.get(collaborator, "value", "")
+      });
+    }
+
+    const selectedCollaboratorStr = window.btoa(JSON.stringify(selectedCollaboratorIDs));
+    const query = `mutation {
+     addCollaborator(ID: "${submissionID}", SelectedCollaborator: "${selectedCollaboratorStr}") {
+       UUID
+     }
+    }`;
+
+    const json = await GraphQLRequestHelper.request({query, csrfToken});
+
+    const uuid = _.toString(_.get(json, "data.addCollaborator.UUID", null));
+    if (!uuid) {
       throw DEFAULT_NETWORK_ERROR;
     }
     return {uuid};

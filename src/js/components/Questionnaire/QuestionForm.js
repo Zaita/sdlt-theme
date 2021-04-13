@@ -8,6 +8,7 @@ import DarkButton from "../Button/DarkButton";
 import moment from "moment";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
 
 type Props = {
   question: Question,
@@ -36,6 +37,10 @@ class QuestionForm extends Component<Props> {
 
         {this.renderActions(question)}
         {this.renderInputsForm(question)}
+        <div className="saveText">
+          <InfoOutlinedIcon className="icon-blue"/>
+          <span className="saveMessage">Your answers will be saved when you continue to the next question.</span>
+        </div>
       </div>
     );
   }
@@ -63,25 +68,47 @@ class QuestionForm extends Component<Props> {
       );
     }
 
-    return (
-      <div>
-        <div className="actions">
-          {actions.map((action, index) => {
-            switch (index) {
-              case 0:
-                return <DarkButton title={action.label} key={action.id} classes={["mr-3"]} onClick={() => {
-                  handleActionClick(action);
-                }}/>;
-              default:
-                return <LightButton title={action.label} key={action.id} classes={["mr-3"]} onClick={() => {
-                  handleActionClick(action);
-                }}/>;
-            }
-          })}
+    if (!chosenAction) {
+      return (
+        <div>
+          <div className="actions">
+            {actions.map((action, index) => {
+              switch (index) {
+                case 0:
+                  return <DarkButton title={action.label} key={action.id} classes={["mr-3"]} onClick={() => {
+                    handleActionClick(action);
+                  }}/>;
+                default:
+                  return <LightButton title={action.label} key={action.id} classes={["mr-3"]} onClick={() => {
+                    handleActionClick(action);
+                  }}/>;
+              }
+            })}
+          </div>
+          {message}
         </div>
-        {message}
-      </div>
-    );
+      );
+    } else {
+      return (
+        <div>
+          <div className="actions">
+            {actions.map((action) => {
+              switch (action.isChose) {
+                case true:
+                  return <DarkButton title={action.label} key={action.id} classes={["mr-3"]} onClick={() => {
+                    handleActionClick(action);
+                  }}/>;
+                default:
+                  return <LightButton title={action.label} key={action.id} classes={["mr-3"]} onClick={() => {
+                    handleActionClick(action);
+                  }}/>;
+              }
+            })}
+          </div>
+          {message}
+        </div>
+      );
+    }
   }
 
   renderInputsForm(question: Question) {
@@ -201,7 +228,7 @@ class QuestionForm extends Component<Props> {
                     <tr key={id}>
                       <td className="label"><label>{label}</label></td>
                       <td>
-                        <Field type={type} name={id} className={classes.join(" ")} placeholder={placeholder} maxlength={maxLength > 0 ? maxLength : 4096}/>
+                        <Field type={type} name={id} className={classes.join(" ")} placeholder={placeholder} maxLength={maxLength > 0 ? maxLength : 4096}/>
                         {hasError && <i className="fas fa-exclamation-circle text-danger ml-1"/>}
                       </td>
                     </tr>

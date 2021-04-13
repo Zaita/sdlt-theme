@@ -12,6 +12,7 @@ import {questionnaireSubmissionListState} from "./questionnaireSubmissionListSta
 import {securityRiskAssessmentState} from "./securityRiskAssessmentState";
 import {controlValidationAuditState} from "./controlValidationAuditState";
 import loadingState from './loadingState';
+import {memberState} from './memberState';
 
 export default combineReducers<RootState>({
   homeState,
@@ -23,5 +24,6 @@ export default combineReducers<RootState>({
   questionnaireSubmissionListState,
   securityRiskAssessmentState,
   controlValidationAuditState,
-  loadingState
+  loadingState,
+  memberState
 });

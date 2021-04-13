@@ -39,7 +39,7 @@ export function loadControlValidationAudit(args: {uuid: string, secureToken?: st
   };
 }
 
-export function saveControlValidationAuditData(uuid: string, controlData?: object, questionnaireSubmissionUUID: string, secureToken: string): ThunkAction {
+export function saveControlValidationAuditData(uuid: string, controlData?: object, questionnaireSubmissionUUID: string, secureToken: string, auto: boolean): ThunkAction {
   return async (dispatch) => {
     try {
       // Get CSRF token
@@ -58,7 +58,9 @@ export function saveControlValidationAuditData(uuid: string, controlData?: objec
       };
 
       await dispatch(action);
-      URLUtil.redirectToQuestionnaireSummary(questionnaireSubmissionUUID, secureToken);
+      if (!auto) {
+        URLUtil.redirectToQuestionnaireSummary(questionnaireSubmissionUUID, secureToken);
+      }
     }
     catch (error) {
       ErrorUtil.displayError(error);

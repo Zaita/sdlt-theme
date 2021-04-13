@@ -37,6 +37,7 @@ import {SubmissionExpired} from "../Common/SubmissionExpired";
 import {SubmissionNotCompleted} from "../Common/SubmissionNotCompleted";
 import ControlInfo from "../ComponentSelection/ControlInfo";
 import CSRFTokenService from "../../services/CSRFTokenService";
+import ErrorUtil from "../../utils/ErrorUtil";
 
 const mapStateToProps = (state: RootState) => {
   return {
@@ -56,9 +57,23 @@ const mapDispatchToProps = (dispatch: Dispatch, props: *) => {
         dispatch(loadSiteConfig())
       ]);
     },
-    dispatchSaveControlValidationAuditDataAction(uuid: string, controlData: object, questionnaireSubmissionUUID: string, secureToken: string) {
-      dispatch(saveControlValidationAuditData(uuid, controlData, questionnaireSubmissionUUID, secureToken));
+    // when user click on save button, save in the database
+    dispatchSaveControlValidationAuditDataAction(
+      uuid: string,
+      controlData: object,
+      questionnaireSubmissionUUID: string,
+      secureToken: string, auto: boolean
+    ) {
+      dispatch(saveControlValidationAuditData(
+        uuid,
+        controlData,
+        questionnaireSubmissionUUID,
+        secureToken,
+        auto)
+      );
     },
+    // this is used to update the selectedOptionDetail object
+    // before clicking on save button
     dispatchUpdateControlValidationQuestionDataAction (selectedOptionDetail: object) {
       dispatch(updateControlValidationAuditData(selectedOptionDetail));
     },
@@ -81,44 +96,107 @@ type Props = {
   siteConfig?: SiteConfig | null,
 };
 
-let keepSessionActive;
+type State = {
+  isCVATaskEditable: boolean,
+  isSRATaskFinalised: boolean,
+  canEdit: boolean
+};
 
+let autoSaveCVATask;
 class ControlValidationAuditContainer extends Component<Props, State> {
 
+  constructor(props) {
+    super(props);
+    this.state = {
+      isCVATaskEditable: false,
+      isSRATaskFinalised: false,
+      canEdit: false
+    }
+  }
+
   async componentDidMount() {
-    const {uuid, dispatchLoadDataAction, secureToken} = {...this.props};
+    const {
+      uuid,
+      dispatchLoadDataAction,
+      secureToken,
+    } = {...this.props};
+
     await dispatchLoadDataAction(uuid, secureToken);
 
     /**
-     * Refresh CSRFToken every 10 mins to keep the session activate when the user
-     * is staying on the CVA task page so userInput will not get lost
+     * Save CVA task in every 10 mins so userInput will not get lost
      */
-    this.keepSessionActive = setInterval(
-      async function refreshToken() {
-        const csrfToken = await CSRFTokenService.getCSRFToken();
-      },
-      600000
-    );
+    try {
+      const {
+        controlValidationAuditData,
+        currentUser
+      } = {...this.props};
+
+      const isSubmitter = controlValidationAuditData.submitterID === currentUser.id;
+      const canEdit = (isSubmitter || controlValidationAuditData.isTaskCollborator);
+      const isSRATaskFinalised = SecurityRiskAssessmentUtil.isSRATaskFinalised(controlValidationAuditData.siblingSubmissions);
+      const isCVATaskEditable = (canEdit && !isSRATaskFinalised);
+
+      this.setState({
+        canEdit: canEdit,
+        isSRATaskFinalised: isSRATaskFinalised,
+        isCVATaskEditable: isCVATaskEditable
+      });
+
+      this.autoSaveCVATask = setInterval(
+        async () => {
+          if (isCVATaskEditable) {
+            await this.callAutoSaveCvaTaskApi();
+          }
+        },
+        600000
+      );
+    } catch(e) {
+      ErrorUtil.displayError(error);
+    }
   }
 
   /**
    * Clear Interval function when the user is leaving CVA task page
    */
   componentWillUnmount() {
-    clearInterval(this.keepSessionActive);
+    clearInterval(this.autoSaveCVATask);
+  }
+
+
+  /**
+   * Call db save Api logic in every 10 mins
+   */
+  callAutoSaveCvaTaskApi() {
+    const {
+      uuid,
+      secureToken,
+      dispatchSaveControlValidationAuditDataAction,
+      controlValidationAuditData,
+      cvaSelectedComponents,
+      currentUser
+    } = {...this.props};
+
+    dispatchSaveControlValidationAuditDataAction(
+      uuid,
+      cvaSelectedComponents,
+      controlValidationAuditData.questionnaireSubmissionUUID,
+      secureToken,
+      true
+    );
   }
 
   /**
    * Display a list of security component headlines with radio inputs for controls
    */
-  renderCVAQuestionsForm(isCVATaskEditable) {
+  renderCVAQuestionsForm() {
     const productAspects = this.props.controlValidationAuditData.productAspects;
     const selectedComponents = this.props.cvaSelectedComponents;
     const componentTarget =this.props.controlValidationAuditData.componentTarget;
 
     if (productAspects.length > 0 && selectedComponents.length > 0) {
       return (
-        this.renderComponentGroupByProductAspect(productAspects, selectedComponents, isCVATaskEditable)
+        this.renderComponentGroupByProductAspect(productAspects, selectedComponents)
       );
     } else if (selectedComponents.length > 0) {
       return(
@@ -126,7 +204,7 @@ class ControlValidationAuditContainer extends Component<Props, State> {
           {
             selectedComponents.map((component) => {
               return (
-                this.renderComponent(component, isCVATaskEditable)
+                this.renderComponent(component)
               );
             })
           }
@@ -142,7 +220,7 @@ class ControlValidationAuditContainer extends Component<Props, State> {
     }
   }
 
-  renderComponentGroupByProductAspect(productAspects, components, isCVATaskEditable) {
+  renderComponentGroupByProductAspect(productAspects, components) {
     return (
       <div>
       {
@@ -161,7 +239,7 @@ class ControlValidationAuditContainer extends Component<Props, State> {
               {
                 filterComponent.map((component) => {
                   return (
-                    this.renderComponent(component, isCVATaskEditable)
+                    this.renderComponent(component)
                   );
                 })
               }
@@ -173,11 +251,11 @@ class ControlValidationAuditContainer extends Component<Props, State> {
     );
   }
 
-  renderComponent(component, isCVATaskEditable) {
+  renderComponent(component) {
     const componentKey = component.productAspect ? `${component.productAspect}_${component.id}`: component.id;
-
     const controls = component.controls;
     const link = component.jiraTicketLink ? (<a href={component.jiraTicketLink}>{component.jiraTicketLink}</a>) : null;
+
     return (
       <div key={componentKey}>
         <h5>
@@ -186,7 +264,7 @@ class ControlValidationAuditContainer extends Component<Props, State> {
         </h5>
         {
           controls && controls.length > 0 && controls.map((control) => {
-            return (this.renderControl(control, component, isCVATaskEditable));
+            return (this.renderControl(control, component));
           })
         }
         {
@@ -200,18 +278,18 @@ class ControlValidationAuditContainer extends Component<Props, State> {
     );
   }
 
-  renderControl(control, component, isCVATaskEditable) {
+  renderControl(control, component) {
     const controlKey = component.productAspect ? `${component.productAspect}_${component.id}_${control.id}`: `${component.id}_${control.id}`;
     const componentTarget = this.props.controlValidationAuditData.componentTarget;
 
     if (componentTarget === "JIRA Cloud") {
       return this.renderRemoteControls(control, controlKey);
     } else {
-      return this.renderLocalControl(control, controlKey, component, isCVATaskEditable);
+      return this.renderLocalControl(control, controlKey, component);
     }
   }
 
-  renderLocalControl(control, controlKey, component, isCVATaskEditable) {
+  renderLocalControl(control, controlKey, component) {
     const options = [
       {'value': CTL_STATUS_1, 'label': DEFAULT_CVA_CONTROLS_ANSWER_YES},
       {'value':CTL_STATUS_2, 'label': DEFAULT_CVA_CONTROLS_ANSWER_NO},
@@ -231,7 +309,7 @@ class ControlValidationAuditContainer extends Component<Props, State> {
                     name={controlKey}
                     value={option.value}
                     defaultChecked={control.selectedOption === option.value}
-                    disabled={!isCVATaskEditable}
+                    disabled={!this.state.isCVATaskEditable}
                     onClick={() => this.props.dispatchUpdateControlValidationQuestionDataAction({
                       "selectedOption": option.value,
                       "controlID":control.id,
@@ -262,7 +340,7 @@ class ControlValidationAuditContainer extends Component<Props, State> {
             implementationEvidenceUserInput={control.implementationEvidenceUserInput}
             showImplementationEvidence={true}
             className="text-muted"
-            isCVATaskEditable={isCVATaskEditable}
+            isCVATaskEditable={this.state.isCVATaskEditable}
             updateEvidenceTextareaData={
               (value) => this.props.dispatchUpdateControlValidationQuestionDataAction({
                 "selectedOption": control.selectedOption,
@@ -301,23 +379,19 @@ class ControlValidationAuditContainer extends Component<Props, State> {
       cvaSelectedComponents,
       dispatchReSyncWithJira
     } = {...this.props};
-
     if (!currentUser || !controlValidationAuditData || !siteConfig) {
       return null;
     }
 
-    const isSubmitter = controlValidationAuditData.submitterID === currentUser.id;
-    const isSRATaskFinalised = SecurityRiskAssessmentUtil.isSRATaskFinalised(controlValidationAuditData.siblingSubmissions);
-    const isCVATaskEditable = (isSubmitter && !isSRATaskFinalised);
-
-    const submitButton = isCVATaskEditable && cvaSelectedComponents.length > 0 ? (
+    const submitButton = this.state.isCVATaskEditable && cvaSelectedComponents.length > 0 ? (
       <LightButton
       title="SUBMIT"
       onClick={() => dispatchSaveControlValidationAuditDataAction(
         controlValidationAuditData.uuid,
         cvaSelectedComponents,
         controlValidationAuditData.questionnaireSubmissionUUID,
-        secureToken
+        secureToken,
+        false
       )}/>
     ): null;
 
@@ -330,7 +404,7 @@ class ControlValidationAuditContainer extends Component<Props, State> {
       />
     );
 
-    const reSync = isCVATaskEditable && controlValidationAuditData.componentTarget == "JIRA Cloud" && cvaSelectedComponents.length > 0 ? (
+    const reSync = this.state.isCVATaskEditable && controlValidationAuditData.componentTarget == "JIRA Cloud" && cvaSelectedComponents.length > 0 ? (
       <DarkButton
         title={"RE SYNC WITH JIRA"}
         onClick={() => dispatchReSyncWithJira(controlValidationAuditData.uuid)}
@@ -357,17 +431,17 @@ class ControlValidationAuditContainer extends Component<Props, State> {
                 <h3>Have These Controls Been Implemented?</h3>
                 {
                   ['start','in_progress'].includes(controlValidationAuditData.status)
-                  && !isSubmitter
+                  && !this.state.canEdit
                   && (
                         <SubmissionNotCompleted/>
                     )
                 }
                 {
-                  (isSubmitter || controlValidationAuditData.status == "complete") &&
+                  (this.state.canEdit || controlValidationAuditData.status == "complete") &&
                   (
                     <div>
-                      {isSRATaskFinalised ? SecurityRiskAssessmentUtil.getSraIsFinalisedAlert() : false}
-                      {this.renderCVAQuestionsForm(isCVATaskEditable)}
+                      {this.state.isSRATaskFinalised ? SecurityRiskAssessmentUtil.getSraIsFinalisedAlert() : false}
+                      {this.renderCVAQuestionsForm()}
                     </div>
                   )
                 }

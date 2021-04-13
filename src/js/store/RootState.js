@@ -8,6 +8,7 @@ import type {CurrentUserState} from "./CurrentUserState";
 import type {ComponentSelectionState} from "./ComponentSelectionState";
 import type {SecurityRiskAssessmentState} from "./SecurityRiskAssessmentState";
 import type {LoadingState} from "./LoadingState";
+import type {MemberState} from "./MemberState";
 import type {} from "./ControlValidatioAuditState";
 import type {
   MySubmissionListState,
@@ -25,5 +26,6 @@ export type RootState = {
   questionnaireSubmissionListState: QuestionnaireSubmissionListState,
   securityRiskAssessmentState: SecurityRiskAssessmentState,
   controlValidatioAuditState: ControlValidatioAuditState,
-  loadingState: LoadingState
+  loadingState: LoadingState,
+  memberState: MemberState
 }

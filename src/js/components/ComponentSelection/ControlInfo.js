@@ -1,6 +1,8 @@
 // @flow
 import React, {Component} from "react";
-import { Icon } from 'react-fa'
+import { Icon } from 'react-fa';
+import tinymce from "tinymce";
+import 'tinymce/themes/modern';
 import { Editor } from "@tinymce/tinymce-react";
 
 type Props = {
@@ -25,13 +27,21 @@ export default class ControlInfo extends React.Component<Props> {
     super(props);
     this.state = {
       isExpanded: false,
-      isImplementationEvidenceExpaned: false
-    };
-  }
+      isImplementationEvidenceExpaned: !this.props.isCVATaskEditable
+  };
+}
 
   handleOnBlurForImplementationEvidence(event) {
     if (this.props.isCVATaskEditable) {
       this.props.updateEvidenceTextareaData(event.target.getContent());
+    }
+  }
+
+  componentDidUpdate(prevProps) {
+    if(prevProps.isCVATaskEditable !== this.props.isCVATaskEditable) {
+      this.setState({
+        isImplementationEvidenceExpaned: !this.props.isCVATaskEditable
+      })
     }
   }
 
@@ -113,22 +123,33 @@ export default class ControlInfo extends React.Component<Props> {
                   }}
                 >
                 </div>
-                <div>
-                  <Editor
-                    className="form-control"
-                    initialValue={implementationEvidenceUserInput}
-                    disabled={!isCVATaskEditable}
-                    init={{
-                      selector: 'textarea',
-                      height: 250,
-                      menubar: false,
-                      toolbar: false,
-                      statusbar: false,
-                      skin_url: 'resources/vendor/silverstripe/admin/thirdparty/tinymce/skins/silverstripe'
-                    }}
-                    onBlur={(event) => this.handleOnBlurForImplementationEvidence(event)}
-                  />
-                </div>
+                {
+                  isCVATaskEditable ? (
+                    <div>
+                      <Editor
+                        className="implementation-evidence"
+                        initialValue={implementationEvidenceUserInput}
+                        init={{
+                          selector: 'textarea',
+                          menubar: false,
+                          toolbar: false,
+                          statusbar: false,
+                          skin_url: 'resources/vendor/silverstripe/admin/thirdparty/tinymce/skins/silverstripe'
+                        }}
+                        onBlur={(event) => this.handleOnBlurForImplementationEvidence(event)}
+                      />
+                    </div>
+                    ) : (
+                    <div className="implementation-evidence">
+                      <span
+                        dangerouslySetInnerHTML={{
+                          __html: implementationEvidenceUserInput.replace(/ href=/gi, " target='_blank' href=")
+                        }}
+                      >
+                      </span>
+                    </div>
+                  )
+                }
                 </div>
               )}
             </div>
