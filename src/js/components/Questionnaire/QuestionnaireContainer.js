@@ -74,31 +74,47 @@ class QuestionnaireContainer extends Component<Props> {
         <div className="QuestionnaireContainer">
           <Header title={title} subtitle={siteConfig.siteTitle} username={user.name} logopath={siteConfig.logoPath}/>
           <div className="questionnaire-message">
-            <h3>
-              The questionnaire is not in progress...
-            </h3>
+            <h4>
+              The questionnaire is not in progress. Please check the summary screen.
+            </h4>
           </div>
           <Footer footerCopyrightText={siteConfig.footerCopyrightText}/>
         </div>
       );
     }
 
+    if (user.id === submission.submitter.id) {
+      return (
+        <div className="QuestionnaireContainer">
+          <Header title={title} subtitle={siteConfig.siteTitle} logopath={siteConfig.logoPath} username={user.name} />
+          <Questionnaire
+            questions={submission.questions}
+            saveAnsweredQuestion={(answeredQuestion) => {
+              dispatchSaveAnsweredQuestionAction(answeredQuestion);
+            }}
+            onLeftBarItemClick={(targetQuestion) => {
+              dispatchMoveToPreviousQuestionAction(targetQuestion);
+            }}
+          />
+          <Footer footerCopyrightText={siteConfig.footerCopyrightText}/>
+        </div>
+      );
+    }
 
     return (
       <div className="QuestionnaireContainer">
-        <Header title={title} subtitle={siteConfig.siteTitle} logopath={siteConfig.logoPath} username={user.name} />
-        <Questionnaire
-          questions={submission.questions}
-          saveAnsweredQuestion={(answeredQuestion) => {
-            dispatchSaveAnsweredQuestionAction(answeredQuestion);
-          }}
-          onLeftBarItemClick={(targetQuestion) => {
-            dispatchMoveToPreviousQuestionAction(targetQuestion);
-          }}
-        />
+        <Header title={title} subtitle={siteConfig.siteTitle} username={user.name} logopath={siteConfig.logoPath}/>
+        <div className="questionnaire-message">
+          <h4>
+            It appears this submission has not yet been submitted.
+            Only the submitter can edit a submission and must submit
+            before it can be reviewed.
+          </h4>
+        </div>
         <Footer footerCopyrightText={siteConfig.footerCopyrightText}/>
       </div>
     );
+
   }
 }
 
