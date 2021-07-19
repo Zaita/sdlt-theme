@@ -336,6 +336,7 @@ class Summary extends Component<Props> {
       handleApproveButtonClick,
       handleOptionalApproveButtonClick,
       handleAssignToMeButtonClick,
+      handleNotApprovedButtonClick,
       handleDenyButtonClick,
       handleEditButtonClick
     } = {...this.props};
@@ -425,6 +426,14 @@ class Summary extends Component<Props> {
                     onClick={() => handleApproveButtonClick(this.state.skipBoAndCisoApproval)}
         />
       );
+
+      const notApproveButton = (
+        <DarkButton title="Not APPROVE"
+                    classes={["button"]}
+                    onClick={() => handleNotApproveButtonClick(this.state.skipBoAndCisoApproval)}
+        />
+      );
+
       const denyButton = (
         <LightButton title="DENY"
                      classes={["button"]}
@@ -453,6 +462,22 @@ class Summary extends Component<Props> {
               {assignToMeButton}
             </div>
             <div/>
+          </div>
+        );
+      }
+
+      if (submission.status === "waiting_for_security_architect_approval") {
+        return (
+          <div className="buttons">
+            <div>
+              {viewAnswersButton}
+              {downloadPDFButton}
+            </div>
+            <div>
+              {approveButton}
+              {notApproveButton}
+              {denyButton}
+            </div>
           </div>
         );
       }

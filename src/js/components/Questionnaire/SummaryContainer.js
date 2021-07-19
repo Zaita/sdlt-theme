@@ -11,6 +11,7 @@ import type {MemberState} from "../../store/MemberState";
 import {
   approveQuestionnaireSubmission,
   denyQuestionnaireSubmission,
+  notApproveQuestionnaireSubmission
   editQuestionnaireSubmission,
   loadQuestionnaireSubmissionState,
   submitQuestionnaireForApproval,
@@ -67,6 +68,11 @@ const mapDispatchToProps = (dispatch: Dispatch, props: *) => {
     },
     dispatchDenySubmissionAction(submissionID: string, skipBoAndCisoApproval: boolean) {
       dispatch(denyQuestionnaireSubmission(submissionID, skipBoAndCisoApproval));
+    },
+
+    // as a SA not approve the submission
+    dispatchNotApproveSubmissionAction(submissionID: string, skipBoAndCisoApproval: boolean) {
+      dispatch(notApproveQuestionnaireSubmission(submissionID, skipBoAndCisoApproval));
     },
 
     // As a SA assign the submission to cureent logged in user
@@ -171,6 +177,7 @@ class SummaryContainer extends Component<Props, State> {
                  handlePDFDownloadButtonClick={this.handlePDFDownloadButtonClick.bind(this)}
                  handleSubmitButtonClick={this.handleSubmitButtonClick.bind(this)}
                  handleApproveButtonClick={this.handleApproveButtonClick.bind(this)}
+                 handleNotApproveButtonClick={this.handleNotApproveButtonClick.bind(this)}
                  handleDenyButtonClick={this.handleDenyButtonClick.bind(this)}
                  handleEditButtonClick={this.handleOpenModal.bind(this)}
                  handleAssignToMeButtonClick={this.handleAssignToMeButtonClick.bind(this)}
@@ -248,6 +255,24 @@ class SummaryContainer extends Component<Props, State> {
       this.props.dispatchBusinessOwnerApproveSubmissionAction(submission.submissionID, secureToken);
     } else if (isCurrentUserApprover) {
       this.props.dispatchApproveSubmissionAction(submission.submissionID, skipBoAndCisoApproval);
+    }
+  }
+
+  handleNotApproveButtonClick(skipBoAndCisoApproval: boolean = false) {
+    const {secureToken} = {...this.props};
+    const {
+      user,
+      submission,
+      isCurrentUserApprover,
+      isCurrentUserABusinessOwnerApprover
+    } = {...this.props.submissionState};
+
+    if (!user || !submission) {
+      return;
+    }
+
+    if (isCurrentUserApprover) {
+      this.props.dispatchNotApproveSubmissionAction(submission.submissionID, skipBoAndCisoApproval);
     }
   }
 

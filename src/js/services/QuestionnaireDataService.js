@@ -371,6 +371,25 @@ mutation {
     return {uuid};
   }
 
+// Not approve questionnaire for sa
+  static async NotApproveQuestionnaireSubmission(argument: { submissionID: string, csrfToken: string, skipBoAndCisoApproval: boolean}): Promise<{ uuid: string }> {
+    const {submissionID, csrfToken, skipBoAndCisoApproval} = {...argument};
+    const query = `
+mutation {
+ updateQuestionnaireSAStatusToNotApprove(ID: "${submissionID}", SkipBoAndCisoApproval: ${skipBoAndCisoApproval}) {
+   QuestionnaireStatus
+   UUID
+ }
+}`;
+    const json = await GraphQLRequestHelper.request({query, csrfToken});
+    const status = _.toString(_.get(json, "data.updateQuestionnaireSAStatusToNotApprove.QuestionnaireStatus", null));
+    const uuid = _.toString(_.get(json, "data.updateQuestionnaireSAStatusToNotApprove.UUID", null));
+    if (!status || !uuid) {
+      throw DEFAULT_NETWORK_ERROR;
+    }
+    return {uuid};
+  }
+
   static async editQuestionnaireSubmission(argument: { submissionID: string, csrfToken: string }): Promise<{ uuid: string }> {
     const {submissionID, csrfToken} = {...argument};
     const query = `
