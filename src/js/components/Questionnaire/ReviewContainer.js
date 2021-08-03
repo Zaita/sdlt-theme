@@ -81,7 +81,7 @@ class ReviewContainer extends Component<Props> {
       }
 
       // Check if the current user is an approver
-      if (isCurrentUserABusinessOwnerApprover) {
+      if (isCurrentUserABusinessOwnerApprover && submission.status == 'waiting_for_approval') {
         viewAs = "businessOwnerApprover";
         break;
       }

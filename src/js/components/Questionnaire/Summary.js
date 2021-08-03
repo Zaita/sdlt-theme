@@ -31,6 +31,7 @@ type Props = {
   handleAssignToMeButtonClick: () => void,
   handleApproveButtonClick: (skipBoAndCisoApproval: boolean) => void,
   handleDenyButtonClick: (skipBoAndCisoApproval: boolean) => void,
+  handleNotApproveButtonClick: (skipBoAndCisoApproval: boolean) => void,
   handleEditButtonClick: () => void,
   handleCollaboratorAddButtonClick: (selectedCollaborators: Array<Collaborator>) => void,
   viewAs: "submitter" | "approver" | "others",
@@ -62,11 +63,13 @@ class Summary extends Component<Props> {
     handlePDFDownloadButtonClick: () => {},
     handleSubmitButtonClick: () => {},
     handleApproveButtonClick: () => {},
+    handleNotApproveButtonClick: () => {},
     handleDenyButtonClick: () => {},
     handleEditButtonClick: () => {},
     handleAssignToMeButtonClick: () => {},
     handleCollaboratorAddButtonClick: () => {},
     viewAs: "others",
+    showNotApproveButton: false,
     token: "",
     user: null,
     members: null
@@ -330,12 +333,14 @@ class Summary extends Component<Props> {
     const {
       user,
       viewAs,
+      showNotApproveButton,
       token,
       handleSubmitButtonClick,
       handlePDFDownloadButtonClick,
       handleApproveButtonClick,
       handleOptionalApproveButtonClick,
       handleAssignToMeButtonClick,
+      handleNotApproveButtonClick,
       handleDenyButtonClick,
       handleEditButtonClick
     } = {...this.props};
@@ -425,6 +430,14 @@ class Summary extends Component<Props> {
                     onClick={() => handleApproveButtonClick(this.state.skipBoAndCisoApproval)}
         />
       );
+
+      const notApproveButton = (
+       <DarkButton title="Not APPROVE"
+                   classes={["button"]}
+                   onClick={() => handleNotApproveButtonClick(this.state.skipBoAndCisoApproval)}
+       />
+     );
+
       const denyButton = (
         <LightButton title="DENY"
                      classes={["button"]}
@@ -453,6 +466,22 @@ class Summary extends Component<Props> {
               {assignToMeButton}
             </div>
             <div/>
+          </div>
+        );
+      }
+
+      if (submission.status === "waiting_for_security_architect_approval") {
+        return (
+          <div className="buttons">
+            <div>
+              {viewAnswersButton}
+              {downloadPDFButton}
+            </div>
+            <div>
+              {approveButton}
+              {showNotApproveButton ? notApproveButton : null}
+              {denyButton}
+            </div>
           </div>
         );
       }
@@ -497,7 +526,7 @@ class Summary extends Component<Props> {
 
     let securityArchitectApprovalStatus = prettifyStatus(approvalStatus.securityArchitect);
 
-    if (securityArchitectApprovalStatus == "Approved") {
+    if (securityArchitectApprovalStatus == "Approved" || securityArchitectApprovalStatus == "Not Approved") {
       securityArchitectApprovalStatus = securityArchitectApprover.firstName + " " +
         securityArchitectApprover.surname + " - " + securityArchitectApprovalStatus;
     }

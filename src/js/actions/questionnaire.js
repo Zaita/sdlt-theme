@@ -286,6 +286,20 @@ export function denyQuestionnaireSubmission(submissionID: string, skipBoAndCisoA
   }
 }
 
+// Not approve questionnaire submission as a sa
+export function notApproveQuestionnaireSubmissionforSA(submissionID: string, skipBoAndCisoApproval: boolean): ThunkAction {
+  return async (dispatch, getState) => {
+    try {
+      const csrfToken = await CSRFTokenService.getCSRFToken();
+      const {uuid} = await QuestionnaireDataService.NotApproveQuestionnaireSubmission({submissionID, csrfToken, skipBoAndCisoApproval});
+      dispatch(loadQuestionnaireSubmissionState(uuid));
+    } catch(error) {
+      // TODO: errors
+      alert(error);
+    }
+  }
+}
+
 // Approve the Questionnaire Submission as a BO
 export function approveQuestionnaireSubmissionAsBusinessOwner(submissionID: string, secureToken: string): ThunkAction {
   return async (dispatch, getState) => {
