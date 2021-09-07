@@ -432,7 +432,7 @@ class Summary extends Component<Props> {
       );
 
       const notApproveButton = (
-       <DarkButton title="Not APPROVE"
+       <DarkButton title="NOT APPROVED"
                    classes={["button"]}
                    onClick={() => handleNotApproveButtonClick(this.state.skipBoAndCisoApproval)}
        />
