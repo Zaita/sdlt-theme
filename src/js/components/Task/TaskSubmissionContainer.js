@@ -13,7 +13,8 @@ import {
   moveToPreviousQuestionInTaskSubmission,
   saveAnsweredQuestionInTaskSubmission,
   approveTaskSubmission,
-  denyTaskSubmission
+  denyTaskSubmission,
+  inProgressTaskSubmission
 } from "../../actions/task";
 import TaskSubmission from "./TaskSubmission";
 import type {User} from "../../types/User";
@@ -53,6 +54,9 @@ const mapDispatchToProps = (dispatch: Dispatch, props: *) => {
     },
     dispatchDenyTaskSubmissionAction(uuid: string) {
       dispatch(denyTaskSubmission(uuid));
+    },
+    dispatchSendBackForChangesTaskSubmissionAction(uuid: string) {
+      dispatch(inProgressTaskSubmission(uuid));
     }
   };
 };
@@ -66,6 +70,7 @@ type Props = {
   dispatchLoadDataAction?: (uuid: string, secureToken: string) => void,
   dispatchApproveTaskSubmissionAction?: (uuid: string) => void,
   dispatchDenyTaskSubmissionAction?: (uuid: string) => void,
+  dispatchSendBackForChangesTaskSubmissionAction?: (uuid: string) => void,
   dispatchSaveAnsweredQuestionAction?: (answeredQuestion: Question) => void,
   dispatchMoveToPreviousQuestionAction?: (targetQuestion: Question) => void,
   dispatchEditAnswersAction?: () => void
@@ -88,6 +93,7 @@ class TaskSubmissionContainer extends Component<Props> {
       dispatchEditAnswersAction,
       dispatchApproveTaskSubmissionAction,
       dispatchDenyTaskSubmissionAction,
+      dispatchSendBackForChangesTaskSubmissionAction,
       secureToken
     } = {...this.props};
 
@@ -136,6 +142,7 @@ class TaskSubmissionContainer extends Component<Props> {
           canUpdateAnswers={canUpdateAnswers}
           handleApproveButtonClick={this.handleApproveButtonClick.bind(this)}
           handleDenyButtonClick={this.handleDenyButtonClick.bind(this)}
+          handleSendBackForChangesButtonClick={this.handleSendBackForChangesButtonClick.bind(this)}
           showBackButton={!!taskSubmission.questionnaireSubmissionUUID}
           viewAs={viewAs}
           siteConfig={siteConfig}
@@ -154,6 +161,16 @@ class TaskSubmissionContainer extends Component<Props> {
     }
 
     this.props.dispatchApproveTaskSubmissionAction(uuid);
+  }
+
+  handleSendBackForChangesButtonClick() {
+    const {user, isCurrentUserAnApprover, uuid} = {...this.props.taskSubmission};
+
+    if (!user && !uuid && !isCurrentUserAnApprover) {
+      return;
+    }
+
+    this.props.dispatchSendBackForChangesTaskSubmissionAction(uuid);
   }
 
   handleDenyButtonClick() {

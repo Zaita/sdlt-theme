@@ -279,7 +279,8 @@ mutation {
 }`;
     const json = await GraphQLRequestHelper.request({query, csrfToken});
     const status = toString(
-      get(json, "data.updateTaskStatusToDenied.Status", null));
+      get(json, "data.updateTaskStatusToDenied.Status", null)
+    );
     if (!status || !uuid) {
       throw DEFAULT_NETWORK_ERROR;
     }
