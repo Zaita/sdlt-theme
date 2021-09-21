@@ -379,6 +379,18 @@ export function approveTaskSubmission(uuid: string): ThunkAction {
   }
 }
 
+export function inProgressTaskSubmission(uuid: string): ThunkAction {
+  return async (dispatch, getState) => {
+    try {
+      const csrfToken = await CSRFTokenService.getCSRFToken();
+      const {status} = await TaskDataService.editTaskSubmission({uuid, csrfToken, secureToken: ''});
+      await dispatch(loadTaskSubmission({uuid, secureToken: ''}));
+    } catch(error) {
+      ErrorUtil.displayError(error.message);
+    }
+  }
+}
+
 export function denyTaskSubmission(uuid: string): ThunkAction {
   return async (dispatch, getState) => {
     try {

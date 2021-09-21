@@ -1,12 +1,14 @@
 @import "../../variables";
 
 .DarkButton {
-    border: solid 2px $blue;
-    background-color: $blue;
-    color: $white;
+  border: 1.5px solid $light-blue;
+  box-sizing: border-box;
+  border-radius: 5px;
+  background-color: $light-blue;
+  color: $white;
 
-    &:hover {
-        border: solid 2px $orange;
-        background-color: $orange;
-    }
+  &:hover {
+      text-decoration: underline;
+      color: $white;
+  }
 }

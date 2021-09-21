@@ -30,9 +30,20 @@
         flex-direction: row;
         justify-content: flex-start;
         align-items: stretch;
+        margin-right: -16px;
 
         .BaseButton {
             margin-right: 16px;
         }
+        .buttons-right {
+          margin-left: auto;
+        }
+    }
+
+    .approver-action {
+      font-weight: bold;
+      font-size: 12px;
+      margin-right: 10px;
+      line-height: 13px;
     }
 }
