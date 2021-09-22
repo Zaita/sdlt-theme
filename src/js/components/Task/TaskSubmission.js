@@ -7,6 +7,7 @@ import type {TaskSubmission as TaskSubmissionType} from "../../types/Task";
 import type {Question} from "../../types/Questionnaire";
 import editIcon from "../../../img/icons/edit.svg";
 import LightButton from "../Button/LightButton";
+import RedButton from "../Button/RedButton";
 import URLUtil from "../../utils/URLUtil";
 import DarkButton from "../Button/DarkButton";
 import pdfIcon from "../../../img/icons/download.svg";
@@ -106,7 +107,7 @@ class TaskSubmission extends Component<Props> {
     ) : null;
 
     const denyButton = (viewAs === "approver" && taskSubmission.status === "waiting_for_approval") ? (
-      <LightButton title={"Not approved"} onClick={handleDenyButtonClick} classes={["button"]}/>
+      <RedButton title={"Not approved"} onClick={handleDenyButtonClick} classes={["button"]}/>
     ) : null;
 
     return (

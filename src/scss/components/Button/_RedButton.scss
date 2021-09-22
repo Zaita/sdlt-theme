@@ -1,0 +1,9 @@
+@import "../../variables";
+
+.RedButton {
+    border: 2px solid $dark-red;
+    box-sizing: border-box;
+    border-radius: 5px;
+    background-color: $dark-red;
+    color: $white;
+}
