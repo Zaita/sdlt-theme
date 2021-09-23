@@ -294,7 +294,7 @@ class Summary extends Component<Props> {
           }
 
           if ((status === "approved" || status === "denied") && approver.name) {
-            taskNameAndStatus = taskName + ' (' + prettifyStatus(status) + ' by ' + approver.name + ')';
+            taskNameAndStatus = taskName + ' (Not Approved by ' + approver.name + ')';
           }
 
           const {token} = {...this.props};
