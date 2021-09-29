@@ -7,9 +7,10 @@ import type {TaskSubmission as TaskSubmissionType} from "../../types/Task";
 import type {Question} from "../../types/Questionnaire";
 import editIcon from "../../../img/icons/edit.svg";
 import LightButton from "../Button/LightButton";
+import RedButton from "../Button/RedButton";
 import URLUtil from "../../utils/URLUtil";
 import DarkButton from "../Button/DarkButton";
-import pdfIcon from "../../../img/icons/pdf.svg";
+import pdfIcon from "../../../img/icons/download.svg";
 import PDFUtil from "../../utils/PDFUtil";
 import RiskResultContainer from "../Common/RiskResultContainer";
 import SecurityRiskAssessmentUtil from "../../utils/SecurityRiskAssessmentUtil";
@@ -20,6 +21,7 @@ type Props = {
   saveAnsweredQuestion: (answeredQuestion: Question) => void,
   moveToPreviousQuestion: (targetQuestion: Question) => void,
   handleApproveButtonClick: () => void,
+  handleSendBackForChangesButtonClick: () => void,
   handleDenyButtonClick: () => void,
   showBackButton: boolean,
   showEditButton: boolean,
@@ -35,6 +37,7 @@ class TaskSubmission extends Component<Props> {
       moveToPreviousQuestion,
       handleApproveButtonClick,
       handleDenyButtonClick,
+      handleSendBackForChangesButtonClick,
       editAnswers,
       showBackButton,
       showEditButton,
@@ -78,7 +81,7 @@ class TaskSubmission extends Component<Props> {
 
     const resultStatus = ["complete", "waiting_for_approval", "approved", "denied"];
     const pdfButton = (resultStatus.indexOf(taskSubmission.status) > -1) ? (
-      <LightButton title={"DOWNLOAD PDF"} iconImage={pdfIcon} onClick={() => this.downloadPdf()}/>
+      <LightButton title={"PDF"} iconImage={pdfIcon} onClick={() => this.downloadPdf()}/>
     ) : null;
 
     const result = taskSubmission.result && (resultStatus.indexOf(taskSubmission.status) > -1) ? (
@@ -96,11 +99,15 @@ class TaskSubmission extends Component<Props> {
     ) : null;
 
     const approveButton = (viewAs === "approver" && taskSubmission.status === "waiting_for_approval") ? (
-      <DarkButton title={"APPROVE"} onClick={handleApproveButtonClick} classes={["button"]}/>
+      <DarkButton title={"Approve"} onClick={handleApproveButtonClick} classes={["button"]}/>
+    ) : null;
+
+    const sendBackForChangesButton = (viewAs === "approver" && taskSubmission.status === "waiting_for_approval") ? (
+      <LightButton title={"Send back for changes"} onClick={handleSendBackForChangesButtonClick} classes={["button"]}/>
     ) : null;
 
     const denyButton = (viewAs === "approver" && taskSubmission.status === "waiting_for_approval") ? (
-      <LightButton title={"DENY"} onClick={handleDenyButtonClick} classes={["button"]}/>
+      <RedButton title={"Not approved"} onClick={handleDenyButtonClick} classes={["button"]}/>
     ) : null;
 
     return (
@@ -116,16 +123,23 @@ class TaskSubmission extends Component<Props> {
               {result}
               {body}
               {riskResult}
-
-                  <div className="buttons">
+              <div className="buttons">
+                <div className="buttons-left">
                   {editButton}
                   {pdfButton}
                   {backButton}
-                  <div>
-                    {approveButton}
-                    {denyButton}
-                  </div>
                 </div>
+                <div className="buttons-right">
+                  {
+                    viewAs === "approver" &&
+                    taskSubmission.status === "waiting_for_approval" &&
+                    <span className="approver-action">Approver action: </span>
+                  }
+                  {sendBackForChangesButton}
+                  {denyButton}
+                  {approveButton}
+                </div>
+            </div>
             </div>
           )
         }
