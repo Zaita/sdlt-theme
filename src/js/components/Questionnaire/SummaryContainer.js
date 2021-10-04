@@ -72,8 +72,6 @@ const mapDispatchToProps = (dispatch: Dispatch, props: *) => {
 
     // as a SA not approve the submission
     dispatchNotApproveSubmissionAction(submissionID: string, skipBoAndCisoApproval: boolean) {
-      console.log(submissionID);
-      console.log(skipBoAndCisoApproval);
       dispatch(notApproveQuestionnaireSubmissionforSA(submissionID, skipBoAndCisoApproval));
     },
 

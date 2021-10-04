@@ -7,13 +7,13 @@ import type {Question} from "../types/Questionnaire";
 import SubmissionDataUtil from "../utils/SubmissionDataUtil";
 import _ from "lodash";
 import CSRFTokenService from "../services/CSRFTokenService";
-import type {Task, TaskSubmission} from "../types/Task";
+import type {Task, TaskSubmission, TaskRecommendation} from "../types/Task";
 import ErrorUtil from "../utils/ErrorUtil";
 import type {
   LoadTaskSubmissionAction,
   MarkQuestionsNotApplicableInTaskSubmissionAction,
   MoveToQuestionInTaskSubmissionAction,
-  PutDataInTaskSubmissionAction,
+  PutDataInTaskSubmissionAction
 } from "./ActionType";
 import {loadSelectedComponents} from "./componentSelection";
 import type {User} from "../types/User";
@@ -396,6 +396,20 @@ export function denyTaskSubmission(uuid: string): ThunkAction {
     try {
       const csrfToken = await CSRFTokenService.getCSRFToken();
       const {status} = await TaskDataService.denyTaskSubmission({uuid, csrfToken});
+      await dispatch(loadTaskSubmission({uuid}));
+    } catch(error) {
+      ErrorUtil.displayError(error.message);
+    }
+  }
+}
+
+export function addTaskRecommendation(uuid: string, newtaskRecommendationObj: TaskRecommendation, taskRecommendations: Array<TaskRecommendation>): ThunkAction {
+  return async (dispatch, getState) => {
+    try {
+      // push new task recommendation in existing taskRecommendations object
+      taskRecommendations.push(newtaskRecommendationObj);
+      const csrfToken = await CSRFTokenService.getCSRFToken();
+      const {taskRecommendationData} = await TaskDataService.updateTaskRecommendation({uuid, csrfToken, taskRecommendations});
       await dispatch(loadTaskSubmission({uuid}));
     } catch(error) {
       ErrorUtil.displayError(error.message);

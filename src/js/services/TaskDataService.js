@@ -7,7 +7,7 @@ import uniq from "lodash/uniq";
 import {DEFAULT_NETWORK_ERROR} from "../constants/errors";
 import type {Question, SubmissionQuestionData} from "../types/Questionnaire";
 import QuestionParser from "../utils/QuestionParser";
-import type {Task, TaskSubmission, TaskSubmissionListItem} from "../types/Task";
+import type {Task, TaskSubmission, TaskSubmissionListItem, TaskRecommendation} from "../types/Task";
 import UserParser from "../utils/UserParser";
 import TaskParser from "../utils/TaskParser";
 import SecurityComponentParser from "../utils/SecurityComponentParser";
@@ -79,6 +79,7 @@ query {
     IsTaskApprovalRequired
     IsCurrentUserAnApprover
     RiskResultData
+    TaskRecommendationData
     ComponentTarget
     ProductAspects
     HideWeightsAndScore
@@ -113,12 +114,14 @@ query {
       isCurrentUserAnApprover:  get(submissionJSONObject, "IsCurrentUserAnApprover", "false") === "true",
       isTaskApprovalRequired: get(submissionJSONObject, "IsTaskApprovalRequired", false) === "true",
       riskResults: _.has(submissionJSONObject, 'RiskResultData') ? JSON.parse(get(submissionJSONObject, "RiskResultData", "[]")) : "[]",
+      taskRecommendations: _.has(submissionJSONObject, 'TaskRecommendationData') ? JSON.parse(_.defaultTo(get(submissionJSONObject, "TaskRecommendationData", "[]"), "[]")) : "[]",
       productAspects:  _.has(submissionJSONObject, 'ProductAspects') ? JSON.parse(get(submissionJSONObject, "ProductAspects", [])) : [],
       componentTarget: toString(get(submissionJSONObject, "ComponentTarget", "")),
       hideWeightsAndScore: _.get(submissionJSONObject, "HideWeightsAndScore", "false") === "true",
       isTaskCollborator: _.get(submissionJSONObject, "IsTaskCollborator", "false") === "true",
       siblingSubmissions: TaskParser.parseAlltaskSubmissionforQuestionnaire(submissionJSONObject)
     };
+
     return data;
   }
 
@@ -286,6 +289,26 @@ mutation {
     }
     return {status};
   }
+
+    static async updateTaskRecommendation(argument: { uuid: string, csrfToken: string, taskRecommendations: Array<TaskRecommendation> }): Promise<{ uuid: string }> {
+      const {uuid, csrfToken, taskRecommendations} = {...argument};
+      const query = `
+  mutation {
+    updateTaskRecommendation(
+      UUID: "${uuid}",
+      TaskRecommendationData: "${window.btoa(unescape(encodeURIComponent(JSON.stringify(taskRecommendations))))}"
+    ) {
+     TaskRecommendationData
+     UUID
+   }
+  }`;
+      const json = await GraphQLRequestHelper.request({query, csrfToken});
+      const taskRecommendationData = _.has(json, 'TaskRecommendationData') ? JSON.parse(get(submissionJSONObject, "TaskRecommendationData", "[]")) : "[]";
+      if (!taskRecommendationData || !uuid) {
+        throw DEFAULT_NETWORK_ERROR;
+      }
+      return {taskRecommendationData};
+    }
 
   // load data for Awaiting Approvals
   static async fetchTaskSubmissionList(userID: string, pageType: string): Promise<Array<TaskSubmissionListItem>> {

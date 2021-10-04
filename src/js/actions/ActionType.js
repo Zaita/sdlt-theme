@@ -6,6 +6,7 @@ import type {User} from "../types/User";
 import type {TaskSubmission} from "../types/Task";
 import type {Question} from "../types/Questionnaire";
 import type {JiraTicket, SecurityComponent} from "../types/SecurityComponent";
+import type {TaskRecommendation} from "../types/Task";
 
 export type LoadHomeStateFinishedAction = {
   type: string,
@@ -85,6 +86,11 @@ export type LoadSelectedComponentsAction= {
   payload: string,
 };
 
+export type AddTaskRecommendationAction = {
+  type: string,
+  payload: Array<TaskRecommendation>
+}
+
 const ActionType = {
   HOME: {
     LOAD_HOME_STATE_STARTED: "LOAD_HOME_STATE_STARTED",
@@ -130,6 +136,7 @@ const ActionType = {
     FETCH_AWAITING_APPROVAL_TASK_LIST_REQUEST: "TASK/FETCH_AWAITING_APPROVAL_TASK_LIST/REQUEST",
     FETCH_AWAITING_APPROVAL_TASK_LIST_SUCCESS: "TASK/FETCH_AWAITING_APPROVAL_TASK_LIST/SUCCESS",
     FETCH_AWAITING_APPROVAL_TASK_LIST_FAILURE: "TASK/FETCH_AWAITING_APPROVAL_TASK_LIST/FAILURE",
+    ADD_TASK_RECOMMENDATION: "TASK/ADD_RECOMMENDATION",
   },
   COMPONENT_SELECTION: {
     SET_AVAILABLE_COMPONENTS: "ACTION_COMPONENT_SELECTION_SET_AVAILABLE_COMPONENTS",

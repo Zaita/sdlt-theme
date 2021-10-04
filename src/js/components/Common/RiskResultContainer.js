@@ -16,12 +16,12 @@ class RiskResultContainer extends Component<Props> {
     }
 
     return (
-      <div className="risks">
-        <h3>Risk Result</h3>
+      <div className="risk-result-container">
+        <h4>Risk Result</h4>
 
-        <div className="table-responsive">
+        <div className="table-responsive table-continer">
           <table className="table">
-            <thead className="thead-light">
+            <thead className="">
               <tr key="risk_table_header">
                 <th>Risk Name</th>
                 {
