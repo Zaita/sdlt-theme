@@ -25,5 +25,5 @@ export default combineReducers<RootState>({
   securityRiskAssessmentState,
   controlValidationAuditState,
   loadingState,
-  memberState
+  memberState,
 });

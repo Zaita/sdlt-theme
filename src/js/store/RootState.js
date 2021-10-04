@@ -27,5 +27,5 @@ export type RootState = {
   securityRiskAssessmentState: SecurityRiskAssessmentState,
   controlValidatioAuditState: ControlValidatioAuditState,
   loadingState: LoadingState,
-  memberState: MemberState
+  memberState: MemberState,
 }

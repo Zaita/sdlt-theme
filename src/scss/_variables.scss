@@ -8,6 +8,7 @@
 // Color system
 
 $white:    #fff !default;
+$gray-85:  #D9D9D9 !default;
 $gray-100: #f8f9fa !default;
 $gray-200: #efefef !default;
 $gray-300: #dee2e6 !default;
@@ -31,7 +32,8 @@ $grays: map-merge(
     "600": $gray-600,
     "700": $gray-700,
     "800": $gray-800,
-    "900": $gray-900
+    "900": $gray-900,
+    "85" : $gray-85
   ),
   $grays
 );
@@ -48,6 +50,8 @@ $teal:       #20c997 !default;
 $cyan:       #17a2b8 !default;
 $dark-red:   #BE3A34 !default;
 $light-blue: #2371A6 !default;
+$dark-blue:  #003B5C !default;
+$light-gray: $gray-85 !default ;
 
 $colors: () !default;
 // stylelint-disable-next-line scss/dollar-variable-default
@@ -65,9 +69,10 @@ $colors: map-merge(
     "cyan":       $cyan,
     "white":      $white,
     "gray":       $gray-200,
-    "gray-dark":  $gray-800
-    "light-blue"  $light-blue
-    "dark-red"    $dark-red
+    "gray-dark":  $gray-800,
+    "light-blue": $light-blue,
+    "dark-red":   $dark-red,
+    "light-gray": $light-gray,
   ),
   $colors
 );
@@ -281,7 +286,7 @@ $font-family-monospace:       SFMono-Regular, Menlo, Monaco, Consolas, "Liberati
 $font-family-base:            $font-family-sans-serif !default;
 // stylelint-enable value-keyword-case
 
-$font-size-base:              1rem !default; // Assumes the browser default, typically `16px`
+$font-size-base:              0.75rem !default; // Assumes the browser default, typically `16px`
 $font-size-lg:                $font-size-base * 1.25 !default;
 $font-size-sm:                $font-size-base * .875 !default;
 

@@ -36,7 +36,7 @@ class AnswersPreview extends Component<Props> {
     );
   }
 
-  renderData(question: Question): * {
+  renderData (question: Question): * {
     // Render data for non-applicable question
     if (!question.isApplicable) {
       const msg = "(Not applicable)";

@@ -38,6 +38,7 @@ export type TaskSubmission = {
   isCurrentUserAnApprover: boolean,
   hideWeightsAndScore: boolean,
   productAspects: Array<ProductAspect>,
+  taskRecommendations: Array<TaskRecommendation>
 };
 
 export type SecurityRiskAssessment = {
@@ -74,3 +75,11 @@ export type TaskSubmissionListItem = {
   status: string,
   submitterName: string
 };
+
+export type TaskRecommendation = {
+  id: string,
+  title: string,
+  status: string,
+  description: string,
+  recommendation: string,
+}

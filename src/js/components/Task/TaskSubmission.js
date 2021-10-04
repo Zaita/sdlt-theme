@@ -5,7 +5,7 @@ import Questionnaire from "../Questionnaire/Questionnaire";
 import AnswersPreview from "../Questionnaire/AnswersPreview";
 import type {TaskSubmission as TaskSubmissionType} from "../../types/Task";
 import type {Question} from "../../types/Questionnaire";
-import editIcon from "../../../img/icons/edit.svg";
+import editIcon from "../../../img/icons/edit-icon.svg";
 import LightButton from "../Button/LightButton";
 import RedButton from "../Button/RedButton";
 import URLUtil from "../../utils/URLUtil";
@@ -13,6 +13,7 @@ import DarkButton from "../Button/DarkButton";
 import pdfIcon from "../../../img/icons/download.svg";
 import PDFUtil from "../../utils/PDFUtil";
 import RiskResultContainer from "../Common/RiskResultContainer";
+import TaskRecommendationContainer from "./TaskRecommendationContainer";
 import SecurityRiskAssessmentUtil from "../../utils/SecurityRiskAssessmentUtil";
 import {SubmissionExpired} from "../Common/SubmissionExpired";
 
@@ -23,6 +24,7 @@ type Props = {
   handleApproveButtonClick: () => void,
   handleSendBackForChangesButtonClick: () => void,
   handleDenyButtonClick: () => void,
+  handleAddTaskRecommendationButtonClick: () => void,
   showBackButton: boolean,
   showEditButton: boolean,
   canUpdateAnswers: boolean,
@@ -38,6 +40,7 @@ class TaskSubmission extends Component<Props> {
       handleApproveButtonClick,
       handleDenyButtonClick,
       handleSendBackForChangesButtonClick,
+      handleAddTaskRecommendationButtonClick,
       editAnswers,
       showBackButton,
       showEditButton,
@@ -46,19 +49,14 @@ class TaskSubmission extends Component<Props> {
       secureToken
     } = {...this.props};
 
-    let body = (
-      <AnswersPreview questions={taskSubmission.questions}/>
+    const taskRecommendationContainer = (
+      <TaskRecommendationContainer
+        taskRecommendations={taskSubmission.taskRecommendations}
+        viewAs={viewAs}
+        status={taskSubmission.status}
+        handleAddTaskRecommendationButtonClick={handleAddTaskRecommendationButtonClick}
+      />
     );
-
-    if (canUpdateAnswers) {
-      body = (
-        <Questionnaire
-          questions={taskSubmission.questions}
-          saveAnsweredQuestion={saveAnsweredQuestion}
-          onLeftBarItemClick={moveToPreviousQuestion}
-        />
-      );
-    }
 
     const backButton = showBackButton ? (
       <DarkButton
@@ -73,7 +71,7 @@ class TaskSubmission extends Component<Props> {
 
     const editButton = showEditButton && !isSRATaskFinalised ? (
       <LightButton
-        title="EDIT ANSWERS"
+        title="Edit"
         onClick={editAnswers}
         iconImage={editIcon}
       />
@@ -110,6 +108,26 @@ class TaskSubmission extends Component<Props> {
       <RedButton title={"Not approved"} onClick={handleDenyButtonClick} classes={["button"]}/>
     ) : null;
 
+    let body = (
+      <div>
+        {result}
+        <h4>Summary</h4>
+        <AnswersPreview questions={taskSubmission.questions}/>
+        {riskResult}
+        {taskRecommendationContainer}
+      </div>
+    );
+
+    if (canUpdateAnswers) {
+      body = (
+        <Questionnaire
+          questions={taskSubmission.questions}
+          saveAnsweredQuestion={saveAnsweredQuestion}
+          onLeftBarItemClick={moveToPreviousQuestion}
+        />
+      );
+    }
+
     return (
       <div className="TaskSubmission">
         {taskSubmission.status === 'expired' && <SubmissionExpired/>}
@@ -120,9 +138,7 @@ class TaskSubmission extends Component<Props> {
                 taskSubmission.taskType === 'risk questionnaire' &&
                 isSRATaskFinalised ? SecurityRiskAssessmentUtil.getSraIsFinalisedAlert() : false
               }
-              {result}
               {body}
-              {riskResult}
               <div className="buttons">
                 <div className="buttons-left">
                   {editButton}
@@ -139,14 +155,13 @@ class TaskSubmission extends Component<Props> {
                   {denyButton}
                   {approveButton}
                 </div>
-            </div>
+              </div>
             </div>
           )
         }
       </div>
     );
   }
-
 
   downloadPdf() {
     const {

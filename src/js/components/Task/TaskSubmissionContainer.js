@@ -14,11 +14,15 @@ import {
   saveAnsweredQuestionInTaskSubmission,
   approveTaskSubmission,
   denyTaskSubmission,
-  inProgressTaskSubmission
+  inProgressTaskSubmission,
+  addTaskRecommendation
 } from "../../actions/task";
 import TaskSubmission from "./TaskSubmission";
 import type {User} from "../../types/User";
-import type {TaskSubmission as TaskSubmissionType} from "../../types/Task";
+import type {
+  TaskSubmission as TaskSubmissionType,
+  TaskRecommendation
+} from "../../types/Task";
 import {loadCurrentUser} from "../../actions/user";
 import {loadSiteConfig} from "../../actions/siteConfig";
 import type {SiteConfig} from "../../types/SiteConfig";
@@ -57,6 +61,9 @@ const mapDispatchToProps = (dispatch: Dispatch, props: *) => {
     },
     dispatchSendBackForChangesTaskSubmissionAction(uuid: string) {
       dispatch(inProgressTaskSubmission(uuid));
+    },
+    dispatchAddTaskRecommendationAction(uuid: string, newtaskRecommendation:TaskRecommendation, taskRecommendations: Array<TaskRecommendation>) {
+      dispatch(addTaskRecommendation(uuid, newtaskRecommendation, taskRecommendations))
     }
   };
 };
@@ -73,7 +80,8 @@ type Props = {
   dispatchSendBackForChangesTaskSubmissionAction?: (uuid: string) => void,
   dispatchSaveAnsweredQuestionAction?: (answeredQuestion: Question) => void,
   dispatchMoveToPreviousQuestionAction?: (targetQuestion: Question) => void,
-  dispatchEditAnswersAction?: () => void
+  dispatchEditAnswersAction?: () => void,
+  dispatchAddTaskRecommendationAction?: (uuid: string, newtaskRecommendation:TaskRecommendation, taskRecommendations: Array<TaskRecommendation>) => void,
 };
 
 class TaskSubmissionContainer extends Component<Props> {
@@ -94,6 +102,7 @@ class TaskSubmissionContainer extends Component<Props> {
       dispatchApproveTaskSubmissionAction,
       dispatchDenyTaskSubmissionAction,
       dispatchSendBackForChangesTaskSubmissionAction,
+      dispatchAddTaskRecommendationAction,
       secureToken
     } = {...this.props};
 
@@ -143,6 +152,7 @@ class TaskSubmissionContainer extends Component<Props> {
           handleApproveButtonClick={this.handleApproveButtonClick.bind(this)}
           handleDenyButtonClick={this.handleDenyButtonClick.bind(this)}
           handleSendBackForChangesButtonClick={this.handleSendBackForChangesButtonClick.bind(this)}
+          handleAddTaskRecommendationButtonClick={this.handleAddTaskRecommendationButtonClick.bind(this)}
           showBackButton={!!taskSubmission.questionnaireSubmissionUUID}
           viewAs={viewAs}
           siteConfig={siteConfig}
@@ -180,6 +190,16 @@ class TaskSubmissionContainer extends Component<Props> {
       return;
     }
     this.props.dispatchDenyTaskSubmissionAction(uuid);
+  }
+
+  handleAddTaskRecommendationButtonClick(recommendationObj) {
+    const {user, isCurrentUserAnApprover, uuid, taskRecommendations} = {...this.props.taskSubmission};
+
+    if (!user && !uuid && !isCurrentUserAnApprover && !taskRecommendations) {
+      return;
+    }
+
+    this.props.dispatchAddTaskRecommendationAction(uuid, recommendationObj, taskRecommendations);
   }
 }
 
