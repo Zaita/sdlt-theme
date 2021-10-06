@@ -25,6 +25,7 @@ type Props = {
   handleSendBackForChangesButtonClick: () => void,
   handleDenyButtonClick: () => void,
   handleAddTaskRecommendationButtonClick: () => void,
+  handleEditTaskRecommendationButtonClick: () => void,
   showBackButton: boolean,
   showEditButton: boolean,
   canUpdateAnswers: boolean,
@@ -41,6 +42,7 @@ class TaskSubmission extends Component<Props> {
       handleDenyButtonClick,
       handleSendBackForChangesButtonClick,
       handleAddTaskRecommendationButtonClick,
+      handleEditTaskRecommendationButtonClick,
       editAnswers,
       showBackButton,
       showEditButton,
@@ -55,6 +57,7 @@ class TaskSubmission extends Component<Props> {
         viewAs={viewAs}
         status={taskSubmission.status}
         handleAddTaskRecommendationButtonClick={handleAddTaskRecommendationButtonClick}
+        handleEditTaskRecommendationButtonClick={handleEditTaskRecommendationButtonClick}
       />
     );
 

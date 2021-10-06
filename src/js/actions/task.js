@@ -403,11 +403,29 @@ export function denyTaskSubmission(uuid: string): ThunkAction {
   }
 }
 
-export function addTaskRecommendation(uuid: string, newtaskRecommendationObj: TaskRecommendation, taskRecommendations: Array<TaskRecommendation>): ThunkAction {
+export function addTaskRecommendation(uuid: string, newTaskRecommendationObj: TaskRecommendation, taskRecommendations: Array<TaskRecommendation>): ThunkAction {
   return async (dispatch, getState) => {
     try {
       // push new task recommendation in existing taskRecommendations object
-      taskRecommendations.push(newtaskRecommendationObj);
+      taskRecommendations.push(newTaskRecommendationObj);
+      const csrfToken = await CSRFTokenService.getCSRFToken();
+      const {taskRecommendationData} = await TaskDataService.updateTaskRecommendation({uuid, csrfToken, taskRecommendations});
+      await dispatch(loadTaskSubmission({uuid}));
+    } catch(error) {
+      ErrorUtil.displayError(error.message);
+    }
+  }
+}
+
+export function editTaskRecommendation(uuid: string, updatedTaskRecommendationObj: TaskRecommendation, taskRecommendations: Array<TaskRecommendation>): ThunkAction {
+  return async (dispatch, getState) => {
+    try {
+      // edit task recommendation in existing taskRecommendations object
+      taskRecommendations = taskRecommendations.map(taskRecommendation =>
+        taskRecommendation.id === updatedTaskRecommendationObj.id ?
+        {...taskRecommendations, ...updatedTaskRecommendationObj} : taskRecommendation
+      );
+
       const csrfToken = await CSRFTokenService.getCSRFToken();
       const {taskRecommendationData} = await TaskDataService.updateTaskRecommendation({uuid, csrfToken, taskRecommendations});
       await dispatch(loadTaskSubmission({uuid}));

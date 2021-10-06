@@ -20,6 +20,7 @@ import IconButton from '@material-ui/core/IconButton';
 type Props = {
   taskRecommendations: Array<TaskRecommendation> | null,
   handleAddTaskRecommendationButtonClick: () => void,
+  handleAddEditRecommendationButtonClick: () => void,
   viewAs: string | null,
   status: string | null
 };
@@ -57,11 +58,25 @@ class TaskRecommendationContainer extends Component<Props> {
     this.setState({ showModal: true, issueID: nextIssueId, FormType: "Add" });
   }
 
+  handleOpenEditRecommendationModal = (id) => {
+    this.setState({ showModal: true, issueID: id, FormType: "Edit" });
+  }
+
+  getFormInitialValues = () => {
+    let initialValues = {"id":this.state.issueID,"title":"","description":"","recommendation":"","status":""};
+
+    if (this.state.FormType == "Edit" && this.props.taskRecommendations.length > 0 && this.state.issueID != 0) {
+      initialValues = this.props.taskRecommendations.find(
+        (taskRecommendation) => taskRecommendation.id === this.state.issueID
+      );
+    }
+
+    return initialValues;
+  }
+
   renderRecommendationform = () =>{
     return <Formik
-      initialValues={
-        {"id":this.state.issueID,"title":"","description":"","recommendation":"","status":""}
-      }
+      initialValues= {this.getFormInitialValues()}
       validate={values => {
         let errors = {};
 
@@ -87,6 +102,9 @@ class TaskRecommendationContainer extends Component<Props> {
       onSubmit={(values, formik) => {
         if (this.state.FormType == 'Add') {
           this.props.handleAddTaskRecommendationButtonClick(values);
+        }
+        if (this.state.FormType == 'Edit') {
+          this.props.handleEditTaskRecommendationButtonClick(values);
         }
         this.handleCloseModal();
       }}
@@ -153,7 +171,12 @@ class TaskRecommendationContainer extends Component<Props> {
 
           <div className="buttons">
             <LightButton title="Cancel" onClick={this.handleCloseModal} />
-            <DarkButton type="button" title="Add" data-flag="action-add" onClick={handleSubmit} />
+            {this.state.FormType == "Add" && (
+              <DarkButton type="button" title="Add" data-flag="action-add" onClick={handleSubmit} />
+            )}
+            {this.state.FormType == "Edit" && (
+              <DarkButton type="button" title="Save" data-flag="action-add" onClick={handleSubmit} />
+            )}
           </div>
         </Form>
       )
@@ -218,7 +241,7 @@ class TaskRecommendationContainer extends Component<Props> {
                       <td>{taskRecommendation.recommendation}</td>
                       <td>{taskRecommendation.status}</td>
                       {viewAs === "approver" && status === "waiting_for_approval" && (
-                        <td className="edit-col"><img src={EditIcon}/></td>
+                        <td className="edit-col"><img className="edit-icon" src={EditIcon} onClick={() => this.handleOpenEditRecommendationModal(taskRecommendation.id)}/></td>
                       )}
                     </tr>
                   );
