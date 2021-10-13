@@ -215,7 +215,7 @@ class TaskRecommendationContainer extends Component<Props> {
 
     return (
       <div className="recommendation-container">
-        {(viewAs === "approver" || (taskRecommendations && taskRecommendations.length > 0)) && (
+        {((viewAs === "approver" && status === "waiting_for_approval") || (taskRecommendations && taskRecommendations.length > 0)) && (
             <h4>Approver's recommendations</h4>
         )}
         {taskRecommendations && taskRecommendations.length > 0 && (

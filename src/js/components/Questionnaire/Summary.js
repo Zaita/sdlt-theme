@@ -5,8 +5,8 @@ import {Link} from "react-router-dom";
 import type {Submission} from "../../types/Questionnaire";
 import LightButton from "../Button/LightButton";
 import DarkButton from "../Button/DarkButton";
-import pdfIcon from "../../../img/icons/pdf.svg";
-import editIcon from "../../../img/icons/edit.svg";
+import pdfIcon from "../../../img/icons/download.svg";
+import editIcon from "../../../img/icons/edit-icon.svg";
 import _ from "lodash";
 import URLUtil from "../../utils/URLUtil";
 import SubmissionDataUtil from "../../utils/SubmissionDataUtil";
@@ -32,6 +32,7 @@ type Props = {
   handleApproveButtonClick: (skipBoAndCisoApproval: boolean) => void,
   handleDenyButtonClick: (skipBoAndCisoApproval: boolean) => void,
   handleNotApproveButtonClick: (skipBoAndCisoApproval: boolean) => void,
+  handleSendBackForChangesButtonClick: () => void,
   handleEditButtonClick: () => void,
   handleCollaboratorAddButtonClick: (selectedCollaborators: Array<Collaborator>) => void,
   viewAs: "submitter" | "approver" | "others",
@@ -62,6 +63,7 @@ class Summary extends Component<Props> {
     submission: null,
     handlePDFDownloadButtonClick: () => {},
     handleSubmitButtonClick: () => {},
+    handleSendBackForChangesButtonClick: () => {},
     handleApproveButtonClick: () => {},
     handleNotApproveButtonClick: () => {},
     handleDenyButtonClick: () => {},
@@ -293,7 +295,11 @@ class Summary extends Component<Props> {
             taskNameAndStatus = taskName + ' (Please complete me)';
           }
 
-          if ((status === "approved" || status === "denied") && approver.name) {
+          if (status === "approved"  && approver.name) {
+            taskNameAndStatus = taskName + ' (' + prettifyStatus(status) + ' by ' + approver.name + ')';
+          }
+
+          if (status === "denied" && approver.name) {
             taskNameAndStatus = taskName + ' (Not Approved by ' + approver.name + ')';
           }
 
@@ -337,6 +343,7 @@ class Summary extends Component<Props> {
       token,
       handleSubmitButtonClick,
       handlePDFDownloadButtonClick,
+      handleSendBackForChangesButtonClick,
       handleApproveButtonClick,
       handleOptionalApproveButtonClick,
       handleAssignToMeButtonClick,
@@ -346,7 +353,7 @@ class Summary extends Component<Props> {
     } = {...this.props};
 
     const downloadPDFButton = (
-      <LightButton title="DOWNLOAD PDF"
+      <LightButton title="PDF"
                    iconImage={pdfIcon}
                    classes={["button"]}
                    onClick={handlePDFDownloadButtonClick}/>
@@ -424,6 +431,13 @@ class Summary extends Component<Props> {
                     onClick={handleAssignToMeButtonClick}
         />
       );
+      const sendBackForChangesButton = (
+        <LightButton title="Send back for changes"
+                    classes={["button"]}
+                    onClick={() => handleSendBackForChangesButtonClick()}
+        />
+      );
+
       const approveButton = (
         <DarkButton title="APPROVE"
                     classes={["button"]}
@@ -478,6 +492,7 @@ class Summary extends Component<Props> {
               {downloadPDFButton}
             </div>
             <div>
+              {sendBackForChangesButton}
               {approveButton}
               {showNotApproveButton ? notApproveButton : null}
               {denyButton}

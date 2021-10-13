@@ -64,14 +64,8 @@
             flex-direction: row;
             justify-content: space-between;
             align-items: stretch;
-            margin-top: 40px;
-
-            div {
-                display: flex;
-                flex-direction: row;
-                justify-content: flex-start;
-                align-items: stretch;
-            }
+            border-top: 2px solid $light-gray;
+            padding-top: 30px;
 
             .BaseButton {
                 margin-right: 16px;
