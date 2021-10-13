@@ -5,6 +5,7 @@ import {Link} from "react-router-dom";
 import type {Submission} from "../../types/Questionnaire";
 import LightButton from "../Button/LightButton";
 import DarkButton from "../Button/DarkButton";
+import RedButton from "../Button/RedButton";
 import pdfIcon from "../../../img/icons/download.svg";
 import editIcon from "../../../img/icons/edit-icon.svg";
 import _ from "lodash";
@@ -438,22 +439,31 @@ class Summary extends Component<Props> {
         />
       );
 
+      let approveButtonTitle = "Approve";
+      if (user.isSA) {
+        approveButtonTitle = "Endorsed";
+      }
+
       const approveButton = (
-        <DarkButton title="APPROVE"
+        <DarkButton title={approveButtonTitle}
                     classes={["button"]}
                     onClick={() => handleApproveButtonClick(this.state.skipBoAndCisoApproval)}
         />
       );
 
       const notApproveButton = (
-       <DarkButton title="NOT APPROVED"
+        <DarkButton title="Not approved"
                    classes={["button"]}
                    onClick={() => handleNotApproveButtonClick(this.state.skipBoAndCisoApproval)}
-       />
-     );
+        />
+      );
 
+      let denyButtonTitle = "Not approved";
+      if (user.isSA) {
+        denyButtonTitle = "Not endorsed";
+      }
       const denyButton = (
-        <LightButton title="DENY"
+        <RedButton title={denyButtonTitle}
                      classes={["button"]}
                      onClick={() => handleDenyButtonClick(this.state.skipBoAndCisoApproval)}
         />
@@ -474,9 +484,11 @@ class Summary extends Component<Props> {
       if (submission.status === "awaiting_security_architect_review") {
         return (
           <div className="buttons">
-            <div>
+            <div className="buttons-left">
               {viewAnswersButton}
               {downloadPDFButton}
+            </div>
+            <div className="buttons-right">
               {assignToMeButton}
             </div>
             <div/>
@@ -487,11 +499,12 @@ class Summary extends Component<Props> {
       if (submission.status === "waiting_for_security_architect_approval") {
         return (
           <div className="buttons">
-            <div>
+            <div className="buttons-left">
               {viewAnswersButton}
               {downloadPDFButton}
             </div>
-            <div>
+            <div className="buttons-right">
+              <span className="approver-action">Approver action: </span>
               {sendBackForChangesButton}
               {approveButton}
               {showNotApproveButton ? notApproveButton : null}
@@ -503,11 +516,12 @@ class Summary extends Component<Props> {
 
       return (
         <div className="buttons">
-          <div>
+          <div className="buttons-left">
             {viewAnswersButton}
             {downloadPDFButton}
           </div>
-          <div>
+          <div className="buttons-right">
+            <span className="approver-action">Approver action: </span>
             {approveButton}
             {denyButton}
           </div>
