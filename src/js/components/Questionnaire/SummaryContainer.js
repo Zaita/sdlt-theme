@@ -11,6 +11,7 @@ import type {MemberState} from "../../store/MemberState";
 import {
   approveQuestionnaireSubmission,
   denyQuestionnaireSubmission,
+  sendBackForChangesSubmission,
   notApproveQuestionnaireSubmissionforSA,
   editQuestionnaireSubmission,
   loadQuestionnaireSubmissionState,
@@ -68,6 +69,10 @@ const mapDispatchToProps = (dispatch: Dispatch, props: *) => {
     },
     dispatchDenySubmissionAction(submissionID: string, skipBoAndCisoApproval: boolean) {
       dispatch(denyQuestionnaireSubmission(submissionID, skipBoAndCisoApproval));
+    },
+
+    dispatchSendBackForChangesSubmissionAction(submissionID: string) {
+      dispatch(sendBackForChangesSubmission(submissionID));
     },
 
     // as a SA not approve the submission
@@ -183,6 +188,7 @@ class SummaryContainer extends Component<Props, State> {
         <Summary submission={submission}
                  handlePDFDownloadButtonClick={this.handlePDFDownloadButtonClick.bind(this)}
                  handleSubmitButtonClick={this.handleSubmitButtonClick.bind(this)}
+                 handleSendBackForChangesButtonClick={this.handleSendBackForChangesButtonClick.bind(this)}
                  handleApproveButtonClick={this.handleApproveButtonClick.bind(this)}
                  handleNotApproveButtonClick={this.handleNotApproveButtonClick.bind(this)}
                  handleDenyButtonClick={this.handleDenyButtonClick.bind(this)}
@@ -301,6 +307,18 @@ class SummaryContainer extends Component<Props, State> {
       this.props.dispatchBusinessOwnerDenySubmissionAction(submission.submissionID, secureToken);
     } else if (isCurrentUserApprover) {
       this.props.dispatchDenySubmissionAction(submission.submissionID, skipBoAndCisoApproval);
+    }
+  }
+
+  handleSendBackForChangesButtonClick() {
+    const {user, submission, isCurrentUserApprover} = {...this.props.submissionState};
+
+    if (!user || !submission) {
+      return;
+    }
+
+    if (isCurrentUserApprover) {
+      this.props.dispatchSendBackForChangesSubmissionAction(submission.submissionID);
     }
   }
 

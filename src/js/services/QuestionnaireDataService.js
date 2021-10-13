@@ -408,6 +408,25 @@ mutation {
     return {uuid};
   }
 
+
+  static async updateQuestionnaireStatusToSendBackForChanges(argument: { submissionID: string, csrfToken: string }): Promise<{ uuid: string }> {
+    const {submissionID, csrfToken} = {...argument};
+    const query = `
+mutation {
+ updateQuestionnaireStatusToSendBackForChanges(ID: "${submissionID}") {
+   QuestionnaireStatus
+   UUID
+ }
+}`;
+    const json = await GraphQLRequestHelper.request({query, csrfToken});
+    const status = _.toString(_.get(json, "data.updateQuestionnaireStatusToSendBackForChanges.QuestionnaireStatus", null));
+    const uuid = _.toString(_.get(json, "data.updateQuestionnaireStatusToSendBackForChanges.UUID", null));
+    if (!status || !uuid) {
+      throw DEFAULT_NETWORK_ERROR;
+    }
+    return {uuid};
+  }
+
   // load data for Awaiting Approvals
   static async fetchQuestionnaireSubmissionList(userID: string, pageType: string): Promise<Array<QuestionnaireSubmissionListItem>> {
     const query = `query {

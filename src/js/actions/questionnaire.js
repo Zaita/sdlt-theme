@@ -258,6 +258,20 @@ export function assignToSecurityArchitectQuestionnaireSubmission(submissionID: s
   }
 }
 
+// Send back for changes
+export function sendBackForChangesSubmission(submissionID: string): ThunkAction {
+  return async (dispatch, getState) => {
+    try {
+      const csrfToken = await CSRFTokenService.getCSRFToken();
+      const {uuid} = await QuestionnaireDataService.updateQuestionnaireStatusToSendBackForChanges({submissionID, csrfToken});
+      dispatch(loadQuestionnaireSubmissionState(uuid));
+    } catch(error) {
+      // TODO: errors
+      alert(error);
+    }
+  }
+}
+
 // Approve the Questionnaire Submission as a SA / CISO
 export function approveQuestionnaireSubmission(submissionID: string, skipBoAndCisoApproval: boolean): ThunkAction {
   return async (dispatch, getState) => {
