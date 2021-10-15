@@ -75,11 +75,6 @@ const mapDispatchToProps = (dispatch: Dispatch, props: *) => {
       dispatch(sendBackForChangesSubmission(submissionID));
     },
 
-    // as a SA not approve the submission
-    dispatchNotApproveSubmissionAction(submissionID: string, skipBoAndCisoApproval: boolean) {
-      dispatch(notApproveQuestionnaireSubmissionforSA(submissionID, skipBoAndCisoApproval));
-    },
-
     // As a SA assign the submission to cureent logged in user
     dispatchAssignToMeAction(submissionID: string) {
       dispatch(assignToSecurityArchitectQuestionnaireSubmission(submissionID));
@@ -190,7 +185,6 @@ class SummaryContainer extends Component<Props, State> {
                  handleSubmitButtonClick={this.handleSubmitButtonClick.bind(this)}
                  handleSendBackForChangesButtonClick={this.handleSendBackForChangesButtonClick.bind(this)}
                  handleApproveButtonClick={this.handleApproveButtonClick.bind(this)}
-                 handleNotApproveButtonClick={this.handleNotApproveButtonClick.bind(this)}
                  handleDenyButtonClick={this.handleDenyButtonClick.bind(this)}
                  handleEditButtonClick={this.handleOpenModal.bind(this)}
                  handleAssignToMeButtonClick={this.handleAssignToMeButtonClick.bind(this)}
@@ -269,24 +263,6 @@ class SummaryContainer extends Component<Props, State> {
       this.props.dispatchBusinessOwnerApproveSubmissionAction(submission.submissionID, secureToken);
     } else if (isCurrentUserApprover) {
       this.props.dispatchApproveSubmissionAction(submission.submissionID, skipBoAndCisoApproval);
-    }
-  }
-
-  handleNotApproveButtonClick(skipBoAndCisoApproval: boolean = false) {
-    const {secureToken} = {...this.props};
-    const {
-      user,
-      submission,
-      isCurrentUserApprover,
-      isCurrentUserABusinessOwnerApprover
-    } = {...this.props.submissionState};
-
-    if (!user || !submission) {
-      return;
-    }
-
-    if (isCurrentUserApprover) {
-      this.props.dispatchNotApproveSubmissionAction(submission.submissionID, skipBoAndCisoApproval);
     }
   }
 
