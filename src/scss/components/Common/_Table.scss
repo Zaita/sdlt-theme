@@ -7,4 +7,12 @@ $white-background: rgba(255, 255, 255, 0.7);
   background-color: $white-background;
   margin-top: 12px;
   border-radius: 5px;
+
+  table {
+    margin-bottom: 0;
+  }
+
+  td {
+    font-size: 11px;
+  }
 }

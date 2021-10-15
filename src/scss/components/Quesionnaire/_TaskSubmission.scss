@@ -1,6 +1,10 @@
 @import "../../variables";
 
 .TaskSubmissionContainer {
+    h4 {
+      font-size: 15px;
+    }
+
     .TaskSubmission {
         max-width: map_get($container-max-widths, xl);
         margin-left: auto;
@@ -13,7 +17,7 @@
     }
 
     .AnswersPreview, .risk-result-container, .recommendation-container {
-        margin-bottom: 40px;
+        margin-bottom: 25px;
     }
 
     .recommendation-container {

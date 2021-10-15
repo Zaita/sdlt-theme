@@ -8,6 +8,9 @@ import DarkButton from "../Button/DarkButton";
 import RedButton from "../Button/RedButton";
 import pdfIcon from "../../../img/icons/download.svg";
 import editIcon from "../../../img/icons/edit-icon.svg";
+import approveIcon from "../../../img/icons/approve.svg";
+import notApprovedIcon from "../../../img/icons/not-approved.svg";
+import awaitingApprovalIcon from "../../../img/icons/awaiting-approval.svg";
 import _ from "lodash";
 import URLUtil from "../../utils/URLUtil";
 import SubmissionDataUtil from "../../utils/SubmissionDataUtil";
@@ -32,7 +35,6 @@ type Props = {
   handleAssignToMeButtonClick: () => void,
   handleApproveButtonClick: (skipBoAndCisoApproval: boolean) => void,
   handleDenyButtonClick: (skipBoAndCisoApproval: boolean) => void,
-  handleNotApproveButtonClick: (skipBoAndCisoApproval: boolean) => void,
   handleSendBackForChangesButtonClick: () => void,
   handleEditButtonClick: () => void,
   handleCollaboratorAddButtonClick: (selectedCollaborators: Array<Collaborator>) => void,
@@ -58,6 +60,26 @@ const prettifyStatus = (status: string) => {
     .join(" ");
 };
 
+const prettifyApprovalStatus = (status: string) => {
+  if (!status) {
+    return;
+  }
+
+  if (status == "pending") {
+    return "Awaiting approval";
+  }
+
+  if (status == "denied") {
+    return "Not approved"
+  }
+
+  if (status == "not_required") {
+    return "Not required"
+  }
+
+  return prettifyStatus(status);
+}
+
 class Summary extends Component<Props> {
 
   static defaultProps = {
@@ -66,7 +88,6 @@ class Summary extends Component<Props> {
     handleSubmitButtonClick: () => {},
     handleSendBackForChangesButtonClick: () => {},
     handleApproveButtonClick: () => {},
-    handleNotApproveButtonClick: () => {},
     handleDenyButtonClick: () => {},
     handleEditButtonClick: () => {},
     handleAssignToMeButtonClick: () => {},
@@ -151,9 +172,9 @@ class Summary extends Component<Props> {
     if (submission.status === "in_progress" && viewAs === "submitter") {
       return (
         <div className="Summary">
-          <h3>
+          <h4>
             Questionnaire Submission has not been completed...
-          </h3>
+          </h4>
         </div>
       );
     }
@@ -187,7 +208,7 @@ class Summary extends Component<Props> {
         parentSelector={() => {return document.querySelector(".Summary");}}
       >
         <div className="collaborator-model-title">
-          <span><h3>Add Collaborators</h3></span>
+          <span><h4>Add Collaborators</h4></span>
           <IconButton
             aria-label="close"
             component="span"
@@ -219,7 +240,7 @@ class Summary extends Component<Props> {
   renderCollboratorsInfo(submission: Submission, members) {
     return (
       <div>
-        <h3>Collaborators</h3>
+        <h4>Collaborators</h4>
         <div><b>Add people to help complete your submission.</b></div>
         {submission.collaborators.length > 0 && (
           <div className="collaborators-name-container">
@@ -247,7 +268,7 @@ class Summary extends Component<Props> {
     const submitter = submission.submitter;
     return (
       <div>
-        <h3>Request Information</h3>
+        <h4>Request Information</h4>
         <div><b>Product Name:</b> {submission.productName} </div>
         <div><b>Submitted by:</b> {submitter.name}</div>
         <div><b>Email:</b> {submitter.email}</div>
@@ -285,7 +306,7 @@ class Summary extends Component<Props> {
 
     return (
       <div className="tasks">
-        <h3>Tasks</h3>
+        <h4>Tasks</h4>
         {unfinshedRQTaskMessage}
         {isSRATaskFinalised ? SecurityRiskAssessmentUtil.getSraIsFinalisedAlert() : null}
 
@@ -348,7 +369,6 @@ class Summary extends Component<Props> {
       handleApproveButtonClick,
       handleOptionalApproveButtonClick,
       handleAssignToMeButtonClick,
-      handleNotApproveButtonClick,
       handleDenyButtonClick,
       handleEditButtonClick
     } = {...this.props};
@@ -443,6 +463,9 @@ class Summary extends Component<Props> {
       if (user.isSA) {
         approveButtonTitle = "Endorsed";
       }
+      if (user.isCISO) {
+        approveButtonTitle = "Recommend Approval";
+      }
 
       const approveButton = (
         <DarkButton title={approveButtonTitle}
@@ -451,17 +474,14 @@ class Summary extends Component<Props> {
         />
       );
 
-      const notApproveButton = (
-        <DarkButton title="Not approved"
-                   classes={["button"]}
-                   onClick={() => handleNotApproveButtonClick(this.state.skipBoAndCisoApproval)}
-        />
-      );
-
       let denyButtonTitle = "Not approved";
       if (user.isSA) {
         denyButtonTitle = "Not endorsed";
       }
+      if (user.isCISO) {
+        denyButtonTitle = "Recommend Rejection";
+      }
+
       const denyButton = (
         <RedButton title={denyButtonTitle}
                      classes={["button"]}
@@ -506,9 +526,8 @@ class Summary extends Component<Props> {
             <div className="buttons-right">
               <span className="approver-action">Approver action: </span>
               {sendBackForChangesButton}
-              {approveButton}
-              {showNotApproveButton ? notApproveButton : null}
               {denyButton}
+              {approveButton}
             </div>
           </div>
         );
@@ -522,8 +541,8 @@ class Summary extends Component<Props> {
           </div>
           <div className="buttons-right">
             <span className="approver-action">Approver action: </span>
-            {approveButton}
             {denyButton}
+            {approveButton}
           </div>
         </div>
       );
@@ -549,48 +568,74 @@ class Summary extends Component<Props> {
       return null;
     }
 
+
     const approvalStatus = submission.approvalStatus;
     const securityArchitectApprover = submission.securityArchitectApprover;
     const cisoApprover = submission.cisoApprover;
 
-    let securityArchitectApprovalStatus = prettifyStatus(approvalStatus.securityArchitect);
+    const securityArchitectApprovalStatus = prettifyApprovalStatus(approvalStatus.securityArchitect);
+    let securityArchitectName = "Unassigned";
 
-    if (securityArchitectApprovalStatus == "Approved" || securityArchitectApprovalStatus == "Not Approved") {
-      securityArchitectApprovalStatus = securityArchitectApprover.firstName + " " +
-        securityArchitectApprover.surname + " - " + securityArchitectApprovalStatus;
+    if (securityArchitectApprover.firstName) {
+      securityArchitectName = securityArchitectApprover.firstName + " " + securityArchitectApprover.surname;
     }
 
-    if (submission.status === "waiting_for_security_architect_approval") {
-      securityArchitectApprovalStatus = "Being Reviewed by " + securityArchitectApprover.firstName + " " +
-        securityArchitectApprover.surname;
+    const cisoApprovalStatus = prettifyApprovalStatus(approvalStatus.chiefInformationSecurityOfficer);
+    let cisoApproverName = "Unassigned";
+
+    if (cisoApprover.firstName) {
+      cisoApproverName = cisoApprover.firstName + " " + cisoApprover.surname;
     }
 
-    let cisoApprovalStatus = prettifyStatus(approvalStatus.chiefInformationSecurityOfficer);
-    if (cisoApprovalStatus !== "Pending" && cisoApprovalStatus !== "Not Required") {
-      cisoApprovalStatus = cisoApprover.firstName + " " + cisoApprover.surname + " - " + cisoApprovalStatus;
-    }
+    const businessOwnerApprovalStatus = prettifyApprovalStatus(approvalStatus.businessOwner)
+    const businessOwnerName = submission.businessOwnerApproverName ? submission.businessOwnerApproverName : "Unassigned";
 
-    let businessOwnerApprovalStatus = prettifyStatus(approvalStatus.businessOwner)
-    if (businessOwnerApprovalStatus !== "Pending" && businessOwnerApprovalStatus !== 'Not Required') {
-      businessOwnerApprovalStatus = submission.businessOwnerApproverName + " - " + businessOwnerApprovalStatus;
-    }
+    const approvalStatusDetails = [
+      {"role": "Security Architect", "name": securityArchitectName, "status": securityArchitectApprovalStatus},
+      {"role": "Chief Information Security Officer", "name": cisoApproverName, "status": cisoApprovalStatus},
+      {"role": "Business Owner", "name": businessOwnerName, "status": businessOwnerApprovalStatus}
+    ];
+
     return (
-      <div className="approvals">
-        <h3>Approvals</h3>
-        <div>
-          <b>Security Architect</b>
-          &nbsp;-&nbsp;
-          {securityArchitectApprovalStatus}
-        </div>
-        <div>
-          <b>Chief Information Security Officer</b>
-          &nbsp;-&nbsp;
-          {cisoApprovalStatus}
-        </div>
-        <div>
-          <b>Business Owner</b>
-          &nbsp;-&nbsp;
-          {businessOwnerApprovalStatus}
+      <div className="submission-approval-container">
+        <h4>Submission approvals</h4>
+        <div className="table-responsive table-continer">
+          <table className="table">
+            <thead className="">
+              <tr key="approval_table_header">
+                <th>Role</th>
+                <th>Name</th>
+                <th>Approval status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {approvalStatusDetails.map((approvalStatusDetail, index) => {
+                const status = approvalStatusDetail.status;
+                let statusIcon = awaitingApprovalIcon;
+
+                if (status == "Approved") {
+                  statusIcon = approveIcon;
+                }
+
+                if (status == "Not approved") {
+                    statusIcon = notApprovedIcon;
+                }
+
+                return (
+                  <tr key={index+1}>
+                    <td>{approvalStatusDetail.role}</td>
+                    <td className={approvalStatusDetail.name == "Unassigned" ? "unassigned-approver" : ""}>
+                      {approvalStatusDetail.name}
+                    </td>
+                    <td>
+                      <img src={statusIcon} />
+                      <span className="approval-status"> {status} </span>
+                    </td>
+                  </tr>
+                );
+                })}
+            </tbody>
+          </table>
         </div>
       </div>
     );
@@ -604,7 +649,7 @@ class Summary extends Component<Props> {
       submission.status === "waiting_for_security_architect_approval") {
         return (
           <div className="approvals">
-            <h3>Skip Business Owner and CISO approval</h3>
+            <h4>Skip Business Owner and CISO approval</h4>
             <label>
               <input
               type="checkbox"
