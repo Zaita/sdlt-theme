@@ -460,11 +460,17 @@ class Summary extends Component<Props> {
       );
 
       let approveButtonTitle = "Approve";
+
       if (user.isSA) {
         approveButtonTitle = "Endorsed";
       }
+
       if (user.isCISO) {
         approveButtonTitle = "Recommend Approval";
+      }
+
+      if (viewAs === "businessOwnerApprover") {
+        approveButtonTitle = "Accept risks and approve";
       }
 
       const approveButton = (
