@@ -92,6 +92,8 @@ query {
     ID
     UUID
     ApprovalLinkToken
+    BusinessOwnerAcknowledgementText
+    IsCertificationAndAccreditationTaskExists
     User {
       ID
     }
@@ -194,6 +196,8 @@ query {
           answersJSON: _.toString(_.get(submissionJSON, "AnswerData", "")),
         }),
         businessOwnerApproverName: _.toString(_.get(submissionJSON, "BusinessOwnerApproverName", "")),
+        businessOwnerAcknowledgementText: _.toString(_.get(submissionJSON, "BusinessOwnerAcknowledgementText", "")),
+        isCertificationAndAccreditationTaskExists: _.get(submissionJSON, "IsCertificationAndAccreditationTaskExists", "false") === "true",
         taskSubmissions: _
           .toArray(_.get(submissionJSON, "TaskSubmissions", []))
           .map((item) => {
