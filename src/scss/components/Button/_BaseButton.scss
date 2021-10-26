@@ -27,13 +27,14 @@
 }
 
 .BaseButton.disabled {
+    border: 2px solid $gray-600;
+    box-sizing: border-box;
+    border-radius: 5px;
     background-color: $gray-600;
     color: $gray-200;
-    border: none;
 
     &:hover {
         background-color: $gray-600;
         color: $gray-200;
-        border: none;
     }
 }

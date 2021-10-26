@@ -45,7 +45,8 @@ type Props = {
 };
 
 type State = {
-  showModal: boolean
+  showModal: boolean,
+  enableApproveButton: boolean
 };
 
 const prettifyStatus = (status: string) => {
@@ -103,8 +104,15 @@ class Summary extends Component<Props> {
     super(props);
     this.state = {
       skipBoAndCisoApproval: false,
+      enableApproveButton: false,
       showModal: false,
       selectedCollaborators: props.submission.collaborators
+    }
+  }
+
+  componentDidMount() {
+    if (!this.props.submission.isCertificationAndAccreditationTaskExists  || this.props.viewAs !== "businessOwnerApprover") {
+      this.setState({ enableApproveButton: true });
     }
   }
 
@@ -195,6 +203,7 @@ class Summary extends Component<Props> {
           hideWeightsAndScore={submission.hideWeightsAndScore}
         />
         {this.renderSkipCheckbox(submission, viewAs, user)}
+        {this.renderAcknowledgements(submission, viewAs)}
         {this.renderButtons(submission)}
       </div>
     );
@@ -476,6 +485,7 @@ class Summary extends Component<Props> {
       const approveButton = (
         <DarkButton title={approveButtonTitle}
                     classes={["button"]}
+                    disabled={!this.state.enableApproveButton}
                     onClick={() => handleApproveButtonClick(this.state.skipBoAndCisoApproval)}
         />
       );
@@ -654,7 +664,7 @@ class Summary extends Component<Props> {
     if (viewAs === 'approver' && user.isSA &&
       submission.status === "waiting_for_security_architect_approval") {
         return (
-          <div className="approvals">
+          <div className="sub-container">
             <h4>Skip Business Owner and CISO approval</h4>
             <label>
               <input
@@ -668,6 +678,35 @@ class Summary extends Component<Props> {
               &nbsp; This deliverable does not modify the current risk rating for this
               project. Business Owner and CISO approval is not required
             </label>
+          </div>
+        );
+    }
+
+    return null;
+  }
+
+  renderAcknowledgements(submission: Submission, viewAs: string) {
+    if (!submission.isCertificationAndAccreditationTaskExists) {
+      return null;
+    }
+    if (viewAs === 'businessOwnerApprover' && submission.businessOwnerAcknowledgementText) {
+        return (
+          <div className="acknowledgement-container">
+            <h4>Acknowledgements</h4>
+            <div className="sub-container">
+              <div className="form-check">
+                <input
+                type="checkbox"
+                className="form-check-input"
+                checked={this.state.enableApproveButton}
+                onChange={event => {
+                  this.setState({
+                    enableApproveButton: event.target.checked
+                  });
+                }} />
+                <label className="form-check-label">{submission.businessOwnerAcknowledgementText}</label>
+              </div>
+            </div>
           </div>
         );
     }
