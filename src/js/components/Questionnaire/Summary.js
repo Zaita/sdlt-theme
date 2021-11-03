@@ -37,6 +37,10 @@ type Props = {
   handleDenyButtonClick: (skipBoAndCisoApproval: boolean) => void,
   handleSendBackForChangesButtonClick: () => void,
   handleEditButtonClick: () => void,
+  handleGrantCertificationButtonClick: () => void,
+  handleDenyCertificationButtonClick: () => void,
+  handleIssueAccreditationButtonClick: () => void,
+  handleDenyAccreditationButtonClick: () => void,
   handleCollaboratorAddButtonClick: (selectedCollaborators: Array<Collaborator>) => void,
   viewAs: "submitter" | "approver" | "others",
   token: string,
@@ -61,7 +65,7 @@ const prettifyStatus = (status: string) => {
     .join(" ");
 };
 
-const prettifyApprovalStatus = (status: string) => {
+const prettifyApprovalStatus = (status: string, role:string) => {
   if (!status) {
     return;
   }
@@ -70,13 +74,30 @@ const prettifyApprovalStatus = (status: string) => {
     return "Awaiting approval";
   }
 
-  if (status == "denied") {
-    return "Not approved"
+  if (status == "not_required") {
+    return "Not required";
   }
 
-  if (status == "not_required") {
-    return "Not required"
+  if (status == "approved" && role == "Certification Authority") {
+    return "Certification granted";
   }
+
+  if (status == "denied" && role == "Certification Authority") {
+    return "Certification denied";
+  }
+
+  if (status == "approved" && role == "Accreditation Authority") {
+    return "Accreditation issued";
+  }
+
+  if (status == "denied" && role == "Accreditation Authority") {
+    return "Accreditation denied";
+  }
+
+  if (status == "denied") {
+    return "Not approved";
+  }
+
 
   return prettifyStatus(status);
 }
@@ -93,6 +114,10 @@ class Summary extends Component<Props> {
     handleEditButtonClick: () => {},
     handleAssignToMeButtonClick: () => {},
     handleCollaboratorAddButtonClick: () => {},
+    handleGrantCertificationButtonClick: () => {},
+    handleDenyCertificationButtonClick: () => {},
+    handleIssueAccreditationButtonClick: () => {},
+    handleDenyAccreditationButtonClick: () => {},
     viewAs: "others",
     showNotApproveButton: false,
     token: "",
@@ -104,16 +129,37 @@ class Summary extends Component<Props> {
     super(props);
     this.state = {
       skipBoAndCisoApproval: false,
-      enableApproveButton: false,
+      enableApproveButton: true,
       showModal: false,
       selectedCollaborators: props.submission.collaborators
     }
   }
 
   componentDidMount() {
-    if (!this.props.submission.isCertificationAndAccreditationTaskExists  || this.props.viewAs !== "businessOwnerApprover") {
-      this.setState({ enableApproveButton: true });
+    if (this.getAcknowledgeText() !== "") {
+      this.setState({ enableApproveButton: false });
     }
+  }
+
+  getAcknowledgeText()
+  {
+    if (this.props.submission.isCertificationAndAccreditationTaskExists) {
+      if (this.props.viewAs === 'businessOwnerApprover' && this.props.submission.businessOwnerAcknowledgementText) {
+        return this.props.submission.businessOwnerAcknowledgementText;
+      }
+
+      if (this.props.viewAs === 'approver') {
+        if (this.props.user.isCertificationAuthority && this.props.submission.certificationAuthorityAcknowledgementText) {
+          return this.props.submission.certificationAuthorityAcknowledgementText;
+        }
+
+        if (this.props.user.isAccreditationAuthority && this.props.submission.accreditationAuthorityAcknowledgementText) {
+          return this.props.submission.accreditationAuthorityAcknowledgementText;
+        }
+      }
+    }
+
+    return "";
   }
 
   unfinishedTaskSubmissionMessage()
@@ -203,7 +249,7 @@ class Summary extends Component<Props> {
           hideWeightsAndScore={submission.hideWeightsAndScore}
         />
         {this.renderSkipCheckbox(submission, viewAs, user)}
-        {this.renderAcknowledgements(submission, viewAs)}
+        {this.renderAcknowledgements(submission, viewAs, user)}
         {this.renderButtons(submission)}
       </div>
     );
@@ -379,7 +425,11 @@ class Summary extends Component<Props> {
       handleOptionalApproveButtonClick,
       handleAssignToMeButtonClick,
       handleDenyButtonClick,
-      handleEditButtonClick
+      handleEditButtonClick,
+      handleGrantCertificationButtonClick,
+      handleDenyCertificationButtonClick,
+      handleIssueAccreditationButtonClick,
+      handleDenyAccreditationButtonClick
     } = {...this.props};
 
     const downloadPDFButton = (
@@ -505,6 +555,36 @@ class Summary extends Component<Props> {
         />
       );
 
+      const grantCertification = (
+        <DarkButton title="Grant Certification"
+                    classes={["button"]}
+                    disabled={!this.state.enableApproveButton}
+                    onClick={() => handleGrantCertificationButtonClick()}
+        />
+      );
+
+      const denyCertification = (
+        <RedButton title="Deny Certification"
+                    classes={["button"]}
+                    onClick={() => handleDenyCertificationButtonClick()}
+        />
+      );
+
+      const issueAccreditation = (
+        <DarkButton title="Issue Accreditation"
+                    classes={["button"]}
+                    disabled={!this.state.enableApproveButton}
+                    onClick={() => handleIssueAccreditationButtonClick()}
+        />
+      );
+
+      const denyAccreditation = (
+        <RedButton title="Deny Accreditation"
+                    classes={["button"]}
+                    onClick={() => handleDenyAccreditationButtonClick()}
+        />
+      );
+
       if (submission.status === "submitted") {
         return (
           <div className="buttons">
@@ -541,9 +621,40 @@ class Summary extends Component<Props> {
             </div>
             <div className="buttons-right">
               <span className="approver-action">Approver action: </span>
-              {sendBackForChangesButton}
               {denyButton}
               {approveButton}
+            </div>
+          </div>
+        );
+      }
+
+      if (user.isCertificationAuthority && (submission.status === "awaiting_certification_and_accreditation" || submission.status === "awaiting_certification")) {
+        return (
+          <div className="buttons">
+            <div className="buttons-left">
+              {viewAnswersButton}
+              {downloadPDFButton}
+            </div>
+            <div className="buttons-right">
+              <span className="approver-action">Approver action: </span>
+              {denyCertification}
+              {grantCertification}
+            </div>
+          </div>
+        );
+      }
+
+      if (user.isAccreditationAuthority && (submission.status === "awaiting_certification_and_accreditation" || submission.status === "awaiting_accreditation")) {
+        return (
+          <div className="buttons">
+            <div className="buttons-left">
+              {viewAnswersButton}
+              {downloadPDFButton}
+            </div>
+            <div className="buttons-right">
+              <span className="approver-action">Approver action: </span>
+              {denyAccreditation}
+              {issueAccreditation}
             </div>
           </div>
         );
@@ -588,17 +699,17 @@ class Summary extends Component<Props> {
     const approvalStatus = submission.approvalStatus;
     const securityArchitectApprover = submission.securityArchitectApprover;
     const cisoApprover = submission.cisoApprover;
+    const certificationAuthorityApprover = submission.certificationAuthorityApprover;
+    const accreditationAuthorityApprover = submission.accreditationAuthorityApprover;
 
     const securityArchitectApprovalStatus = prettifyApprovalStatus(approvalStatus.securityArchitect);
     let securityArchitectName = "Unassigned";
-
     if (securityArchitectApprover.firstName) {
       securityArchitectName = securityArchitectApprover.firstName + " " + securityArchitectApprover.surname;
     }
 
     const cisoApprovalStatus = prettifyApprovalStatus(approvalStatus.chiefInformationSecurityOfficer);
     let cisoApproverName = "Unassigned";
-
     if (cisoApprover.firstName) {
       cisoApproverName = cisoApprover.firstName + " " + cisoApprover.surname;
     }
@@ -606,11 +717,30 @@ class Summary extends Component<Props> {
     const businessOwnerApprovalStatus = prettifyApprovalStatus(approvalStatus.businessOwner)
     const businessOwnerName = submission.businessOwnerApproverName ? submission.businessOwnerApproverName : "Unassigned";
 
-    const approvalStatusDetails = [
+    let approvalStatusDetails = [
       {"role": "Security Architect", "name": securityArchitectName, "status": securityArchitectApprovalStatus},
       {"role": "Chief Information Security Officer", "name": cisoApproverName, "status": cisoApprovalStatus},
       {"role": "Business Owner", "name": businessOwnerName, "status": businessOwnerApprovalStatus}
     ];
+
+    if (this.props.submission.isCertificationAndAccreditationTaskExists) {
+      const certificationAuthorityApprovalStatus = prettifyApprovalStatus(approvalStatus.certificationAuthority, 'Certification Authority');
+      let certificationAuthorityApproverName = "Unassigned";
+      if (certificationAuthorityApprover.firstName) {
+        certificationAuthorityApproverName = certificationAuthorityApprover.firstName + " " + certificationAuthorityApprover.surname;
+      }
+
+      const accreditationAuthorityApprovalStatus = prettifyApprovalStatus(approvalStatus.accreditationAuthority, 'Accreditation Authority');
+      let accreditationAuthorityApproverName = "Unassigned";
+      if (accreditationAuthorityApprover.firstName) {
+        accreditationAuthorityApproverName = accreditationAuthorityApprover.firstName + " " + accreditationAuthorityApprover.surname;
+      }
+
+      approvalStatusDetails.push(
+        {"role": "Certification Authority", "name":certificationAuthorityApproverName, "status": certificationAuthorityApprovalStatus},
+        {"role": "Accreditation Authority", "name":accreditationAuthorityApproverName, "status": accreditationAuthorityApprovalStatus}
+      );
+    }
 
     return (
       <div className="submission-approval-container">
@@ -629,11 +759,12 @@ class Summary extends Component<Props> {
                 const status = approvalStatusDetail.status;
                 let statusIcon = awaitingApprovalIcon;
 
-                if (status == "Approved") {
+                if (status == "Approved" || status == "Certification granted" || status == "Accreditation issued") {
                   statusIcon = approveIcon;
                 }
 
-                if (status == "Not approved") {
+                if (status == "Not approved" || status == "Certification denied" ||
+                  status == "Accreditation denied" || status == "Not required") {
                     statusIcon = notApprovedIcon;
                 }
 
@@ -685,11 +816,14 @@ class Summary extends Component<Props> {
     return null;
   }
 
-  renderAcknowledgements(submission: Submission, viewAs: string) {
+  renderAcknowledgements(submission: Submission, viewAs: string, user: User) {
     if (!submission.isCertificationAndAccreditationTaskExists) {
       return null;
     }
-    if (viewAs === 'businessOwnerApprover' && submission.businessOwnerAcknowledgementText) {
+
+    const acknowledgementText = this.getAcknowledgeText();
+
+    if (acknowledgementText !== "" ) {
         return (
           <div className="acknowledgement-container">
             <h4>Acknowledgements</h4>
@@ -704,7 +838,7 @@ class Summary extends Component<Props> {
                     enableApproveButton: event.target.checked
                   });
                 }} />
-                <label className="form-check-label">{submission.businessOwnerAcknowledgementText}</label>
+                <label className="form-check-label">{acknowledgementText}</label>
               </div>
             </div>
           </div>

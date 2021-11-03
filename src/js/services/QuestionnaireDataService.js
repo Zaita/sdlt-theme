@@ -87,12 +87,16 @@ query {
     Surname
     IsSA
     IsCISO
+    IsCertificationAuthority
+    IsAccreditationAuthority
   }
   readQuestionnaireSubmission(UUID: "${submissionHash}", SecureToken: "${secureToken}") {
     ID
     UUID
     ApprovalLinkToken
     BusinessOwnerAcknowledgementText
+    CertificationAuthorityAcknowledgementText
+    AccreditationAuthorityAcknowledgementText
     IsCertificationAndAccreditationTaskExists
     User {
       ID
@@ -134,6 +138,16 @@ query {
       FirstName
       Surname
     }
+    CertificationAuthorityApprover {
+      FirstName
+      Surname
+    }
+    AccreditationAuthorityApprover{
+      FirstName
+      Surname
+    }
+    CertificationAuthorityApprovalStatus
+    AccreditationAuthorityApprovalStatus
     ApprovalOverrideBySecurityArchitect
     CollaboratorList
   }
@@ -182,6 +196,8 @@ query {
           chiefInformationSecurityOfficer: _.toString(_.get(submissionJSON, "CisoApprovalStatus", "")),
           businessOwner: _.toString(_.get(submissionJSON, "BusinessOwnerApprovalStatus", "")),
           securityArchitect: _.toString(_.get(submissionJSON, "SecurityArchitectApprovalStatus", "")),
+          certificationAuthority: _.toString(_.get(submissionJSON, "CertificationAuthorityApprovalStatus", "")),
+          accreditationAuthority: _.toString(_.get(submissionJSON, "AccreditationAuthorityApprovalStatus", ""))
         },
         securityArchitectApprover: {
           firstName: _.toString(_.get(submissionJSON, "SecurityArchitectApprover.FirstName", "")),
@@ -191,12 +207,22 @@ query {
           firstName: _.toString(_.get(submissionJSON, "CisoApprover.FirstName", "")),
           surname: _.toString(_.get(submissionJSON, "CisoApprover.Surname", "")),
         },
+        certificationAuthorityApprover: {
+          firstName: _.toString(_.get(submissionJSON, "CertificationAuthorityApprover.FirstName", "")),
+          surname: _.toString(_.get(submissionJSON, "CertificationAuthorityApprover.Surname", "")),
+        },
+        accreditationAuthorityApprover: {
+          firstName: _.toString(_.get(submissionJSON, "AccreditationAuthorityApprover.FirstName", "")),
+          surname: _.toString(_.get(submissionJSON, "AccreditationAuthorityApprover.Surname", "")),
+        },
         questions: QuestionParser.parseQuestionsFromJSON({
           schemaJSON: _.toString(_.get(submissionJSON, "QuestionnaireData", "")),
           answersJSON: _.toString(_.get(submissionJSON, "AnswerData", "")),
         }),
         businessOwnerApproverName: _.toString(_.get(submissionJSON, "BusinessOwnerApproverName", "")),
         businessOwnerAcknowledgementText: _.toString(_.get(submissionJSON, "BusinessOwnerAcknowledgementText", "")),
+        certificationAuthorityAcknowledgementText: _.toString(_.get(submissionJSON, "CertificationAuthorityAcknowledgementText", "")),
+        accreditationAuthorityAcknowledgementText: _.toString(_.get(submissionJSON, "AccreditationAuthorityAcknowledgementText", "")),
         isCertificationAndAccreditationTaskExists: _.get(submissionJSON, "IsCertificationAndAccreditationTaskExists", "false") === "true",
         taskSubmissions: _
           .toArray(_.get(submissionJSON, "TaskSubmissions", []))
@@ -484,6 +510,7 @@ mutation {
     return {uuid};
   }
 
+  // deny by business owner
   static async denyQuestionnaireSubmissionAsBusinessOwner(
     argument: { submissionID: string, csrfToken: string, secureToken: string },
   ): Promise<{ uuid: string }> {
@@ -504,6 +531,7 @@ mutation {
     return {uuid};
   }
 
+  // add collaborator
   static async addCollaborator(submissionID: string, selectedCollaborators: Array<Collaborator>, csrfToken: string) {
     let selectedCollaboratorIDs = [];
     if (selectedCollaborators && selectedCollaborators.length > 0) {
@@ -522,6 +550,76 @@ mutation {
     const json = await GraphQLRequestHelper.request({query, csrfToken});
 
     const uuid = _.toString(_.get(json, "data.addCollaborator.UUID", null));
+    if (!uuid) {
+      throw DEFAULT_NETWORK_ERROR;
+    }
+    return {uuid};
+  }
+
+  // grant certification
+  static async grantCertification(submissionID: string, csrfToken: string) {
+    const query = `mutation {
+     grantCertification(ID: "${submissionID}") {
+       UUID
+     }
+    }`;
+
+    const json = await GraphQLRequestHelper.request({query, csrfToken});
+
+    const uuid = _.toString(_.get(json, "data.grantCertification.UUID", null));
+    if (!uuid) {
+      throw DEFAULT_NETWORK_ERROR;
+    }
+    return {uuid};
+  }
+
+  // deny certification
+  static async denyCertification(submissionID: string, csrfToken: string) {
+    const query = `mutation {
+     denyCertification(ID: "${submissionID}") {
+       UUID
+     }
+    }`;
+
+    const json = await GraphQLRequestHelper.request({query, csrfToken});
+
+    const uuid = _.toString(_.get(json, "data.denyCertification.UUID", null));
+    if (!uuid) {
+      throw DEFAULT_NETWORK_ERROR;
+    }
+    return {uuid};
+  }
+
+  // issue accreditation
+  static async issueAccreditation(submissionID: string, csrfToken: string) {
+    console.log(submissionID);
+    console.log(csrfToken);
+    const query = `mutation {
+     issueAccreditation(ID: "${submissionID}") {
+       UUID
+     }
+    }`;
+
+    const json = await GraphQLRequestHelper.request({query, csrfToken});
+
+    const uuid = _.toString(_.get(json, "data.issueAccreditation.UUID", null));
+    if (!uuid) {
+      throw DEFAULT_NETWORK_ERROR;
+    }
+    return {uuid};
+  }
+
+  // deny accreditation
+  static async denyAccreditation(submissionID: string, csrfToken: string) {
+    const query = `mutation {
+     denyAccreditation(ID: "${submissionID}") {
+       UUID
+     }
+    }`;
+
+    const json = await GraphQLRequestHelper.request({query, csrfToken});
+
+    const uuid = _.toString(_.get(json, "data.denyAccreditation.UUID", null));
     if (!uuid) {
       throw DEFAULT_NETWORK_ERROR;
     }
