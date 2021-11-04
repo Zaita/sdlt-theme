@@ -19,7 +19,11 @@ import {
   approveQuestionnaireSubmissionAsBusinessOwner,
   denyQuestionnaireSubmissionAsBusinessOwner,
   assignToSecurityArchitectQuestionnaireSubmission,
-  addCollaboratorAction
+  addCollaboratorAction,
+  grantCertificationAction,
+  denyCertificationAction,
+  issueAccreditationAction,
+  denyAccreditationAction
 } from "../../actions/questionnaire";
 import {loadMember} from "../../actions/user";
 import Summary from "./Summary";
@@ -83,6 +87,26 @@ const mapDispatchToProps = (dispatch: Dispatch, props: *) => {
     dispatchAddCollaboratorAction(submissionID: string, selectedCollaborators:Array<Collaborator>)
     {
       dispatch(addCollaboratorAction(submissionID, selectedCollaborators));
+    },
+
+    dispatchGrantCertificationAction(submissionID: string)
+    {
+      dispatch(grantCertificationAction(submissionID));
+    },
+
+    dispatchDenyCertificationAction(submissionID: string)
+    {
+      dispatch(denyCertificationAction(submissionID));
+    },
+
+    dispatchIssueAccreditationAction(submissionID: string)
+    {
+      dispatch(issueAccreditationAction(submissionID));
+    },
+
+    dispatchDenyAccreditationAction(submissionID: string)
+    {
+      dispatch(denyAccreditationAction(submissionID));
     }
   };
 };
@@ -102,6 +126,10 @@ type reduxProps = {
   dispatchEditSubmissionAction: (submissionID: string) => void,
   approveQuestionnaireSubmissionFromBusinessOwner: (submissionID: string) => void,
   denyQuestionnaireSubmissionFromBusinessOwner: (submissionID: string) => void,
+  dispatchGrantCertificationAction: (submissionID: string) => void,
+  dispatchDenyCertificationAction: (submissionID: string) => void,
+  dispatchIssueAccreditationAction: (submissionID: string) => void,
+  dispatchDenyAccreditationAction: (submissionID: string) => void,
   loadingState: object<*>
 };
 
@@ -189,6 +217,10 @@ class SummaryContainer extends Component<Props, State> {
                  handleEditButtonClick={this.handleOpenModal.bind(this)}
                  handleAssignToMeButtonClick={this.handleAssignToMeButtonClick.bind(this)}
                  handleCollaboratorAddButtonClick={this.handleCollaboratorAddButtonClick.bind(this)}
+                 handleGrantCertificationButtonClick={this.handleGrantCertificationButtonClick.bind(this)}
+                 handleDenyCertificationButtonClick={this.handleDenyCertificationButtonClick.bind(this)}
+                 handleIssueAccreditationButtonClick={this.handleIssueAccreditationButtonClick.bind(this)}
+                 handleDenyAccreditationButtonClick={this.handleDenyAccreditationButtonClick.bind(this)}
                  viewAs={viewAs}
                  user={user}
                  token={secureToken}
@@ -339,6 +371,46 @@ class SummaryContainer extends Component<Props, State> {
     }
 
     this.props.dispatchAddCollaboratorAction(submission.submissionID, selectedCollaborators);
+  }
+
+  handleGrantCertificationButtonClick() {
+    const {user, submission} = {...this.props.submissionState};
+
+    if (!user || !submission) {
+      return;
+    }
+
+    this.props.dispatchGrantCertificationAction(submission.submissionID);
+  }
+
+  handleDenyCertificationButtonClick() {
+    const {user, submission} = {...this.props.submissionState};
+
+    if (!user || !submission) {
+      return;
+    }
+
+    this.props.dispatchDenyCertificationAction(submission.submissionID);
+  }
+
+  handleIssueAccreditationButtonClick() {
+    const {user, submission} = {...this.props.submissionState};
+
+    if (!user || !submission) {
+      return;
+    }
+
+    this.props.dispatchIssueAccreditationAction(submission.submissionID);
+  }
+
+  handleDenyAccreditationButtonClick() {
+    const {user, submission} = {...this.props.submissionState};
+
+    if (!user || !submission) {
+      return;
+    }
+
+    this.props.dispatchDenyAccreditationAction(submission.submissionID);
   }
 }
 

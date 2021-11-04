@@ -438,6 +438,74 @@ export function addCollaboratorAction (submissionID: string, selectedCollaborato
   }
 }
 
+// Grant certification
+export function grantCertificationAction (submissionID: string): ThunkAction {
+  return async (dispatch: any, getState: () => RootState) => {
+    const csrfToken = await CSRFTokenService.getCSRFToken();
+    try {
+      // Call grantCertification data api
+      const {uuid} = await QuestionnaireDataService.grantCertification(submissionID, csrfToken);
+
+      dispatch(loadQuestionnaireSubmissionState(uuid));
+    }
+    catch (error) {
+      // TODO: errors
+      alert(error);
+    }
+  }
+}
+
+// Deny certification
+export function denyCertificationAction (submissionID: string): ThunkAction {
+  return async (dispatch: any, getState: () => RootState) => {
+    const csrfToken = await CSRFTokenService.getCSRFToken();
+    try {
+      // Call denyCertification data api
+      const {uuid} = await QuestionnaireDataService.denyCertification(submissionID, csrfToken);
+
+      dispatch(loadQuestionnaireSubmissionState(uuid));
+    }
+    catch (error) {
+      // TODO: errors
+      alert(error);
+    }
+  }
+}
+
+// Issue Accreditation
+export function issueAccreditationAction (submissionID: string): ThunkAction {
+  return async (dispatch: any, getState: () => RootState) => {
+    const csrfToken = await CSRFTokenService.getCSRFToken();
+    try {
+      // Call issueAccreditation data api
+      const {uuid} = await QuestionnaireDataService.issueAccreditation(submissionID, csrfToken);
+
+      dispatch(loadQuestionnaireSubmissionState(uuid));
+    }
+    catch (error) {
+      // TODO: errors
+      alert(error);
+    }
+  }
+}
+
+// Deny Accreditation
+export function denyAccreditationAction (submissionID: string): ThunkAction {
+  return async (dispatch: any, getState: () => RootState) => {
+    const csrfToken = await CSRFTokenService.getCSRFToken();
+    try {
+      // Call denyAccreditation data api
+      const {uuid} = await QuestionnaireDataService.denyAccreditation(submissionID, csrfToken);
+
+      dispatch(loadQuestionnaireSubmissionState(uuid));
+    }
+    catch (error) {
+      // TODO: errors
+      alert(error);
+    }
+  }
+}
+
 // Commons
 async function batchUpdateSubmissionData(rootState: RootState, indexesToUpdate: Array<number>) {
   const submission = rootState.questionnaireState.submissionState.submission;
