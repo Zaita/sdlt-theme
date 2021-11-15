@@ -3,6 +3,7 @@
 .TaskSubmissionContainer {
     h4 {
       font-size: 15px;
+      margin-bottom: 15px;
     }
 
     .TaskSubmission {
@@ -17,7 +18,7 @@
     }
 
     .AnswersPreview, .risk-result-container, .recommendation-container {
-        margin-bottom: 25px;
+        margin-bottom: 40px;
     }
 
     .recommendation-container {
@@ -27,7 +28,7 @@
     .result {
         @extend .mx-0;
         background-color: rgba(255, 255, 255, 0.7);
-        margin-bottom: 1rem;
+        margin-bottom: 2rem;
         padding: 20px;
     }
 
@@ -46,6 +47,21 @@
           margin-left: auto;
           margin-right: -16px;
         }
+    }
+
+    .back-link {
+      color: $light-blue;
+      text-decoration: underline;
+      margin-bottom: 30px;
+      font-weight: bold;
+      cursor: pointer;
+      &:hover {
+        color:$dark-blue;
+      }
+
+      img {
+        margin-right: 5px;
+      }
     }
 
     .approver-action {

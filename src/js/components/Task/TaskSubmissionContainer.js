@@ -161,7 +161,7 @@ class TaskSubmissionContainer extends Component<Props> {
           handleSendBackForChangesButtonClick={this.handleSendBackForChangesButtonClick.bind(this)}
           handleAddTaskRecommendationButtonClick={this.handleAddTaskRecommendationButtonClick.bind(this)}
           handleEditTaskRecommendationButtonClick={this.handleEditTaskRecommendationButtonClick.bind(this)}
-          showBackButton={!!taskSubmission.questionnaireSubmissionUUID}
+          showBackLink={!!taskSubmission.questionnaireSubmissionUUID}
           viewAs={viewAs}
           siteConfig={siteConfig}
           secureToken={secureToken}
