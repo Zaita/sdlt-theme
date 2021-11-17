@@ -16,6 +16,7 @@ import RiskResultContainer from "../Common/RiskResultContainer";
 import TaskRecommendationContainer from "./TaskRecommendationContainer";
 import SecurityRiskAssessmentUtil from "../../utils/SecurityRiskAssessmentUtil";
 import {SubmissionExpired} from "../Common/SubmissionExpired";
+import BackArrow from "../../../img/icons/back-arrow.svg";
 
 type Props = {
   taskSubmission: TaskSubmissionType,
@@ -44,7 +45,7 @@ class TaskSubmission extends Component<Props> {
       handleAddTaskRecommendationButtonClick,
       handleEditTaskRecommendationButtonClick,
       editAnswers,
-      showBackButton,
+      showBackLink,
       showEditButton,
       canUpdateAnswers,
       viewAs,
@@ -61,13 +62,13 @@ class TaskSubmission extends Component<Props> {
       />
     );
 
-    const backButton = showBackButton ? (
-      <DarkButton
-        title={"BACK TO QUESTIONNAIRE SUMMARY"}
-        onClick={() => {
-          URLUtil.redirectToQuestionnaireSummary(taskSubmission.questionnaireSubmissionUUID, secureToken);
-        }}
-      />
+    const backLink = showBackLink ? (
+      <div
+      className="back-link"
+      onClick={() => URLUtil.redirectToQuestionnaireSummary(taskSubmission.questionnaireSubmissionUUID, secureToken)}
+      >
+        <img src={BackArrow}/> Back
+      </div>
     ) : null;
 
     const isSRATaskFinalised = taskSubmission.taskType === 'risk questionnaire' && SecurityRiskAssessmentUtil.isSRATaskFinalised(taskSubmission.siblingSubmissions);
@@ -86,9 +87,9 @@ class TaskSubmission extends Component<Props> {
     ) : null;
 
     const result = taskSubmission.result && (resultStatus.indexOf(taskSubmission.status) > -1) ? (
-      <div className="result">
-        <h3>Result:</h3>
-        <div>{taskSubmission.result}</div>
+      <div className="result-container">
+        <h4>Result</h4>
+        <div className="result">{taskSubmission.result}</div>
       </div>
     ) : null;
 
@@ -141,12 +142,12 @@ class TaskSubmission extends Component<Props> {
                 taskSubmission.taskType === 'risk questionnaire' &&
                 isSRATaskFinalised ? SecurityRiskAssessmentUtil.getSraIsFinalisedAlert() : false
               }
+              {backLink}
               {body}
               <div className="buttons">
                 <div className="buttons-left">
                   {editButton}
                   {pdfButton}
-                  {backButton}
                 </div>
                 <div className="buttons-right">
                   {
