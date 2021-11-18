@@ -451,7 +451,7 @@ class Summary extends Component<Props> {
     if (viewAs === "submitter") {
       // Render edit answers button for submitter in all cases
       const editAnswersButton = (
-        <LightButton title="EDIT ANSWERS"
+        <LightButton title="EDIT"
                      iconImage={editIcon}
                      classes={["button"]}
                      onClick={handleEditButtonClick}

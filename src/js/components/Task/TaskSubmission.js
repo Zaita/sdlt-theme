@@ -144,7 +144,7 @@ class TaskSubmission extends Component<Props> {
               }
               {backLink}
               {body}
-              <div className="buttons">
+              <div className={`buttons ${viewAs != "approver" ? 'buttons-hideborder': ''}`}>
                 <div className="buttons-left">
                   {editButton}
                   {pdfButton}
