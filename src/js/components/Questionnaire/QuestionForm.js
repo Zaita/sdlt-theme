@@ -8,7 +8,13 @@ import DarkButton from "../Button/DarkButton";
 import moment from "moment";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
+import InfoIcon from "../../../img/icons/info.svg";
+import ChevronIcon from "../../../img/icons/chevron-right.svg";
+import tinymce from "tinymce";
+import 'tinymce/themes/modern';
+import { Editor } from "@tinymce/tinymce-react";
+import 'tinymce/plugins/advlist';
+import 'tinymce/plugins/lists';
 
 type Props = {
   question: Question,
@@ -37,10 +43,7 @@ class QuestionForm extends Component<Props> {
 
         {this.renderActions(question)}
         {this.renderInputsForm(question)}
-        <div className="saveText">
-          <InfoOutlinedIcon className="icon-blue"/>
-          <span className="saveMessage">Your answers will be saved when you continue to the next question.</span>
-        </div>
+
       </div>
     );
   }
@@ -61,7 +64,7 @@ class QuestionForm extends Component<Props> {
     const chosenAction = actions.find((action) => action.isChose);
     if (chosenAction && chosenAction.message) {
       message = (
-        <div className="message">
+        <div className="action-message">
           <b>Message:</b>
           <div dangerouslySetInnerHTML={{__html: chosenAction.message}}/>
         </div>
@@ -70,7 +73,7 @@ class QuestionForm extends Component<Props> {
 
     if (!chosenAction) {
       return (
-        <div>
+        <div className="field-container">
           <div className="actions">
             {actions.map((action, index) => {
               switch (index) {
@@ -86,11 +89,21 @@ class QuestionForm extends Component<Props> {
             })}
           </div>
           {message}
+          <div className="bottom-container">
+            <div className="message-container">
+              <span>
+              <img src={InfoIcon} />
+                <span className="saveMessage">
+                  Your answers will be saved when you continue to the next question.
+                </span>
+              </span>
+            </div>
+          </div>
         </div>
       );
     } else {
       return (
-        <div>
+        <div className="field-container">
           <div className="actions">
             {actions.map((action) => {
               switch (action.isChose) {
@@ -106,6 +119,16 @@ class QuestionForm extends Component<Props> {
             })}
           </div>
           {message}
+          <div className="bottom-container">
+            <div className="message-container">
+              <span>
+              <img src={InfoIcon} />
+                <span className="saveMessage">
+                  Your answers will be saved when you continue to the next question.
+                </span>
+              </span>
+            </div>
+          </div>
         </div>
       );
     }
@@ -148,24 +171,24 @@ class QuestionForm extends Component<Props> {
 
           // Required
           if (required && (!value || value === "[]")) {
-            errors[id] = `- Please enter a value for ${label}`;
+            errors[id] = `Please enter a value for ${label}`;
 
             if (type === "radio" || type === "checkbox") {
-                errors[id] = `- Please select an option for ${label}`;
+                errors[id] = `Please select an option for ${label}`;
             }
             return;
           }
 
           // Min Length
           if (minLength > 0 && value && value.length < minLength) {
-            errors[id] = `- Please enter a value with at least ${minLength} characters for ${label}`;
+            errors[id] = `Please enter a value with at least ${minLength} characters for ${label}`;
             return;
           }
 
           // Email
           if (type === "email" &&
             !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(value)) {
-            errors[id] = "- Invalid email address";
+            errors[id] = "Invalid email address";
             return;
           }
 
@@ -174,13 +197,13 @@ class QuestionForm extends Component<Props> {
             const date = moment(value, "YYYY-MM-DD");
 
             if (!date.isValid()) {
-              errors[id] = "- Invalid date";
+              errors[id] = "Invalid date";
             }
           }
 
           if (type === "product aspects" && value &&
             !/^[0-9a-zA-Z\s\n]+$/i.test(value)) {
-            errors[id] = "- Please enter alpha-numeric characters only.";
+            errors[id] = "Please enter alpha-numeric characters only.";
             return;
           }
         });
@@ -191,7 +214,7 @@ class QuestionForm extends Component<Props> {
         handleFormSubmit(formik, values);
       }}
     >
-      {({isSubmitting, errors, touched, setFieldValue, values}) => {
+      {({handleChange, isSubmitting, errors, touched, setFieldValue, values}) => {
         const filteredErrors = [];
         _.keys(errors)
           .filter(key => {
@@ -203,8 +226,6 @@ class QuestionForm extends Component<Props> {
 
         return (
           <Form>
-            <table>
-              <tbody>
               {inputs.map((input) => {
                 const {
                   id,
@@ -214,10 +235,12 @@ class QuestionForm extends Component<Props> {
                   options,
                   defaultRadioButtonValue,
                   defaultCheckboxValue,
-                  maxLength
+                  maxLength,
+                  required
                 } = {...input};
 
-                const hasError = Boolean(_.get(filteredErrors, id, null));
+                const errorMessage = _.get(filteredErrors, id, null);
+                const hasError = Boolean(errorMessage);
                 const classes = [];
                 if (hasError) {
                   classes.push("error");
@@ -225,28 +248,39 @@ class QuestionForm extends Component<Props> {
 
                 if (["text", "email", "url"].includes(type)) {
                   return (
-                    <tr key={id}>
-                      <td className="label"><label>{label}</label></td>
-                      <td>
+                    <div key={id} className="field-container">
+                      <div className="label">
+                        <label className={required > 0 ? "required" : ""}>{label}</label>
+                      </div>
+                      <div>
                         <Field type={type} name={id} className={classes.join(" ")} placeholder={placeholder} maxLength={maxLength > 0 ? maxLength : 4096}/>
-                        {hasError && <i className="fas fa-exclamation-circle text-danger ml-1"/>}
-                      </td>
-                    </tr>
+                      </div>
+                      {
+                        hasError && (
+                          <div className="error-message-container" key={"error_" + id}>
+                            <i className="fas fa-exclamation-circle text-danger ml-1 error-icon"/>
+                            <span className="error-message">{errorMessage}</span>
+                          </div>
+                        )
+                      }
+                    </div>
                   );
                 }
 
                 if (type === "radio") {
                   return (
-                    <tr key={id}>
-                      <td className="label"><label>{label}</label></td>
-                      <td>
+                    <div key={id} className="field-container">
+                      <div className="label">
+                        <label className={required > 0 ? "required" : ""}>{label}</label>
+                      </div>
+                      <div className={hasError ? "radio-container-error" : ""}>
                         {options.length &&
                           options.map((option, index) => {
                             let checked = _.toString(option.value) === _.toString(values[id]);
 
                             return (
                               <div key={index}>
-                                <label>
+                                <label className="radio-label">
                                   <Field type="radio" name={id} value={option.value} className={"radio"} checked={checked} />
                                   {option.label}
                                 </label>
@@ -254,17 +288,26 @@ class QuestionForm extends Component<Props> {
                             );
                           })
                         }
-                      </td>
-                      <td>{hasError && <i className="fas fa-exclamation-circle text-danger ml-1"/>}</td>
-                    </tr>
+                      </div>
+                      {
+                        hasError && (
+                          <div className="error-message-container" key={"error_" + id}>
+                            <i className="fas fa-exclamation-circle text-danger ml-1 error-icon"/>
+                            <span className="error-message">{errorMessage}</span>
+                          </div>
+                        )
+                      }
+                    </div>
                   );
                 }
 
                 if (type === "checkbox") {
                   return (
-                    <tr key={id}>
-                      <td className="label"><label>{label}</label></td>
-                      <td>
+                    <div key={id} className="field-container">
+                      <div className="label">
+                        <label className={required > 0 ? "required" : ""}>{label}</label>
+                      </div>
+                      <div className={hasError ? "checkbox-container-error" : ""}>
                         {options.length &&
                           options.map((option, index) => {
                             let groupCheckboxValueArr = values[id] ? JSON.parse(values[id]): [];
@@ -272,7 +315,7 @@ class QuestionForm extends Component<Props> {
 
                             return (
                               <div key={index}>
-                                <label>
+                                <label className="checkbox-label">
                                   <input
                                   type="checkbox"
                                   name={id}
@@ -293,17 +336,26 @@ class QuestionForm extends Component<Props> {
                             );
                           })
                         }
-                      </td>
-                      <td>{hasError && <i className="fas fa-exclamation-circle text-danger ml-1"/>}</td>
-                    </tr>
+                      </div>
+                      {
+                        hasError && (
+                          <div className="error-message-container" key={"error_" + id}>
+                            <i className="fas fa-exclamation-circle text-danger ml-1 error-icon"/>
+                            <span className="error-message">{errorMessage}</span>
+                          </div>
+                        )
+                      }
+                    </div>
                   );
                 }
 
                 if (type === "date" || type === "release date") {
                   return (
-                    <tr key={id}>
-                      <td className="label"><label>{label}</label></td>
-                      <td>
+                    <div key={id} className="field-container">
+                      <div className="label">
+                        <label className={required > 0 ? "required" : ""}>{label}</label>
+                      </div>
+                      <div>
                         <Field name={id} render={({field}) => {
                           let date = null;
                           const dateValue = field.value || null;
@@ -329,54 +381,100 @@ class QuestionForm extends Component<Props> {
                                         withPortal/>
                           );
                         }}/>
-                        {hasError && <i className="fas fa-exclamation-circle text-danger ml-1"/>}
-                      </td>
-                    </tr>
+                      </div>
+                      {
+                        hasError && (
+                          <div className="error-message-container" key={"error_" + id}>
+                            <i className="fas fa-exclamation-circle text-danger ml-1 error-icon"/>
+                            <span className="error-message">{errorMessage}</span>
+                          </div>
+                        )
+                      }
+                    </div>
                   );
                 }
 
                 if (type === "textarea" || type === "product aspects") {
                   return (
-                    <tr key={id}>
-                      <td className="label"><label>{label}</label></td>
-                      <td>
+                    <div key={id} className="field-container">
+                      <div className="label">
+                        <label className={required > 0 ? "required" : ""}>{label}</label>
+                      </div>
+                      <div>
                         <Field name={id}>
                           {({field}) => {
                             return <textarea {...field} className={classes.join(" ")} placeholder={placeholder}/>;
                           }}
                         </Field>
-                        {hasError && <i className="fas fa-exclamation-circle text-danger ml-1"/>}
-                      </td>
-                    </tr>
+                        {
+                          hasError && (
+                            <div className="error-message-container" key={"error_" + id}>
+                              <i className="fas fa-exclamation-circle text-danger ml-1 error-icon"/>
+                              <span className="error-message">{errorMessage}</span>
+                            </div>
+                          )
+                        }
+                      </div>
+                    </div>
                   );
                 }
 
-                return null;
-              })}
-              <tr>
-                <td/>
-                <td>
-                  <DarkButton title="Continue"/>
-                </td>
-              </tr>
-              <tr>
-                <td/>
-                <td className="text-danger">
-                  {filteredErrors && _.keys(filteredErrors).length > 0 && (
-                    <div>
-                      Whoops!
-                      {_.keys(filteredErrors)
-                        .map((key) => {
-                          return (
-                            <div className="text-error" key={key}>{filteredErrors[key]}</div>
-                          );
-                        })}
+                if (type === "rich text editor") {
+                  return (
+                    <div key={id} className="field-container">
+                      {
+                        label && (
+                          <div className="label">
+                            <label className={required > 0 ? "required" : ""}>{label}</label>
+                          </div>
+                      )}
+
+                      <div>
+                        <Editor
+                          className="implementation-evidence"
+                          initialValue={initialValues[id]}
+                          init={{
+                            selector: 'textarea',
+                            body_class: 'my_class',
+                            menubar: false,
+                            plugins: 'lists advlist',
+                            toolbar: '+ removeformat bold italic underline strikethrough bullist numlist',
+                            statusbar: false,
+                            skin_url: 'resources/vendor/silverstripe/admin/thirdparty/tinymce/skins/silverstripe'
+                          }}
+                          onBlur={(e) => {
+                            handleChange({
+                              target: {name: id, value: e.target.getContent()}
+                            })
+                          }}
+                        />
+                        {
+                          hasError && (
+                            <div className="error-message-container" key={"error_" + id}>
+                              <i className="fas fa-exclamation-circle text-danger ml-1 error-icon"/>
+                              <span className="error-message">{errorMessage}</span>
+                            </div>
+                          )
+                        }
+                      </div>
                     </div>
-                  )}
-                </td>
-              </tr>
-              </tbody>
-            </table>
+                  );
+                }
+              return null;
+            })}
+            <div className="bottom-container">
+              <div className="message-container">
+                <span>
+                <img src={InfoIcon} />
+                  <span className="saveMessage">
+                    Your answers will be saved when you continue to the next question.
+                  </span>
+                </span>
+              </div>
+              <div className="button-container">
+                <DarkButton title="Next" rightIconImage={ChevronIcon}/>
+              </div>
+            </div>
           </Form>
         );
       }}
