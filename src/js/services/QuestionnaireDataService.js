@@ -592,8 +592,6 @@ mutation {
 
   // issue accreditation
   static async issueAccreditation(submissionID: string, csrfToken: string) {
-    console.log(submissionID);
-    console.log(csrfToken);
     const query = `mutation {
      issueAccreditation(ID: "${submissionID}") {
        UUID

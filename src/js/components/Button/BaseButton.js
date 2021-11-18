@@ -21,11 +21,17 @@ class BaseButton extends Component<Props> {
   };
 
   render() {
-    const {title, classes, disabled, onClick, iconImage} = {...this.props};
+    const {title, classes, disabled, onClick, iconImage, rightIconImage} = {...this.props};
 
     let icon = null;
+    let rightIcon = null;
+
     if (iconImage) {
       icon = <img src={iconImage}/>;
+    }
+
+    if (rightIconImage) {
+      rightIcon = <img className="img-right" src={rightIconImage}/>;
     }
 
     return (
@@ -40,6 +46,7 @@ class BaseButton extends Component<Props> {
       >
         {icon}
         {title}
+        {rightIcon}
       </button>
     );
   }

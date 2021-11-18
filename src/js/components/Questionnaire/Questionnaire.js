@@ -73,13 +73,20 @@ class Questionnaire extends Component<Props> {
     return (
       <div className="Questionnaire mx-1">
         <div className="major">
-          <LeftBar questions={questions} onItemClick={onLeftBarItemClick}/>
-          {currentQuestion && <QuestionForm
-            index={currentQuestionIndex}
-            key={currentQuestion.id}
-            question={currentQuestion}
-            handleFormSubmit={this.handleFormSubmit.bind(this)}
-            handleActionClick={this.handleActionClick.bind(this)}/>}
+          <div className="title">Questions</div>
+          <div className="form-container">
+            <LeftBar questions={questions} onItemClick={onLeftBarItemClick}/>
+            {
+              currentQuestion &&
+              <QuestionForm
+                index={currentQuestionIndex}
+                key={currentQuestion.id}
+                question={currentQuestion}
+                handleFormSubmit={this.handleFormSubmit.bind(this)}
+                handleActionClick={this.handleActionClick.bind(this)}
+              />
+            }
+          </div>
         </div>
       </div>
     );

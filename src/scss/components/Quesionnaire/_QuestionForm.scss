@@ -3,77 +3,159 @@
 .QuestionForm {
   background-color: $white;
   width: 840px;
-  padding: 45px;
+  min-height: 510px;
+  padding: 25px 25px 50px 25px;
   font-size: 14px;
   color: $black;
   position: relative;
 
   .heading {
-    font-size: 24px;
-    font-weight: 300;
+    font-size: 14px;
+    font-weight: bold;
     color: $blue;
-    margin-bottom: 1rem;
+    margin-bottom: 20px;
     white-space: pre-line;
+    line-height: 16px;
   }
 
   .description {
-    margin-bottom: 1rem;
-  }
-
-  .saveText {
-    position: absolute;
-    bottom: 2rem;
-  }
-
-  .saveMessage {
+    margin-bottom: 25px;
     font-size: 12px;
-    font-weight: 400;
-    margin-left: 5px;
+    line-height: 16px;
   }
 
-  td {
-    padding-bottom: 1rem;
-    vertical-align: top;
-    max-width: 500px;
+  .field-container {
+    padding-bottom: 20px;
+
+    .label {
+      margin-bottom: 5px;
+      font-weight: 500;
+      font-size: 11px;
+      line-height: 13px;
+    }
+
+    input, textarea {
+      @extend .rounded-0;
+      border: solid 1px $light-blue;
+      width: 355px;
+      font-size: 12px;
+      height: 30px;
+      padding: 5px;
+    }
+
+    textarea {
+      width: 100%;
+      height: 275px;
+      font-size: 12px;
+    }
+
+    input.error, textarea.error {
+      background-color: $light-red;
+      border: solid 1px $dark-red;
+    }
+
+    .radio-container-error,
+    .checkbox-container-error {
+      padding-left: 15px;
+      background-color: $light-red;
+      padding-bottom: 15px;
+      margin-bottom: 5px;
+      border: solid 1px $dark-red;
+    }
+
+    .error-message-container {
+      margin: 5px 0 20px;
+      position: relative;
+
+      .error-icon {
+        position: absolute;
+        font-size: 13px;
+        top: 1px;
+        left: -4px;
+        color: $dark-red !important;
+      }
+
+      .error-message {
+        left: 16px;
+        top: 2px;
+        position: absolute;
+        font-weight: 500;
+        font-size: 10px;
+        line-height: 12px;
+        color: $dark-red;
+      }
+    }
+
+    .actions {
+      margin-top: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .action-message {
+      font-size: 11px;
+      margin-top: 20px !important;
+    }
+
+    .DarkButton, .LightButton {
+      min-width: 84px;
+    }
+
+    .checkbox-label,
+    .radio-label {
+      font-size: 11px;
+      line-height: 13px;
+      margin-bottom: 0px;
+    }
+
+    .radio,
+    .checkbox {
+      font-size: 12px;
+      line-height: 13px;
+      position: relative !important;
+      width: auto;
+      margin: 0 7px 7px 0;
+      top: 11px;
+    }
+
+    .required:after {
+      content:" *";
+      color: $dark-red;
+    }
+
+    .mce-panel {
+      border: solid 1px $light-blue;
+      background-color: $white;
+    }
+
+    .mce-btn {
+      border: none;
+      background: none;
+      color: $light-blue;
+    }
+    .mce-first{
+      border: none;
+    }
   }
 
-  td.label {
-    width: auto;
-    padding-right: 1rem;
-  }
-
-  input, textarea {
-    @extend .rounded-0;
-    border: solid 1px #959595;
-    width: 355px;
-  }
-
-  textarea {
-    height: 119px;
-  }
-
-  input.error, textarea.error {
-    border: solid 1px $red;
-  }
-
-  .actions {
-    margin-top: 1.5rem;
-    margin-bottom: 2rem;
-  }
-
-  .message {
-    font-size: 16px;
-  }
-
-  .DarkButton, .LightButton {
-    min-width: 84px;
-  }
-
-  .radio,
-  .checkbox {
-    position: relative;
-    width: auto;
-    margin: 0 7px 7px 0;
-    top: 3px;
+  .bottom-container {
+    position: absolute;
+    bottom: 25px;
+    width: 95%;
+    .message-container {
+      position: absolute;
+      bottom: 2px;
+      float: left;
+      width: 80%;
+      .saveMessage {
+        font-size: 10px;
+        line-height: 14px;
+        margin-left: 5px;
+      }
+    }
+    .button-container {
+      left: 25px;
+      float: right;
+      width: 10%;
+    }
   }
 }
