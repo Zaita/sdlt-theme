@@ -72,13 +72,20 @@ class QuestionnaireContainer extends Component<Props> {
     if (submission.status !== "in_progress") {
       return (
         <div className="QuestionnaireContainer">
-          <Header title={title} subtitle={siteConfig.siteTitle} username={user.name} logopath={siteConfig.logoPath}/>
+          <Header
+            title={title}
+            subtitle={siteConfig.siteTitle}
+            username={user.name}
+            logopath={siteConfig.logoPath}
+          />
           <div className="questionnaire-message">
             <h4>
               The questionnaire is not in progress. Please check the summary screen.
             </h4>
           </div>
-          <Footer footerCopyrightText={siteConfig.footerCopyrightText}/>
+          <Footer
+            footerCopyrightText={siteConfig.footerCopyrightText}
+          />
         </div>
       );
     }
@@ -86,7 +93,12 @@ class QuestionnaireContainer extends Component<Props> {
     if (user.id === submission.submitter.id) {
       return (
         <div className="QuestionnaireContainer">
-          <Header title={title} subtitle={siteConfig.siteTitle} logopath={siteConfig.logoPath} username={user.name} />
+          <Header
+            title={title}
+            subtitle={siteConfig.siteTitle}
+            logopath={siteConfig.logoPath}
+            username={user.name}
+          />
           <Questionnaire
             questions={submission.questions}
             saveAnsweredQuestion={(answeredQuestion) => {
@@ -96,14 +108,21 @@ class QuestionnaireContainer extends Component<Props> {
               dispatchMoveToPreviousQuestionAction(targetQuestion);
             }}
           />
-          <Footer footerCopyrightText={siteConfig.footerCopyrightText}/>
+          <Footer
+            footerCopyrightText={siteConfig.footerCopyrightText}
+          />
         </div>
       );
     }
 
     return (
       <div className="QuestionnaireContainer">
-        <Header title={title} subtitle={siteConfig.siteTitle} username={user.name} logopath={siteConfig.logoPath}/>
+        <Header
+          title={title}
+          subtitle={siteConfig.siteTitle}
+          username={user.name}
+          logopath={siteConfig.logoPath}
+        />
         <div className="questionnaire-message">
           <h4>
             It appears this submission has not yet been submitted.
@@ -111,7 +130,9 @@ class QuestionnaireContainer extends Component<Props> {
             before it can be reviewed.
           </h4>
         </div>
-        <Footer footerCopyrightText={siteConfig.footerCopyrightText}/>
+        <Footer
+          footerCopyrightText={siteConfig.footerCopyrightText}
+        />
       </div>
     );
 
