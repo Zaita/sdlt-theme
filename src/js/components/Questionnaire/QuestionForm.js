@@ -15,6 +15,7 @@ import 'tinymce/themes/modern';
 import { Editor } from "@tinymce/tinymce-react";
 import 'tinymce/plugins/advlist';
 import 'tinymce/plugins/lists';
+import Select from 'react-select';
 
 type Props = {
   question: Question,
@@ -135,7 +136,7 @@ class QuestionForm extends Component<Props> {
   }
 
   renderInputsForm(question: Question) {
-    const {handleFormSubmit} = {...this.props};
+    const {handleFormSubmit, serviceRegister} = {...this.props};
     if (question.type !== "input") {
       return;
     }
@@ -168,20 +169,21 @@ class QuestionForm extends Component<Props> {
         inputs.forEach((input: AnswerInput) => {
           const {id, type, required, label, minLength} = {...input};
           const value = _.get(values, id, null);
+          const fieldLabel = (label ? label : "field");
 
           // Required
           if (required && (!value || value === "[]")) {
-            errors[id] = `Please enter a value for ${label}`;
+            errors[id] = `Please enter a value for ${fieldLabel}`;
 
-            if (type === "radio" || type === "checkbox") {
-                errors[id] = `Please select an option for ${label}`;
+            if (type === "radio" || type === "checkbox" || type === "service register") {
+                errors[id] = `Please select an option for ${fieldLabel}`;
             }
             return;
           }
 
           // Min Length
           if (minLength > 0 && value && value.length < minLength) {
-            errors[id] = `Please enter a value with at least ${minLength} characters for ${label}`;
+            errors[id] = `Please enter a value with at least ${minLength} characters for ${fieldLabel}`;
             return;
           }
 
@@ -459,6 +461,48 @@ class QuestionForm extends Component<Props> {
                       </div>
                     </div>
                   );
+                }
+
+                if (type === "service register") {
+                  return (
+                    <div key={id} className="field-container">
+                      {
+                        label && (
+                          <div className="label">
+                            <label className={required > 0 ? "required" : ""}>{label}</label>
+                          </div>
+                      )}
+                      <div className="dropdown-container">
+                        <Select
+                          name={id}
+                          options={serviceRegister}
+                          defaultValue={
+                            (
+                              initialValues[id] &&
+                              serviceRegister.find(o => o.value === JSON.parse(initialValues[id]).value)
+                            ) ? JSON.parse(initialValues[id]) : ''
+                          }
+                          classNamePrefix="react-select"
+                          className={hasError? "react-select-error" : " "}
+                          maxMenuHeight={250}
+                          placeholder="Select"
+                          onChange={(selectedOption) => {
+                            handleChange({
+                              target: {name: id, value: JSON.stringify(selectedOption)}
+                            })
+                          }}
+                        />
+                      </div>
+                      {
+                        hasError && (
+                          <div className="error-message-container" key={"error_" + id}>
+                            <i className="fas fa-exclamation-circle text-danger ml-1 error-icon"/>
+                            <span className="error-message">{errorMessage}</span>
+                          </div>
+                        )
+                      }
+                    </div>
+                  )
                 }
               return null;
             })}

@@ -10,7 +10,8 @@ import _ from "lodash";
 type Props = {
   questions: Array<Question>,
   saveAnsweredQuestion: (question: Question) => void,
-  onLeftBarItemClick: (question: Question) => void
+  onLeftBarItemClick: (question: Question) => void,
+  serviceRegister: Array<*>
 };
 
 class Questionnaire extends Component<Props> {
@@ -62,7 +63,7 @@ class Questionnaire extends Component<Props> {
   }
 
   render() {
-    const {questions, onLeftBarItemClick} = {...this.props};
+    const {questions, onLeftBarItemClick, serviceRegister} = {...this.props};
 
     const currentQuestion = questions.find((question) => {
       return question.isCurrent === true;
@@ -82,6 +83,7 @@ class Questionnaire extends Component<Props> {
                 index={currentQuestionIndex}
                 key={currentQuestion.id}
                 question={currentQuestion}
+                serviceRegister={serviceRegister}
                 handleFormSubmit={this.handleFormSubmit.bind(this)}
                 handleActionClick={this.handleActionClick.bind(this)}
               />

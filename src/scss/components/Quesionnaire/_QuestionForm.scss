@@ -41,6 +41,81 @@
       font-size: 12px;
       height: 30px;
       padding: 5px;
+      background-color: $white;
+      border-radius: 5px !important;
+    }
+
+    .dropdown-container {
+      width: 380px;
+
+      .react-select__control {
+        border: solid 1px $light-blue;
+        font-size: 11px;
+        min-height: 30px;
+        height: 30px;
+        background-color: $white;
+      }
+
+      .react-select-error {
+        .react-select__control {
+          background-color: $light-red;
+          border: solid 1px $dark-red;
+        }
+      }
+
+      .react-select__control--is-focused {
+        box-shadow: none !important;
+        border: solid 1px $light-blue;
+      }
+
+      .react-select__control--menu-is-open {
+        border-bottom-right-radius: 0;
+        border-bottom-left-radius: 0;
+      }
+
+      .react-select__value-container {
+        padding: 0 5px;
+        min-height: 30px;
+        height: 30px;
+      }
+
+      .react-select__single-value {
+        position: sticky;
+      }
+
+      .react-select__placeholder {
+        position: sticky;
+        color: $black;
+      }
+
+      .react-select__indicator {
+        color: $light-blue;
+        height: 30px;
+        padding: 5px;
+      }
+
+      .react-select__indicator-separator {
+        display: none;
+        width: 0;
+      }
+
+      .react-select__menu {
+        margin-top: -1px;
+        border: solid 1px $light-blue;
+        border-top-right-radius: 0;
+        border-top-left-radius: 0;
+        font-size: 11px;
+      }
+
+      .react-select__option--is-selected {
+        background-color: $light-blue;
+        color: $white;
+      }
+
+      .react-select__option--is-focused {
+        background-color: #E1E7EB;
+        color: $black;
+      }
     }
 
     textarea {
@@ -49,8 +124,8 @@
       font-size: 12px;
     }
 
-    input.error, textarea.error {
-      background-color: $light-red;
+    input.error, textarea.error, .select-error {
+      background-color: $light-red !important;
       border: solid 1px $dark-red;
     }
 

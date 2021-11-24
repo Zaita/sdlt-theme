@@ -84,10 +84,15 @@ query {
     ProductAspects
     HideWeightsAndScore
   }
+  readServiceInventory {
+    ID
+    ServiceName
+  }
 }`;
 
     const responseJSONObject = await GraphQLRequestHelper.request({query});
     const submissionJSONObject = get(responseJSONObject, "data.readTaskSubmission.0", null);
+    const serviceRegister = get(responseJSONObject, "data.readServiceInventory", null);
 
     if (!submissionJSONObject) {
       throw DEFAULT_NETWORK_ERROR;
@@ -119,7 +124,8 @@ query {
       componentTarget: toString(get(submissionJSONObject, "ComponentTarget", "")),
       hideWeightsAndScore: _.get(submissionJSONObject, "HideWeightsAndScore", "false") === "true",
       isTaskCollborator: _.get(submissionJSONObject, "IsTaskCollborator", "false") === "true",
-      siblingSubmissions: TaskParser.parseAlltaskSubmissionforQuestionnaire(submissionJSONObject)
+      siblingSubmissions: TaskParser.parseAlltaskSubmissionforQuestionnaire(submissionJSONObject),
+      serviceRegister: TaskParser.parseServiceRegister(serviceRegister)
     };
 
     return data;
