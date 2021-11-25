@@ -21,7 +21,9 @@ type Props = {
   question: Question,
   index: number,
   handleFormSubmit: (formik: FormikBag, values: Object) => void,
-  handleActionClick: (action: AnswerAction) => void
+  handleActionClick: (action: AnswerAction) => void,
+  serviceRegister: Array<*>,
+  informationClassificationTaskResult: string
 };
 
 class QuestionForm extends Component<Props> {
@@ -136,7 +138,7 @@ class QuestionForm extends Component<Props> {
   }
 
   renderInputsForm(question: Question) {
-    const {handleFormSubmit, serviceRegister} = {...this.props};
+    const {handleFormSubmit, serviceRegister, informationClassificationTaskResult} = {...this.props};
     if (question.type !== "input") {
       return;
     }
@@ -158,6 +160,11 @@ class QuestionForm extends Component<Props> {
       // set checkbox default value
       if (input.type == "checkbox" && input.data === null && input.defaultCheckboxValue) {
           initialValues[input.id] = input.defaultCheckboxValue;
+      }
+
+      // set default value for information classification dropdown
+      if (input.type == "information classification" && input.data === null && informationClassificationTaskResult) {
+          initialValues[input.id] = informationClassificationTaskResult;
       }
     });
 
@@ -227,7 +234,7 @@ class QuestionForm extends Component<Props> {
           });
 
         return (
-          <Form>
+          <Form className="scroller">
               {inputs.map((input) => {
                 const {
                   id,
@@ -433,11 +440,9 @@ class QuestionForm extends Component<Props> {
 
                       <div>
                         <Editor
-                          className="implementation-evidence"
                           initialValue={initialValues[id]}
                           init={{
                             selector: 'textarea',
-                            body_class: 'my_class',
                             menubar: false,
                             plugins: 'lists advlist',
                             toolbar: '+ removeformat bold italic underline strikethrough bullist numlist',
@@ -463,7 +468,18 @@ class QuestionForm extends Component<Props> {
                   );
                 }
 
-                if (type === "service register") {
+                if (type === "service register" || type === "dropdown" || type === "information classification") {
+                  let selectOptions = serviceRegister;
+
+                  if (type !== "service register") {
+                    selectOptions = options.map((option) => {
+                      return {
+                        value: option.value,
+                        label: option.label
+                      }
+                    })
+                  }
+
                   return (
                     <div key={id} className="field-container">
                       {
@@ -472,18 +488,19 @@ class QuestionForm extends Component<Props> {
                             <label className={required > 0 ? "required" : ""}>{label}</label>
                           </div>
                       )}
+
                       <div className="dropdown-container">
                         <Select
                           name={id}
-                          options={serviceRegister}
+                          options={selectOptions}
                           defaultValue={
                             (
                               initialValues[id] &&
-                              serviceRegister.find(o => o.value === JSON.parse(initialValues[id]).value)
+                              selectOptions.find(option => option.value === JSON.parse(initialValues[id]).value)
                             ) ? JSON.parse(initialValues[id]) : ''
                           }
                           classNamePrefix="react-select"
-                          className={hasError? "react-select-error" : " "}
+                          className={hasError? "react-select-error" : ""}
                           maxMenuHeight={250}
                           placeholder="Select"
                           onChange={(selectedOption) => {

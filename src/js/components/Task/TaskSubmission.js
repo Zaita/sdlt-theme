@@ -127,6 +127,7 @@ class TaskSubmission extends Component<Props> {
         <Questionnaire
           questions={taskSubmission.questions}
           serviceRegister={taskSubmission.serviceRegister}
+          informationClassificationTaskResult={taskSubmission.informationClassificationTaskResult}
           saveAnsweredQuestion={saveAnsweredQuestion}
           onLeftBarItemClick={moveToPreviousQuestion}
         />

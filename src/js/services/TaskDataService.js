@@ -83,6 +83,7 @@ query {
     ComponentTarget
     ProductAspects
     HideWeightsAndScore
+    InformationClassificationTaskResult
   }
   readServiceInventory {
     ID
@@ -105,6 +106,7 @@ query {
       taskType: toString(get(submissionJSONObject, "TaskType", "")),
       status: toString(get(submissionJSONObject, "Status", "")),
       result: toString(get(submissionJSONObject, "Result", "")),
+      informationClassificationTaskResult: toString(get(submissionJSONObject, "InformationClassificationTaskResult", "")),
       submitter: UserParser.parseUserFromJSON(get(submissionJSONObject, "Submitter")),
       lockWhenComplete: Boolean(get(submissionJSONObject, "LockAnswersWhenComplete", false)),
       questionnaireSubmissionUUID: toString(get(submissionJSONObject, "QuestionnaireSubmission.UUID", "")),
@@ -127,7 +129,6 @@ query {
       siblingSubmissions: TaskParser.parseAlltaskSubmissionforQuestionnaire(submissionJSONObject),
       serviceRegister: TaskParser.parseServiceRegister(serviceRegister)
     };
-
     return data;
   }
 
