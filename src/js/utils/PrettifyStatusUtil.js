@@ -10,31 +10,37 @@ export default class PrettifyStatusUtil {
     businessOwnerApprovalStatus: string
   ) {
     if (status === "awaiting_security_architect_review") {
-      return "Waiting for Security Architect Approval - unassigned";
+      return "Awaiting security review";
     }
 
     if (status === "waiting_for_security_architect_approval") {
-      if (currentUser.id == securityArchitectID) {
-        return "Waiting for Security Architect Approval - assigned to me";
-      }
-
-      if (currentUser.id !== securityArchitectID) {
-        return "Waiting for Security Architect Approval - " + securityArchitectApprover;
-      }
+      return "Awaiting security approval";
     }
 
     if (status === "waiting_for_approval") {
       if (CisoApprovalStatus === "pending" && businessOwnerApprovalStatus === "pending") {
-        return "Waiting for Approval - Business Owner and Chief Information Security Officer";
+        return "Awaiting approval";
       }
 
       if (CisoApprovalStatus !== "pending" && businessOwnerApprovalStatus === "pending") {
-        return "Waiting for Approval - Business Owner";
+        return "Awaiting business owner approval";
       }
     }
 
     if (status === "approved" && CisoApprovalStatus === "pending" && businessOwnerApprovalStatus === "approved") {
       return "Approved - Chief Information Security Officer Approval Pending";
+    }
+
+    if (status == "awaiting_certification_and_accreditation") {
+      return "Awaiting certification and accreditation";
+    }
+
+    if (status == "awaiting_accreditation") {
+      return "Awaiting accreditation";
+    }
+
+    if (status == "awaiting_certification") {
+      return "Awaiting certification";
     }
 
     return status

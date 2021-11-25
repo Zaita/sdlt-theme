@@ -10,10 +10,16 @@ import PrettifyStatusUtil from "../../utils/PrettifyStatusUtil";
 import type {TaskSubmissionListItem} from "../../types/Task";
 import {loadCurrentUser} from "../../actions/user";
 import {loadAwaitingApprovalList} from "../../actions/questionnaire";
-import {loadAwaitingApprovalTaskList} from "../../actions/task";
+import {loadAwaitingApprovalTaskList } from "../../actions/task";
 import moment from "moment";
 import {loadSiteConfig} from "../../actions/siteConfig";
 import type {SiteConfig} from "../../types/SiteConfig";
+import chevronRightIcon from "../../../img/icons/chevron-right-link.svg";
+import ArrowDownIcon from "../../../img/icons/arrow-down.svg";
+import awaitingApprovalIcon from "../../../img/icons/awaiting-approval.svg";
+import PaginationContainer from "../Pagination/PaginationContainer";
+import {loadPaginationReset} from "../../actions/pagination";
+import _ from "lodash";
 
 const mapStateToProps = (state: RootState) => {
   return {
@@ -29,33 +35,48 @@ const mapDispatchToProps = (dispatch: Dispatch, props: *) => {
   return {
     async dispatchLoadDataAction() {
       await dispatch(loadCurrentUser());
-      await dispatch(loadAwaitingApprovalList());
-      await dispatch(loadAwaitingApprovalTaskList());
+      await dispatch(loadAwaitingApprovalList(10, 0));
+      await dispatch(loadAwaitingApprovalTaskList(10, 0));
       await dispatch(loadSiteConfig());
-    }
+    },
+    dispatchloadAwaitingApprovalTaskList(limit: number, offset: number) {
+      dispatch(loadAwaitingApprovalTaskList(limit, offset));
+    },
+    dispatchloadAwaitingApprovalList(limit: number, offset: number) {
+      dispatch(loadAwaitingApprovalList(limit, offset));
+    },
+    resetPagination: () => dispatch(loadPaginationReset()),
   };
 };
 
-type Props = {
+type ownProps = {
   currentUser?: User | null,
   siteConfig?: SiteConfig | null,
   dispatchLoadDataAction?: () => void,
   awaitingApprovalList?: Array<QuestionnaireSubmissionListItem>,
   awaitingApprovalTaskList?: Array<TaskSubmissionListItem>,
-  loadingState: object<*>
+  loadingState: object<*>,
+};
+
+type reduxProps = {
+  dispatchloadAwaitingApprovalList: (limit: number, offset: number) => void,
+  dispatchloadAwaitingApprovalTaskList: (limit: number, offset: number) => void,
 };
 
 type State = {
   currentApprovalList: string
 };
 
+type Props = ownProps & reduxProps;
+
 class AwaitingApprovalList extends Component<Props> {
   constructor(props: *) {
     super(props);
     this.state = {
-      currentApprovalList: "QuestionnaireApproval"
+      currentApprovalList: "QuestionnaireApproval",
     };
   }
+
   componentDidMount() {
     const {dispatchLoadDataAction} = {...this.props};
     dispatchLoadDataAction();
@@ -67,8 +88,10 @@ class AwaitingApprovalList extends Component<Props> {
       siteConfig,
       awaitingApprovalList,
       awaitingApprovalTaskList,
-      loadingState
-    } = {...this.props};
+      loadingState,
+      dispatchloadAwaitingApprovalList,
+      dispatchloadAwaitingApprovalTaskList,
+    } = { ...this.props };
 
     if (!currentUser || !awaitingApprovalList || !siteConfig || !awaitingApprovalTaskList) {
       return null;
@@ -80,32 +103,62 @@ class AwaitingApprovalList extends Component<Props> {
 
     return (
       <div className="AnswersPreview">
-        <Header title="Awaiting Approvals" username={currentUser.name} subtitle={siteConfig.siteTitle} logopath={siteConfig.logoPath}/>
-        <div className="container text-center tab-container">
+        <Header
+          title="Awaiting Approvals"
+          username={currentUser.name}
+          subtitle={siteConfig.siteTitle}
+          logopath={siteConfig.logoPath}
+        />
+        <div className="container tab-container mb-0">
           <button
-            className={this.state.currentApprovalList=="QuestionnaireApproval" ? "tab-button mr-3 active" : "tab-button mr-3"}
-            onClick={() => this.setState({currentApprovalList: "QuestionnaireApproval"})}
+            className={this.state.currentApprovalList == "QuestionnaireApproval" ? "tab-button active": "tab-button"}
+            onClick={() => {
+              this.setState({ currentApprovalList: "QuestionnaireApproval" });
+              this.props.resetPagination();
+              this.props.dispatchloadAwaitingApprovalList(10,0);
+            }}
           >
-            Questionnaire Approvals
+            Submission approvals
           </button>
           <button
-            className={this.state.currentApprovalList=="TaskApproval" ? "tab-button active" : "tab-button"}
-            onClick={()=> this.setState({currentApprovalList: "TaskApproval"})}
+            className={this.state.currentApprovalList == "TaskApproval"? "tab-button active": "tab-button"}
+            onClick={() => {
+              this.setState({ currentApprovalList: "TaskApproval" });
+              this.props.resetPagination();
+              this.props.dispatchloadAwaitingApprovalTaskList(10,0);
+            }}
           >
-            Task Approvals
+            Task approvals
           </button>
         </div>
-        {this.state.currentApprovalList=="QuestionnaireApproval" && questionnaireList(awaitingApprovalList, currentUser)}
-        {this.state.currentApprovalList=="TaskApproval" && taskList(awaitingApprovalTaskList, currentUser)}
-        <Footer footerCopyrightText={siteConfig.footerCopyrightText}/>
+        {this.state.currentApprovalList == "QuestionnaireApproval" &&
+          questionnaireList(
+            awaitingApprovalList,
+            currentUser,
+            dispatchloadAwaitingApprovalList
+          )}
+
+        {this.state.currentApprovalList == "TaskApproval" &&
+          taskList(
+            awaitingApprovalTaskList,
+            currentUser,
+            dispatchloadAwaitingApprovalTaskList
+          )}
+        <Footer footerCopyrightText={siteConfig.footerCopyrightText} />
       </div>
     );
   }
 }
 
-const questionnaireList = (awaitingApprovalList: Array<QuestionnaireSubmissionListItem>, currentUser: User) => {
-  if(!awaitingApprovalList.length)
-  {
+const questionnaireList = (
+  awaitingApprovalList: Array<QuestionnaireSubmissionListItem>,
+  currentUser: User,
+  dispatchloadAwaitingApprovalList
+) => {
+
+  const { questionnaireSubmissionList, pageInfo} = awaitingApprovalList;
+
+  if (_.isEmpty(questionnaireSubmissionList)) {
     return (
       <div className="container">
         <div className="alert alert-danger">
@@ -118,51 +171,57 @@ const questionnaireList = (awaitingApprovalList: Array<QuestionnaireSubmissionLi
   return (
     <div className="container">
       <div className="table-responsive">
-        <table className="table table-bordered table-hover">
+        <table className="table table-hover table-approval-list">
           <thead>
             <tr key="submission_table_header">
-              <th className="text-center">Date Created</th>
-              <th className="text-center">Product Name</th>
-              <th className="text-center">Business Owner</th>
-              <th className="text-center">Submitter</th>
-              <th className="text-center">Status</th>
-              <th className="text-center">Deliverable Release Date</th>
-              <th className="text-center">Actions</th>
+              <th>
+                <span className="date-created">Date created</span>
+                <img src={ArrowDownIcon} />
+              </th>
+              <th className="submission-product-name-header">Product Name</th>
+              <th>Business Owner</th>
+              <th>Submitter</th>
+              <th>Release date</th>
+              <th className="security-architect-header">Security architect</th>
+              <th className="submission-status-header">Status</th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
-            {awaitingApprovalList.map((awaitingApproval) => {
-              const url =  "#/questionnaire/summary/" + awaitingApproval.uuid;
+            {questionnaireSubmissionList.map((awaitingApproval) => {
+              const url = "#/questionnaire/summary/" + awaitingApproval.uuid;
+              let securityArchitectName = awaitingApproval.SecurityArchitectApprover;
+
+              // SA name parsed as first name + last name
+              if (securityArchitectName == "null null") {
+                securityArchitectName = "Unassigned";
+              }
+
               return (
                 <tr key={awaitingApproval.id}>
+                  <td>{moment(awaitingApproval.created).format("DD/MM/YY")}</td>
+                  <td>{awaitingApproval.productName}</td>
+                  <td>{awaitingApproval.businessOwner}</td>
+                  <td>{awaitingApproval.submitterName}</td>
                   <td>
-                    {moment(awaitingApproval.created).format("DD MMM YYYY")}
+                    {awaitingApproval.releaseDate ? moment(awaitingApproval.releaseDate).format("DD/MM/YY"): ""}
+                  </td>
+                  <td className={securityArchitectName == "Unassigned" ? "unassigned-approver" : ""}>
+                    {securityArchitectName}
                   </td>
                   <td>
-                    {awaitingApproval.productName}
-                  </td>
-                  <td>
-                    {awaitingApproval.businessOwner}
-                  </td>
-                  <td>
-                    {awaitingApproval.submitterName}
-                  </td>
-                  <td>
+                    <img src={awaitingApprovalIcon} />
                     {PrettifyStatusUtil.prettifyStatus(
                       awaitingApproval.status,
                       awaitingApproval.SecurityArchitectApproverID,
                       currentUser,
                       awaitingApproval.SecurityArchitectApprover,
                       awaitingApproval.CisoApprovalStatus,
-                      awaitingApproval.BusinessOwnerApprovalStatus,
-                    )
-                    }
+                      awaitingApproval.BusinessOwnerApprovalStatus
+                    )}
                   </td>
                   <td>
-                    {awaitingApproval.releaseDate ? moment(awaitingApproval.releaseDate).format("DD MMM YYYY") : ''}
-                  </td>
-                  <td>
-                    <a href={url}>View</a>
+                    <a href={url}><img src={chevronRightIcon} /></a>
                   </td>
                 </tr>
               );
@@ -170,13 +229,24 @@ const questionnaireList = (awaitingApprovalList: Array<QuestionnaireSubmissionLi
           </tbody>
         </table>
       </div>
+      <PaginationContainer
+        paginationInfo={pageInfo}
+        listLength={questionnaireSubmissionList.length}
+        dispatchList={dispatchloadAwaitingApprovalList}
+      />
     </div>
   );
-}
+};
 
-const taskList = (awaitingApprovalTaskList:Array<TaskSubmissionListItem>, currentUser: User) => {
-  if(!awaitingApprovalTaskList.length)
-  {
+const taskList = (
+  awaitingApprovalTaskList: Array<TaskSubmissionListItem>,
+  currentUser: User,
+  dispatchloadAwaitingApprovalTaskList
+) => {
+
+  const { taskSubmissionList, pageInfo } = awaitingApprovalTaskList;
+
+  if (_.isEmpty(taskSubmissionList)) {
     return (
       <div className="container">
         <div className="alert alert-danger">
@@ -189,46 +259,37 @@ const taskList = (awaitingApprovalTaskList:Array<TaskSubmissionListItem>, curren
   return (
     <div className="container">
       <div className="table-responsive">
-        <table className="table table-bordered table-hover">
+        <table className="table table-hover table-approval-list">
           <thead>
             <tr key="submission_table_header">
-              <th className="text-center">Date Created</th>
-              <th className="text-center">Task Name</th>
-              <th className="text-center">Product Name</th>
-              <th className="text-center">Submitter</th>
-              <th className="text-center">Status</th>
-              <th className="text-center">Actions</th>
+              <th>
+                <span className="date-created">Date created</span>
+                <img src={ArrowDownIcon} />
+              </th>
+              <th className="task-name-header">Task name</th>
+              <th className="task-product-name-header">Product Name</th>
+              <th className="task-submitter-header">Submitter</th>
+              <th className="task-status-header-header">Status</th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
-            {awaitingApprovalTaskList.map((awaitingTaskApproval) => {
-              const url =  "#/task/submission/" + awaitingTaskApproval.uuid;
+            {taskSubmissionList.map((awaitingTaskApproval) => {
+              const url = "#/task/submission/" + awaitingTaskApproval.uuid;
               return (
                 <tr key={awaitingTaskApproval.id}>
                   <td>
-                    {moment(awaitingTaskApproval.created).format("DD MMM YYYY")}
+                    {moment(awaitingTaskApproval.created).format("DD/MM/YY")}
+                  </td>
+                  <td>{awaitingTaskApproval.taskName}</td>
+                  <td>{awaitingTaskApproval.productName}</td>
+                  <td>{awaitingTaskApproval.submitterName}</td>
+                  <td>
+                    <img src={awaitingApprovalIcon} />
+                    Awaiting approval
                   </td>
                   <td>
-                    {awaitingTaskApproval.taskName}
-                  </td>
-                  <td>
-                    {awaitingTaskApproval.productName}
-                  </td>
-                  <td>
-                    {awaitingTaskApproval.submitterName}
-                  </td>
-                  <td>
-                    {PrettifyStatusUtil.prettifyStatus(
-                      awaitingTaskApproval.status,
-                      '',
-                      currentUser,
-                      '',
-                      '',
-                      ''
-                    )}
-                  </td>
-                  <td>
-                    <a href={url}>View</a>
+                    <a href={url}><img src={chevronRightIcon} /></a>
                   </td>
                 </tr>
               );
@@ -236,11 +297,16 @@ const taskList = (awaitingApprovalTaskList:Array<TaskSubmissionListItem>, curren
           </tbody>
         </table>
       </div>
+      <PaginationContainer
+        paginationInfo={pageInfo}
+        listLength={taskSubmissionList.length}
+        dispatchList={dispatchloadAwaitingApprovalTaskList}
+      />
     </div>
   );
-}
+};
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps,
+  mapDispatchToProps
 )(AwaitingApprovalList);

@@ -353,7 +353,8 @@ export function loadMySubmissionList(): ThunkAction {
 
     try {
       // Call re sync with jira data api
-      const data = await QuestionnaireDataService.fetchQuestionnaireSubmissionList(user.id, 'my_submission_list');
+      // limit and offset for pagination query set to 0
+      const data = await QuestionnaireDataService.fetchQuestionnaireSubmissionList(user.id, 'my_submission_list', 0, 0);
 
       dispatch({
         type: ActionType.QUESTIONNAIRE.FETCH_MY_SUBMISSION_LIST_SUCCESS,
@@ -369,7 +370,7 @@ export function loadMySubmissionList(): ThunkAction {
 
 // Questionnaire Submissions list of pending approval list
 // for SA, CISO and Business owner
-export function loadAwaitingApprovalList(): ThunkAction {
+export function loadAwaitingApprovalList(limit: number, offset: number): ThunkAction {
   return async (dispatch: any, getState: () => RootState) => {
     const user = getState().currentUserState.user;
     if (!user) {
@@ -380,8 +381,7 @@ export function loadAwaitingApprovalList(): ThunkAction {
 
     try {
       // Call re sync with jira data api
-      const data = await QuestionnaireDataService.fetchQuestionnaireSubmissionList(user.id, 'awaiting_approval_list');
-
+      const data = await QuestionnaireDataService.fetchQuestionnaireSubmissionList(user.id, 'awaiting_approval_list', limit, offset);
       dispatch({
         type: ActionType.QUESTIONNAIRE.FETCH_AWAITING_APPROVAL_LIST_SUCCESS,
         payload: data
@@ -406,7 +406,8 @@ export function loadMyProductList(): ThunkAction {
 
     try {
       // Call re sync with jira data api
-      const data = await QuestionnaireDataService.fetchQuestionnaireSubmissionList(user.id, 'my_product_list');
+      // limit and offset for pagination query set to 0
+      const data = await QuestionnaireDataService.fetchQuestionnaireSubmissionList(user.id, 'my_product_list', 0, 0);
 
       dispatch({
         type: ActionType.QUESTIONNAIRE.FETCH_MY_PRODUCT_LIST_SUCCESS,

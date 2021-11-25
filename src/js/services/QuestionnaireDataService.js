@@ -9,7 +9,7 @@ import QuestionParser from "../utils/QuestionParser";
 import UserParser from "../utils/UserParser";
 import SiteConfigParser from "../utils/SiteConfigParser";
 import type {Collaborator} from "../types/User";
-
+import type {PaginationInfo} from "../types/Pagination";
 export default class QuestionnaireDataService {
 
   static async createInProgressSubmission(argument: { questionnaireID: string, csrfToken: string }): Promise<string> {
@@ -102,11 +102,11 @@ query {
     User {
       ID
     }
-    SubmitterName,
-    SubmitterEmail,
-    QuestionnaireStatus,
-    BusinessOwnerApproverName,
-    RiskResultData,
+    SubmitterName
+    SubmitterEmail
+    QuestionnaireStatus
+    BusinessOwnerApproverName
+    RiskResultData
     Questionnaire {
       ID
       Name
@@ -147,7 +147,7 @@ query {
       FirstName
       Surname
     }
-    AccreditationAuthorityApprover{
+    AccreditationAuthorityApprover {
       FirstName
       Surname
     }
@@ -453,55 +453,77 @@ mutation {
     return {uuid};
   }
 
-  // load data for Awaiting Approvals
-  static async fetchQuestionnaireSubmissionList(userID: string, pageType: string): Promise<Array<QuestionnaireSubmissionListItem>> {
+  // load data for Awaiting Approvals, submissions list, product list
+  static async fetchQuestionnaireSubmissionList(userID: string, pageType: string, limit: number, offset: number): Promise<Array<QuestionnaireSubmissionListItem>> {
     const query = `query {
-      readQuestionnaireSubmission(UserID: "${userID}", PageType: "${pageType}") {
-        ID
-        UUID
-        QuestionnaireStatus
-        QuestionnaireName
-        Created
-        ProductName
-        ReleaseDate
-        BusinessOwnerApproverName
-        SubmitterName
-        SecurityArchitectApprover {
-          FirstName
-          Surname
-          ID
+      paginatedReadQuestionnaireSubmissions(UserID: "${userID}", PageType: "${pageType}", limit: ${limit}, offset: ${offset}) {
+        edges {
+          node {
+            ID
+            UUID
+            QuestionnaireStatus
+            QuestionnaireName
+            Created
+            ProductName
+            ReleaseDate
+            BusinessOwnerApproverName
+            SubmitterName
+            SecurityArchitectApprover {
+              FirstName
+              Surname
+              ID
+            }
+            CisoApprovalStatus
+            BusinessOwnerApprovalStatus
+          }
         }
-        CisoApprovalStatus
-        BusinessOwnerApprovalStatus
+        pageInfo {
+          hasNextPage,
+          hasPreviousPage,
+          totalCount
+        }
       }
     }`;
 
     const json = await GraphQLRequestHelper.request({query});
 
     // TODO: parse data
-    const data = _.get(json, 'data.readQuestionnaireSubmission', []);
+    const data = _.get(json, 'data.paginatedReadQuestionnaireSubmissions.edges', []);
+    const pageInfoData = _.get(json, 'data.paginatedReadQuestionnaireSubmissions.pageInfo', []);
+
     if (!Array.isArray(data)) {
       throw 'error';
     }
 
-    return data.map((item: any) : QuestionnaireSubmissionListItem => {
+    const pageInfo : PaginationInfo = {
+      totalCount: _.get(pageInfoData, 'totalCount', 0),
+      hasNextPage: Boolean(_.get(pageInfoData, 'hasNextPage', false)),
+      hasPreviousPage: Boolean(_.get(pageInfoData, 'hasPreviousPage', false))
+    }
+
+    const questionnaireSubmissionList = data.map((item: any) : QuestionnaireSubmissionListItem => {
       let obj = {};
-      obj['id'] = _.get(item, 'ID', '');
-      obj['uuid'] = _.get(item, 'UUID', '');
-      obj['status'] = _.get(item, 'QuestionnaireStatus', '');
-      obj['productName'] = _.get(item, 'ProductName', '');
-      obj['questionnaireName'] = _.get(item, 'QuestionnaireName', '');
-      obj['created'] = _.get(item, 'Created', '');
-      obj['releaseDate'] = _.get(item, 'ReleaseDate', '');
-      obj['businessOwner'] = _.get(item, 'BusinessOwnerApproverName', '');
-      obj['submitterName'] = _.get(item, 'SubmitterName', '');
-      obj['SecurityArchitectApprover'] = _.toString(_.get(item, 'SecurityArchitectApprover.FirstName', '') + " " + _.get(item, 'SecurityArchitectApprover.Surname', ''));
-      obj['SecurityArchitectApproverID'] = _.get(item, 'SecurityArchitectApprover.ID', '');
-      obj['CisoApprovalStatus'] = _.get(item, 'CisoApprovalStatus', '');
-      obj['BusinessOwnerApprovalStatus'] =  _.get(item, 'BusinessOwnerApprovalStatus', '');
+      obj['id'] = _.get(item, 'node.ID', '');
+      obj['uuid'] = _.get(item, 'node.UUID', '');
+      obj['status'] = _.get(item, 'node.QuestionnaireStatus', '');
+      obj['productName'] = _.get(item, 'node.ProductName', '');
+      obj['questionnaireName'] = _.get(item, 'node.QuestionnaireName', '');
+      obj['created'] = _.get(item, 'node.Created', '');
+      obj['releaseDate'] = _.get(item, 'node.ReleaseDate', '');
+      obj['businessOwner'] = _.get(item, 'node.BusinessOwnerApproverName', '');
+      obj['submitterName'] = _.get(item, 'node.SubmitterName', '');
+      obj['SecurityArchitectApprover'] = _.toString(_.get(item, 'node.SecurityArchitectApprover.FirstName', '') + " " + _.get(item, 'node.SecurityArchitectApprover.Surname', ''));
+      obj['SecurityArchitectApproverID'] = _.get(item, 'node.SecurityArchitectApprover.ID', '');
+      obj['CisoApprovalStatus'] = _.get(item, 'node.CisoApprovalStatus', '');
+      obj['BusinessOwnerApprovalStatus'] =  _.get(item, 'node.BusinessOwnerApprovalStatus', '');
       obj['']
       return obj;
     });
+
+    return {
+      questionnaireSubmissionList,
+      pageInfo
+    }
   }
 
   static async approveQuestionnaireSubmissionAsBusinessOwner(
