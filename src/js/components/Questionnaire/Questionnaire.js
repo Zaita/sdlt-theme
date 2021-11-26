@@ -11,7 +11,8 @@ type Props = {
   questions: Array<Question>,
   saveAnsweredQuestion: (question: Question) => void,
   onLeftBarItemClick: (question: Question) => void,
-  serviceRegister: Array<*>
+  serviceRegister: Array<*>,
+  informationClassificationTaskResult: string
 };
 
 class Questionnaire extends Component<Props> {
@@ -63,7 +64,7 @@ class Questionnaire extends Component<Props> {
   }
 
   render() {
-    const {questions, onLeftBarItemClick, serviceRegister} = {...this.props};
+    const {questions, onLeftBarItemClick, serviceRegister, informationClassificationTaskResult} = {...this.props};
 
     const currentQuestion = questions.find((question) => {
       return question.isCurrent === true;
@@ -84,6 +85,7 @@ class Questionnaire extends Component<Props> {
                 key={currentQuestion.id}
                 question={currentQuestion}
                 serviceRegister={serviceRegister}
+                informationClassificationTaskResult={informationClassificationTaskResult}
                 handleFormSubmit={this.handleFormSubmit.bind(this)}
                 handleActionClick={this.handleActionClick.bind(this)}
               />
