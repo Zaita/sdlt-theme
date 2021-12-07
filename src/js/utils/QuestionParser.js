@@ -172,7 +172,7 @@ export default class QuestionParser {
         title: _.toString(_.get(questionSchema, "Title", "")),
         heading: _.toString(_.get(questionSchema, "QuestionHeading", "")),
         description: _.toString(_.get(questionSchema, "Description", "")),
-        type: _.toString(_.get(questionSchema, "AnswerFieldType", "")).toLowerCase() === "input" ? "input" : "action",
+        type: _.toString(_.get(questionSchema, "AnswerFieldType", "")).toLowerCase(),
         isCurrent: isCurrent,
         hasAnswer: hasAnswer,
         isApplicable: isApplicable,

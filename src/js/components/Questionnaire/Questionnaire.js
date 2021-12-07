@@ -12,7 +12,8 @@ type Props = {
   saveAnsweredQuestion: (question: Question) => void,
   onLeftBarItemClick: (question: Question) => void,
   serviceRegister: Array<*>,
-  informationClassificationTaskResult: string
+  informationClassificationTaskResult: string,
+  riskProfileData: Array<*>
 };
 
 class Questionnaire extends Component<Props> {
@@ -63,8 +64,26 @@ class Questionnaire extends Component<Props> {
     saveAnsweredQuestion(answeredQuestion);
   }
 
+  handleNextButtonClickForDisplayField() {
+    const {questions, saveAnsweredQuestion} = {...this.props};
+
+    // Generate new question with data
+    const currentQuestion = questions.find((question) => {
+      return question.isCurrent === true;
+    });
+    if (!currentQuestion) {
+      return;
+    }
+
+    const answeredQuestion = {...currentQuestion};
+    answeredQuestion.hasAnswer = true;
+    answeredQuestion.isApplicable = true;
+
+    saveAnsweredQuestion(answeredQuestion);
+  }
+
   render() {
-    const {questions, onLeftBarItemClick, serviceRegister, informationClassificationTaskResult} = {...this.props};
+    const {questions, onLeftBarItemClick, serviceRegister, informationClassificationTaskResult, riskProfileData} = {...this.props};
 
     const currentQuestion = questions.find((question) => {
       return question.isCurrent === true;
@@ -85,6 +104,7 @@ class Questionnaire extends Component<Props> {
                 key={currentQuestion.id}
                 question={currentQuestion}
                 serviceRegister={serviceRegister}
+                riskProfileData={riskProfileData}
                 informationClassificationTaskResult={informationClassificationTaskResult}
                 handleFormSubmit={this.handleFormSubmit.bind(this)}
                 handleActionClick={this.handleActionClick.bind(this)}

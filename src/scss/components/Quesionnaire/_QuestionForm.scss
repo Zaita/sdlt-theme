@@ -265,4 +265,27 @@
     scrollbar-color: $light-blue $white;
     scrollbar-width: thin;
   }
+
+  .risk-profile-container {
+    font-size: 12px;
+
+    .product-aspect-container {
+      margin-bottom: 10px;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    .risk-profile-table-container {
+      margin-bottom: 40px;
+
+      .table {
+        border: 1px solid $light-gray;
+        border-radius: 5px;
+
+        td {
+          font-size: 11px;
+        }
+      }
+    }
+  }
 }
