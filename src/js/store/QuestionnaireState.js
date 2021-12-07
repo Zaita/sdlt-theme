@@ -17,7 +17,8 @@ export type QuestionnaireSubmissionState = {
   user: User | null,
   submission: Submission | null,
   isCurrentUserApprover: boolean,
-  isCurrentUserABusinessOwnerApprover: boolean
+  isCurrentUserABusinessOwnerApprover: boolean,
+  securityTeamEmail: string,
 };
 
 export type QuestionnaireState = {

@@ -7,4 +7,5 @@ export type SiteConfig = {
   homePageBackgroundImagePath: string,
   pdfHeaderImageLink: string,
   pdfFooterImageLink: string,
+  securityTeamEmail: string,
 }

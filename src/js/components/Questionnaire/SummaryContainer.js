@@ -226,6 +226,7 @@ class SummaryContainer extends Component<Props, State> {
                  token={secureToken}
                  members={members}
                  showNotApproveButton={showNotApproveButton}
+                 securityTeamEmail={siteConfig.securityTeamEmail}
         />
         <Footer footerCopyrightText={siteConfig.footerCopyrightText}/>
         <ReactModal

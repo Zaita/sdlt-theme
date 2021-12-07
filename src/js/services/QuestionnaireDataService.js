@@ -98,6 +98,7 @@ query {
     CertificationAuthorityAcknowledgementText
     AccreditationAuthorityAcknowledgementText
     IsCertificationAndAccreditationTaskExists
+    ProductAspects
     User {
       ID
     }
@@ -124,6 +125,10 @@ query {
       TaskName
       TaskType
       Status
+      IsTaskApprovalRequired
+      TimeToComplete
+      TimeToReview
+      CanTaskCreateNewTasks
       TaskApprover {
         ID
         FirstName
@@ -150,6 +155,8 @@ query {
     AccreditationAuthorityApprovalStatus
     ApprovalOverrideBySecurityArchitect
     CollaboratorList
+    Created
+    ReleaseDate
   }
   readSiteConfig {
     Title
@@ -158,6 +165,7 @@ query {
     HomePageBackgroundImagePath
     PdfHeaderImageLink
     PdfFooterImageLink
+    SecurityTeamEmail
   }
 }`;
     const json = await GraphQLRequestHelper.request({query});
@@ -233,12 +241,19 @@ query {
               taskType: _.toString(_.get(item, "TaskType", "")),
               status: _.toString(_.get(item, "Status", "")),
               approver: UserParser.parseUserFromJSON(_.get(item, "TaskApprover")),
+              isTaskApprovalRequired: _.get(item, "IsTaskApprovalRequired", "false") === "true",
+              timeToComplete: _.toString(_.get(item, "TimeToComplete", "")),
+              timeToReview: _.toString(_.get(item, "TimeToReview", "")),
+              canTaskCreateNewTasks: _.get(item, "CanTaskCreateNewTasks", "false") === "true",
             };
             return taskSubmission;
           }),
         collaborators: UserParser.parserCollaboratorsFromJSON(_.get(submissionJSON, "CollaboratorList", [])),
-        riskResults: _.has(submissionJSON, 'RiskResultData') ? JSON.parse(_.get(submissionJSON, "RiskResultData", "[]")) : "[]"
-      },
+        riskResults: _.has(submissionJSON, 'RiskResultData') ? JSON.parse(_.get(submissionJSON, "RiskResultData", "[]")) : "[]",
+        created: _.toString(_.get(submissionJSON, "Created", "")),
+        releaseDate: _.toString(_.get(submissionJSON, "ReleaseDate", "")),
+        productAspects: _.has(submissionJSON, 'ProductAspects') ? JSON.parse(_.get(submissionJSON, "ProductAspects", "[]")) : "[]",
+      }
     };
 
     return data;
