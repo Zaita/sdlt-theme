@@ -23,7 +23,8 @@ type Props = {
   handleFormSubmit: (formik: FormikBag, values: Object) => void,
   handleActionClick: (action: AnswerAction) => void,
   serviceRegister: Array<*>,
-  informationClassificationTaskResult: string
+  informationClassificationTaskResult: string,
+  riskProfileData: Array<*>
 };
 
 class QuestionForm extends Component<Props> {
@@ -46,9 +47,87 @@ class QuestionForm extends Component<Props> {
 
         {this.renderActions(question)}
         {this.renderInputsForm(question)}
+        {this.renderRiskProfile(question)}
 
       </div>
     );
+  }
+
+  renderRiskProfile(question: Question) {
+    if (question.type !== "display") {
+      return;
+    }
+
+    const {riskProfileData, handleActionClick} = {...this.props};
+
+    if (riskProfileData.isDisplayMessage) {
+      return (
+        <div className="alert alert-danger">{riskProfileData.message}</div>
+      );
+    }
+
+    return (
+      <div className="risk-profile-container">
+
+        {
+          riskProfileData.hasProductAspects && Object.entries(riskProfileData.result).map((item, index) => {
+            return (
+              <div key={index}>
+                <div className="product-aspect-container">{item[0]}</div>
+                {this.renderRiskProfileTable(item[1])}
+              </div>
+            )
+          })
+        }
+
+        {
+          !riskProfileData.hasProductAspects && this.renderRiskProfileTable(riskProfileData.result)
+        }
+
+        <div className="bottom-container">
+          <div className="message-container">
+            <span>
+            <img src={InfoIcon} />
+              <span className="saveMessage">
+                Your answers will be saved when you continue to the next question.
+              </span>
+            </span>
+          </div>
+
+          <div className="button-container">
+            <DarkButton title="Next" rightIconImage={ChevronIcon}  onClick={() => {handleActionClick("next")}} />
+          </div>
+        </div>
+
+      </div>
+    );
+  }
+
+  renderRiskProfileTable(items) {
+    return(
+      <div className="risk-profile-table-container">
+        <table className="table">
+          <thead className="">
+            <tr key="risk_profile_table_header">
+              <th>Risk category</th>
+              <th>Current risk rating</th>
+            </tr>
+          </thead>
+          <tbody>
+            {items.map((item, index) => {
+              return(
+                <tr key={index}>
+                  <td>{item.riskName}</td>
+                  <td style={{backgroundColor: item.currentRiskRating.colour}}>
+                    {item.currentRiskRating.name}
+                  </td>
+                </tr>
+              )
+            })}
+          </tbody>
+        </table>
+      </div>
+    )
   }
 
   renderActions(question: Question) {

@@ -56,6 +56,7 @@ query {
     }
     QuestionnaireData
     AnswerData
+    RiskProfileData
     SelectedComponents {
       ID
       ProductAspect
@@ -127,7 +128,8 @@ query {
       hideWeightsAndScore: _.get(submissionJSONObject, "HideWeightsAndScore", "false") === "true",
       isTaskCollborator: _.get(submissionJSONObject, "IsTaskCollborator", "false") === "true",
       siblingSubmissions: TaskParser.parseAlltaskSubmissionforQuestionnaire(submissionJSONObject),
-      serviceRegister: TaskParser.parseServiceRegister(serviceRegister)
+      serviceRegister: TaskParser.parseServiceRegister(serviceRegister),
+      riskProfileData:  _.has(submissionJSONObject, 'RiskProfileData') ? JSON.parse(get(submissionJSONObject, "RiskProfileData", [])) : [],
     };
     return data;
   }
