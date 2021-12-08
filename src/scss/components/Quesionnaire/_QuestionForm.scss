@@ -178,9 +178,21 @@
 
     .checkbox-label,
     .radio-label {
-      font-size: 11px;
+      font-size: 12px;
       line-height: 13px;
       margin-bottom: 0px;
+      display: inline !important ;
+      margin: 0px;
+    }
+
+    .radio-container, .checkbox-container {
+      position: relative;
+      top: -10px;
+    }
+
+    .accreditation-level-option {
+      display: inline !important;
+      margin-right: 38px;
     }
 
     .radio,

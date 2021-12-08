@@ -22,6 +22,7 @@ type Props = {
   index: number,
   handleFormSubmit: (formik: FormikBag, values: Object) => void,
   handleActionClick: (action: AnswerAction) => void,
+  handleNextButtonClickForDisplayField: () => void,
   serviceRegister: Array<*>,
   informationClassificationTaskResult: string,
   riskProfileData: Array<*>
@@ -58,19 +59,17 @@ class QuestionForm extends Component<Props> {
       return;
     }
 
-    const {riskProfileData, handleActionClick} = {...this.props};
+    const {riskProfileData, handleNextButtonClickForDisplayField} = {...this.props};
 
-    if (riskProfileData.isDisplayMessage) {
-      return (
-        <div className="alert alert-danger">{riskProfileData.message}</div>
-      );
-    }
 
     return (
       <div className="risk-profile-container">
+        {
+          riskProfileData.isDisplayMessage && (<div className="alert alert-danger">{riskProfileData.message}</div>)
+        }
 
         {
-          riskProfileData.hasProductAspects && Object.entries(riskProfileData.result).map((item, index) => {
+          !riskProfileData.isDisplayMessage && riskProfileData.hasProductAspects && Object.entries(riskProfileData.result).map((item, index) => {
             return (
               <div key={index}>
                 <div className="product-aspect-container">{item[0]}</div>
@@ -81,7 +80,7 @@ class QuestionForm extends Component<Props> {
         }
 
         {
-          !riskProfileData.hasProductAspects && this.renderRiskProfileTable(riskProfileData.result)
+          !riskProfileData.isDisplayMessage && !riskProfileData.hasProductAspects && this.renderRiskProfileTable(riskProfileData.result)
         }
 
         <div className="bottom-container">
@@ -95,7 +94,7 @@ class QuestionForm extends Component<Props> {
           </div>
 
           <div className="button-container">
-            <DarkButton title="Next" rightIconImage={ChevronIcon}  onClick={() => {handleActionClick("next")}} />
+            <DarkButton title="Next" rightIconImage={ChevronIcon}  onClick={() => {handleNextButtonClickForDisplayField()}} />
           </div>
         </div>
 
@@ -361,13 +360,12 @@ class QuestionForm extends Component<Props> {
                       <div className="label">
                         <label className={required > 0 ? "required" : ""}>{label}</label>
                       </div>
-                      <div className={hasError ? "radio-container-error" : ""}>
+                      <div className={hasError ? "radio-container-error radio-container" : "radio-container"}>
                         {options.length &&
                           options.map((option, index) => {
                             let checked = _.toString(option.value) === _.toString(values[id]);
-
                             return (
-                              <div key={index}>
+                              <div key={index} className={label==="Accreditation level"? "accreditation-level-option radio-option" : "radio-option"}>
                                 <label className="radio-label">
                                   <Field type="radio" name={id} value={option.value} className={"radio"} checked={checked} />
                                   {option.label}
@@ -395,7 +393,7 @@ class QuestionForm extends Component<Props> {
                       <div className="label">
                         <label className={required > 0 ? "required" : ""}>{label}</label>
                       </div>
-                      <div className={hasError ? "checkbox-container-error" : ""}>
+                      <div className={hasError ? "checkbox-container-error checkbox-container" : "checkbox-container"}>
                         {options.length &&
                           options.map((option, index) => {
                             let groupCheckboxValueArr = values[id] ? JSON.parse(values[id]): [];

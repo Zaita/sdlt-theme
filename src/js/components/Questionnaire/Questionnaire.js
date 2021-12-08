@@ -108,6 +108,7 @@ class Questionnaire extends Component<Props> {
                 informationClassificationTaskResult={informationClassificationTaskResult}
                 handleFormSubmit={this.handleFormSubmit.bind(this)}
                 handleActionClick={this.handleActionClick.bind(this)}
+                handleNextButtonClickForDisplayField={this.handleNextButtonClickForDisplayField.bind(this)}
               />
             }
           </div>
