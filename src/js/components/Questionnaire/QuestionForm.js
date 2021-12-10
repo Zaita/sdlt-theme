@@ -520,6 +520,7 @@ class QuestionForm extends Component<Props> {
                           initialValue={initialValues[id]}
                           init={{
                             selector: 'textarea',
+                            height: "280",
                             menubar: false,
                             plugins: 'lists advlist',
                             toolbar: '+ removeformat bold italic underline strikethrough bullist numlist',
