@@ -337,7 +337,7 @@ class Summary extends Component<Props> {
 
     return (
       <div class="submission-details-container">
-        <div class="left-container-submission-details">
+        <div class="submission-detail-left-container">
           <div>
             <span className="product-name">{productName}</span>
           </div>
@@ -351,7 +351,7 @@ class Summary extends Component<Props> {
             <span class="submission-details-data">{submission.releaseDate ? moment(submission.releaseDate).format("DD/MM/YYYY") : ''}</span>
           </div>
         </div>
-        <div class="right-container-submitter-details">
+        <div class="submission-detail-right-container">
           <div>
             <span className="submission-status"><img src={statusIcon}/>{status}</span>
           </div>
