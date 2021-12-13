@@ -70,7 +70,10 @@ export type Submission = {
   hideWeightsAndScore: boolean,
   productName: string,
   riskResults: Array<RiskResult>,
-  collaborators: Array<User>
+  collaborators: Array<User>,
+  created: string,
+  releaseDate: string,
+  productAspects: Array<*>
 };
 
 // Submission Data

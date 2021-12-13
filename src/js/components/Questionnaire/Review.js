@@ -4,8 +4,8 @@ import React, {Component} from "react";
 import type {Submission} from "../../types/Questionnaire";
 import LightButton from "../Button/LightButton";
 import DarkButton from "../Button/DarkButton";
-import editIcon from "../../../img/icons/edit.svg";
-import pdfIcon from "../../../img/icons/pdf.svg";
+import pdfIcon from "../../../img/icons/download.svg";
+import editIcon from "../../../img/icons/edit-icon.svg";
 import AnswersPreview from "./AnswersPreview";
 import SubmissionDataUtil from "../../utils/SubmissionDataUtil";
 import URLUtil from "../../utils/URLUtil";
@@ -42,11 +42,11 @@ class Review extends Component<Props> {
 
     const buttons = (
       <div className="buttons">
-      <LightButton title="EDIT ANSWERS"
+      <LightButton title="Edit"
                    iconImage={editIcon}
                    classes={["button"]}
                    onClick={handleEditAnswerButtonClick}/>
-      <LightButton title="DOWNLOAD PDF"
+      <LightButton title="PDF"
                    iconImage={pdfIcon}
                    classes={["button"]}
                    onClick={handlePDFDownloadButtonClick}/>

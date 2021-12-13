@@ -52,7 +52,8 @@ $dark-red:   #BE3A34 !default;
 $light-red:  #FCF0F0 !default;
 $light-blue: #2371A6 !default;
 $dark-blue:  #003B5C !default;
-$light-gray: $gray-85 !default ;
+$light-gray: $gray-85  !default;
+$dark-gray:  #808080 !default;
 
 $colors: () !default;
 // stylelint-disable-next-line scss/dollar-variable-default
@@ -75,6 +76,7 @@ $colors: map-merge(
     "dark-red":   $dark-red,
     "light-gray": $light-gray,
     "light-red":  $light-red,
+    "dark-gray":  $dark-gray,
   ),
   $colors
 );

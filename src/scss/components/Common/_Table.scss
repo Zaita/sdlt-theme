@@ -15,4 +15,8 @@ $white-background: rgba(255, 255, 255, 0.7);
   td {
     font-size: 11px;
   }
+
+  .table th {
+    border-top: none;
+  }
 }

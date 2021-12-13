@@ -9,6 +9,7 @@
 
     img {
         margin-right: 10px;
+        margin-top: -2px;
     }
 
     .img-right {
@@ -32,14 +33,14 @@
 }
 
 .BaseButton.disabled {
-    border: 2px solid $gray-600;
+    border: 2px solid $dark-gray;
     box-sizing: border-box;
     border-radius: 5px;
-    background-color: $gray-600;
-    color: $gray-200;
+    background-color: $dark-gray;
+    color: $white;
 
     &:hover {
-        background-color: $gray-600;
+        background-color: $dark-gray;
         color: $gray-200;
     }
 }
