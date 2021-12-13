@@ -174,14 +174,14 @@
     }
   }
 
-  .submission-details-container {
-    align-items: center;
-    h3 {
-      font-weight: bold;
-      margin-bottom: 25px;
-      font-size: 18px;
-    }
+  h3 {
+    font-weight: bold;
+    margin-bottom: 25px;
+    font-size: 18px;
+  }
 
+  .submission-details-container {
+    display: flex;
     .product-name {
       font-weight: 500;
       font-size: 14px;
@@ -200,40 +200,24 @@
     }
   }
 
-  span.submission-details-data, span.submission-details-label {
+ .submission-details-data, .submission-details-label {
     min-width: 110px;
     display: inline-block;
   }
 
-  span.submission-details-label {
+  .submission-details-label {
     margin-right: 13px;
     font-weight: 500;
   }
 
-  span.submission-details-data {
+  .submission-details-data {
     height: 14px;
-  }
-
-  span.submission-dates-left {
-    margin-right: 29.5%;
   }
 
   .submitter-name-created-date-row {
     margin-top: 25px;
   }
 
-  .submission-name-status-row {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    width: 100%;
-  }
-
-  .submission-details-column {
-    display: flex;
-    flex-direction: column;
-    flex-basis: 50%;
-  }
 
   .collaborators-components-container {
     display: flex;
@@ -257,7 +241,9 @@
   }
 
   .collaborators-container,
-  .components-container {
+  .components-container,
+  .left-container-submission-details,
+  .right-container-submitter-details {
     flex: 1;
   }
 

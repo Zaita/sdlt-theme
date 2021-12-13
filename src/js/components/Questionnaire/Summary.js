@@ -249,6 +249,7 @@ class Summary extends Component<Props> {
 
     return (
       <div className="Summary">
+        <h3>Submission details</h3>
         {this.renderSubmissionDetails(submission)}
         {this.renderCollboratorsAndComponentsInfo(submission, members)}
         {this.renderTasks(submission)}
@@ -336,27 +337,32 @@ class Summary extends Component<Props> {
 
     return (
       <div class="submission-details-container">
-        <h3>Submission details</h3>
-        <div class="submission-name-status-row">
-          <div class="submission-details-column">
+        <div class="left-container-submission-details">
+          <div>
             <span className="product-name">{productName}</span>
-            <span>{submission.questionnaireTitle}</span>
           </div>
-          <div class="submission-details-column">
+          <span>{submission.questionnaireTitle}</span>
+          <div className="submitter-name-created-date-row">
+            <span class="submission-details-label">Submission created: </span>
+            <span class="submission-details-data">{moment(submission.created).format("DD/MM/YYYY")}</span>
+          </div>
+          <div>
+            <span class="submission-details-label">Go live date: </span>
+            <span class="submission-details-data">{submission.releaseDate ? moment(submission.releaseDate).format("DD/MM/YYYY") : ''}</span>
+          </div>
+        </div>
+        <div class="right-container-submitter-details">
+          <div>
             <span className="submission-status"><img src={statusIcon}/>{status}</span>
           </div>
-        </div>
-        <div className="submitter-name-created-date-row">
-          <span class="submission-details-label">Submission created: </span>
-          <span class="submission-details-data submission-dates-left">{moment(submission.created).format("DD/MM/YYYY")}</span>
-          <span class="submission-details-label">Submitted by: </span>
-          <span class="submission-details-data">{submitter.name}</span>
-        </div>
-        <div>
-          <span class="submission-details-label">Go live date: </span>
-          <span class="submission-details-data submission-dates-left">{submission.releaseDate ? moment(submission.releaseDate).format("DD/MM/YYYY") : ''}</span>
-          <span class="submission-details-label">Email: </span>
-          <span class="submission-details-data">{submitter.email}</span>
+          <div className="submitter-name-created-date-row">
+            <span class="submission-details-label">Submitted by: </span>
+            <span class="submission-details-data">{submitter.name}</span>
+          </div>
+          <div>
+            <span class="submission-details-label">Email: </span>
+            <span class="submission-details-data">{submitter.email}</span>
+          </div>
         </div>
       </div>
     );
