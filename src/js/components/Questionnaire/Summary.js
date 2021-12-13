@@ -336,32 +336,32 @@ class Summary extends Component<Props> {
     }
 
     return (
-      <div class="submission-details-container">
-        <div class="submission-detail-left-container">
+      <div className="submission-details-container">
+        <div className="submission-detail-left-container">
           <div>
             <span className="product-name">{productName}</span>
           </div>
           <span>{submission.questionnaireTitle}</span>
           <div className="submitter-name-created-date-row">
-            <span class="submission-details-label">Submission created: </span>
-            <span class="submission-details-data">{moment(submission.created).format("DD/MM/YYYY")}</span>
+            <span className="submission-details-label">Submission created: </span>
+            <span className="submission-details-data">{moment(submission.created).format("DD/MM/YYYY")}</span>
           </div>
           <div>
-            <span class="submission-details-label">Go live date: </span>
-            <span class="submission-details-data">{submission.releaseDate ? moment(submission.releaseDate).format("DD/MM/YYYY") : ''}</span>
+            <span className="submission-details-label">Go live date: </span>
+            <span className="submission-details-data">{submission.releaseDate ? moment(submission.releaseDate).format("DD/MM/YYYY") : ''}</span>
           </div>
         </div>
-        <div class="submission-detail-right-container">
+        <div className="submission-detail-right-container">
           <div>
             <span className="submission-status"><img src={statusIcon}/>{status}</span>
           </div>
           <div className="submitter-name-created-date-row">
-            <span class="submission-details-label">Submitted by: </span>
-            <span class="submission-details-data">{submitter.name}</span>
+            <span className="submission-details-label">Submitted by: </span>
+            <span className="submission-details-data">{submitter.name}</span>
           </div>
           <div>
-            <span class="submission-details-label">Email: </span>
-            <span class="submission-details-data">{submitter.email}</span>
+            <span className="submission-details-label">Email: </span>
+            <span className="submission-details-data">{submitter.email}</span>
           </div>
         </div>
       </div>
