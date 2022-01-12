@@ -10,6 +10,7 @@ import type {Question} from "../../types/Questionnaire";
 import {
   editCompletedTaskSubmission,
   loadTaskSubmission,
+  loadResultForCertificationAndAccreditation,
   moveToPreviousQuestionInTaskSubmission,
   saveAnsweredQuestionInTaskSubmission,
   approveTaskSubmission,
@@ -44,6 +45,9 @@ const mapDispatchToProps = (dispatch: Dispatch, props: *) => {
       dispatch(loadCurrentUser());
       dispatch(loadSiteConfig());
       dispatch(loadTaskSubmission({uuid, secureToken}));
+    },
+    dispatchLoadResultForCertificationAndAccreditation(uuid: string, secureToken: string) {
+      dispatch(loadResultForCertificationAndAccreditation({uuid, secureToken}));
     },
     dispatchSaveAnsweredQuestionAction(answeredQuestion: Question) {
       dispatch(saveAnsweredQuestionInTaskSubmission({answeredQuestion}));
@@ -161,6 +165,7 @@ class TaskSubmissionContainer extends Component<Props> {
           handleSendBackForChangesButtonClick={this.handleSendBackForChangesButtonClick.bind(this)}
           handleAddTaskRecommendationButtonClick={this.handleAddTaskRecommendationButtonClick.bind(this)}
           handleEditTaskRecommendationButtonClick={this.handleEditTaskRecommendationButtonClick.bind(this)}
+          loadResultForCertificationAndAccreditation={this.loadResultForCertificationAndAccreditation.bind(this)}
           showBackLink={!!taskSubmission.questionnaireSubmissionUUID}
           viewAs={viewAs}
           siteConfig={siteConfig}
@@ -218,6 +223,11 @@ class TaskSubmissionContainer extends Component<Props> {
     }
 
     this.props.dispatchEditTaskRecommendationAction(uuid, updatedRecommendationObj, taskRecommendations);
+  }
+
+  loadResultForCertificationAndAccreditation() {
+    const {uuid, dispatchLoadResultForCertificationAndAccreditation, secureToken} = {...this.props};
+    dispatchLoadResultForCertificationAndAccreditation(uuid, secureToken);
   }
 }
 

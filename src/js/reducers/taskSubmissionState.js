@@ -22,6 +22,18 @@ export function taskSubmissionState(state: TaskSubmissionState = defaultStartSta
     };
   }
 
+  if (action.type === ActionType.TASK.LOAD_RESULT_FOR_CERTIFICATION_AND_ACCREDITATION) {
+    if (!taskSubmission) {
+      return state;
+    }
+
+    const {resultForCertificationAndAccreditation} = {...action.payload};
+    const newState = cloneDeep(state);
+
+    set(newState, `taskSubmission.resultForCertificationAndAccreditation`, resultForCertificationAndAccreditation);
+    return newState;
+  }
+
   if (action.type === ActionType.TASK.PUT_DATA_IN_TASK_SUBMISSION) {
     (action: PutDataInTaskSubmissionAction);
     if (!taskSubmission) {
@@ -102,4 +114,3 @@ export function taskSubmissionState(state: TaskSubmissionState = defaultStartSta
 
   return state;
 }
-

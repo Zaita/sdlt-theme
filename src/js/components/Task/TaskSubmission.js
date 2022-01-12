@@ -17,6 +17,7 @@ import TaskRecommendationContainer from "./TaskRecommendationContainer";
 import SecurityRiskAssessmentUtil from "../../utils/SecurityRiskAssessmentUtil";
 import {SubmissionExpired} from "../Common/SubmissionExpired";
 import BackArrow from "../../../img/icons/back-arrow.svg";
+import CertificationAndAccreditationResultContainer from "./CertificationAndAccreditationResultContainer";
 
 type Props = {
   taskSubmission: TaskSubmissionType,
@@ -25,6 +26,7 @@ type Props = {
   handleApproveButtonClick: () => void,
   handleSendBackForChangesButtonClick: () => void,
   handleDenyButtonClick: () => void,
+  loadResultForCertificationAndAccreditation: () => void,
   handleAddTaskRecommendationButtonClick: () => void,
   handleEditTaskRecommendationButtonClick: () => void,
   showBackButton: boolean,
@@ -44,6 +46,7 @@ class TaskSubmission extends Component<Props> {
       handleSendBackForChangesButtonClick,
       handleAddTaskRecommendationButtonClick,
       handleEditTaskRecommendationButtonClick,
+      loadResultForCertificationAndAccreditation,
       editAnswers,
       showBackLink,
       showEditButton,
@@ -63,17 +66,15 @@ class TaskSubmission extends Component<Props> {
     );
 
     const backLink = showBackLink ? (
-      <div
-      className="back-link"
-      onClick={() => URLUtil.redirectToQuestionnaireSummary(taskSubmission.questionnaireSubmissionUUID, secureToken)}
-      >
-        <img src={BackArrow}/>Back
+      <div className="back-link" onClick={() => this.sendBackToQestionnaire()}>
+        <img src={BackArrow}/>
+        Back
       </div>
     ) : null;
 
     const isSRATaskFinalised = taskSubmission.taskType === 'risk questionnaire' && SecurityRiskAssessmentUtil.isSRATaskFinalised(taskSubmission.siblingSubmissions);
 
-    const editButton = showEditButton && !isSRATaskFinalised ? (
+    const editButton = showEditButton && !isSRATaskFinalised && taskSubmission.taskType !== "certification and accreditation"? (
       <LightButton
         title="Edit"
         onClick={editAnswers}
@@ -116,21 +117,49 @@ class TaskSubmission extends Component<Props> {
       <div>
         {result}
         <h4>Summary</h4>
-        <AnswersPreview questions={taskSubmission.questions}/>
+        {
+          taskSubmission.taskType !== "certification and accreditation" &&
+          <AnswersPreview questions={taskSubmission.questions}/>
+        }
+        {
+          !taskSubmission.isDisplayPreventMessage &&
+          taskSubmission.taskType === "certification and accreditation" &&
+          <div className="task-review-container">
+            <CertificationAndAccreditationResultContainer
+              resultForCertificationAndAccreditation={taskSubmission.resultForCertificationAndAccreditation}
+              isDisplayReportLogo={true}
+            />
+          </div>
+        }
         {riskResult}
         {taskRecommendationContainer}
       </div>
     );
 
-    if (canUpdateAnswers) {
+    if (taskSubmission.taskType === "certification and accreditation" && taskSubmission.isDisplayPreventMessage) {
+      body = (
+        <div
+          className="prevent-message-container alert alert-danger"
+          dangerouslySetInnerHTML={{
+            __html: taskSubmission.preventMessage
+          }}
+        >
+        </div>
+      );
+   }
+
+    else if (canUpdateAnswers) {
       body = (
         <Questionnaire
           questions={taskSubmission.questions}
           serviceRegister={taskSubmission.serviceRegister}
           informationClassificationTaskResult={taskSubmission.informationClassificationTaskResult}
           riskProfileData={taskSubmission.riskProfileData}
+          resultForCertificationAndAccreditation={taskSubmission.resultForCertificationAndAccreditation}
+          loadResultForCertificationAndAccreditation={loadResultForCertificationAndAccreditation}
           saveAnsweredQuestion={saveAnsweredQuestion}
           onLeftBarItemClick={moveToPreviousQuestion}
+          handleTaskSaveDraftButtonClick={this.handleTaskSaveDraftButtonClick.bind(this)}
         />
       );
     }
@@ -189,6 +218,14 @@ class TaskSubmission extends Component<Props> {
       result: taskSubmission.result,
       riskResults: taskSubmission.riskResults,
     });
+  }
+
+  handleTaskSaveDraftButtonClick() {
+    this.sendBackToQestionnaire();
+  }
+
+  sendBackToQestionnaire() {
+    URLUtil.redirectToQuestionnaireSummary(this.props.taskSubmission.questionnaireSubmissionUUID, this.props.secureToken)
   }
 }
 

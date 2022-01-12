@@ -46,6 +46,30 @@ export function loadTaskSubmission(args: {uuid: string, secureToken?: string, ty
   };
 }
 
+export function loadResultForCertificationAndAccreditation(args: {uuid: string, secureToken?: string, }): ThunkAction {
+  const {uuid, secureToken} = {...args};
+
+  return async (dispatch) => {
+    try {
+      const payload = await TaskDataService.fetchResultForCertificationAndAccreditation({
+        uuid,
+        secureToken
+      });
+
+      const action: LoadTaskSubmissionAction = {
+        type: ActionType.TASK.LOAD_RESULT_FOR_CERTIFICATION_AND_ACCREDITATION,
+        payload,
+      };
+
+      await dispatch(action);
+    }
+    catch (error) {
+      ErrorUtil.displayError(error);
+    }
+  };
+}
+
+
 export function loadStandaloneTaskSubmission(args: {taskId: string}): ThunkAction {
   const {taskId} = {...args};
 
