@@ -13,7 +13,8 @@ type Props = {
   onLeftBarItemClick: (question: Question) => void,
   serviceRegister: Array<*>,
   informationClassificationTaskResult: string,
-  riskProfileData: Array<*>
+  riskProfileData: Array<*>,
+  resultForCertificationAndAccreditation: Array<*>
 };
 
 class Questionnaire extends Component<Props> {
@@ -83,7 +84,17 @@ class Questionnaire extends Component<Props> {
   }
 
   render() {
-    const {questions, onLeftBarItemClick, serviceRegister, informationClassificationTaskResult, riskProfileData} = {...this.props};
+    const {
+      questions,
+      onLeftBarItemClick,
+      serviceRegister,
+      informationClassificationTaskResult,
+      riskProfileData,
+      resultForCertificationAndAccreditation,
+      handleTaskSaveDraftButtonClick,
+      handleTaskSubmitButtonClick,
+      loadResultForCertificationAndAccreditation
+    } = {...this.props};
 
     const currentQuestion = questions.find((question) => {
       return question.isCurrent === true;
@@ -105,7 +116,10 @@ class Questionnaire extends Component<Props> {
                 question={currentQuestion}
                 serviceRegister={serviceRegister}
                 riskProfileData={riskProfileData}
+                resultForCertificationAndAccreditation={resultForCertificationAndAccreditation}
+                loadResultForCertificationAndAccreditation={loadResultForCertificationAndAccreditation}
                 informationClassificationTaskResult={informationClassificationTaskResult}
+                handleTaskSaveDraftButtonClick={handleTaskSaveDraftButtonClick}
                 handleFormSubmit={this.handleFormSubmit.bind(this)}
                 handleActionClick={this.handleActionClick.bind(this)}
                 handleNextButtonClickForDisplayField={this.handleNextButtonClickForDisplayField.bind(this)}

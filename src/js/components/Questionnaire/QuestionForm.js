@@ -16,19 +16,28 @@ import { Editor } from "@tinymce/tinymce-react";
 import 'tinymce/plugins/advlist';
 import 'tinymce/plugins/lists';
 import Select from 'react-select';
+import CertificationAndAccreditationResultContainer from "../Task/CertificationAndAccreditationResultContainer";
 
 type Props = {
   question: Question,
   index: number,
   handleFormSubmit: (formik: FormikBag, values: Object) => void,
   handleActionClick: (action: AnswerAction) => void,
+  handleTaskSaveDraftButtonClick: () => void,
   handleNextButtonClickForDisplayField: () => void,
+  loadResultForCertificationAndAccreditation: () => void,
   serviceRegister: Array<*>,
   informationClassificationTaskResult: string,
-  riskProfileData: Array<*>
+  riskProfileData: Array<*>,
+  resultForCertificationAndAccreditation: Array<*>
 };
 
 class QuestionForm extends Component<Props> {
+  componentDidMount() {
+    if (this.props.question.title == "Review") {
+      this.props.loadResultForCertificationAndAccreditation();
+    }
+  }
 
   render() {
     const {question, index} = {...this.props};
@@ -48,19 +57,53 @@ class QuestionForm extends Component<Props> {
 
         {this.renderActions(question)}
         {this.renderInputsForm(question)}
-        {this.renderRiskProfile(question)}
+        {this.renderDisplayField(question)}
 
       </div>
     );
   }
 
-  renderRiskProfile(question: Question) {
+  renderDisplayField(question: Question)
+  {
     if (question.type !== "display") {
       return;
     }
 
-    const {riskProfileData, handleNextButtonClickForDisplayField} = {...this.props};
+    if (question.title == "Risk Profile") {
+      return this.renderRiskProfile();
+    }
 
+    if (question.title == "Review") {
+      return this.renderReview();
+    }
+  }
+
+  renderReview() {
+    const {resultForCertificationAndAccreditation, handleTaskSaveDraftButtonClick, handleNextButtonClickForDisplayField} = {...this.props};
+
+    return (
+      <div>
+        <div className="review-container">
+          <CertificationAndAccreditationResultContainer
+            resultForCertificationAndAccreditation={resultForCertificationAndAccreditation}
+            isDisplayReportLogo={false}
+          />
+        </div>
+        <div className="buttons review-button-container">
+          <div className="buttons-left">
+          </div>
+          <div className="buttons-right">
+            <LightButton title="Save draft" onClick={() => {handleTaskSaveDraftButtonClick()}} />
+            <DarkButton title="Submit" onClick={() => {handleNextButtonClickForDisplayField()}} />
+          </div>
+          <div/>
+        </div>
+      </div>
+    );
+  }
+
+  renderRiskProfile() {
+    const {riskProfileData, handleNextButtonClickForDisplayField} = {...this.props};
 
     return (
       <div className="risk-profile-container">
@@ -103,7 +146,7 @@ class QuestionForm extends Component<Props> {
   }
 
   renderRiskProfileTable(items) {
-    return(
+    return (
       <div className="risk-profile-table-container">
         <table className="table">
           <thead className="">
@@ -517,6 +560,7 @@ class QuestionForm extends Component<Props> {
 
                       <div>
                         <Editor
+                          className="implementation-evidence"
                           initialValue={initialValues[id]}
                           init={{
                             selector: 'textarea',

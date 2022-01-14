@@ -57,6 +57,7 @@ query {
     QuestionnaireData
     AnswerData
     RiskProfileData
+    ResultForCertificationAndAccreditation
     SelectedComponents {
       ID
       ProductAspect
@@ -80,6 +81,8 @@ query {
     IsTaskApprovalRequired
     IsCurrentUserAnApprover
     RiskResultData
+    IsDisplayPreventMessage
+    PreventMessage
     TaskRecommendationData
     ComponentTarget
     ProductAspects
@@ -127,10 +130,41 @@ query {
       componentTarget: toString(get(submissionJSONObject, "ComponentTarget", "")),
       hideWeightsAndScore: _.get(submissionJSONObject, "HideWeightsAndScore", "false") === "true",
       isTaskCollborator: _.get(submissionJSONObject, "IsTaskCollborator", "false") === "true",
+      isDisplayPreventMessage: _.get(submissionJSONObject, "IsDisplayPreventMessage", "false") === "true",
+      preventMessage: toString(get(submissionJSONObject, "PreventMessage", "")),
       siblingSubmissions: TaskParser.parseAlltaskSubmissionforQuestionnaire(submissionJSONObject),
       serviceRegister: TaskParser.parseServiceRegister(serviceRegister),
       riskProfileData:  _.has(submissionJSONObject, 'RiskProfileData') ? JSON.parse(get(submissionJSONObject, "RiskProfileData", [])) : [],
+      resultForCertificationAndAccreditation:  _.has(submissionJSONObject, 'ResultForCertificationAndAccreditation') ? JSON.parse(get(submissionJSONObject, "ResultForCertificationAndAccreditation", [])) : []
     };
+
+    return data;
+  }
+
+  static async fetchResultForCertificationAndAccreditation(args: { uuid: string, secureToken?: string }): Promise<TaskSubmission> {
+    const {uuid, secureToken} = {...args};
+    const query = `
+query {
+  readTaskSubmission(UUID: "${uuid}", SecureToken: "${secureToken || ""}") {
+    ID
+    UUID
+    ResultForCertificationAndAccreditation
+  }
+}`;
+
+    const responseJSONObject = await GraphQLRequestHelper.request({query});
+    const submissionJSONObject = get(responseJSONObject, "data.readTaskSubmission.0", null);
+
+    if (!submissionJSONObject) {
+      throw DEFAULT_NETWORK_ERROR;
+    }
+
+    const data: TaskSubmission = {
+      id: toString(get(submissionJSONObject, "ID", "")),
+      uuid: toString(get(submissionJSONObject, "UUID", "")),
+      resultForCertificationAndAccreditation:  _.has(submissionJSONObject, 'ResultForCertificationAndAccreditation') ? JSON.parse(get(submissionJSONObject, "ResultForCertificationAndAccreditation", [])) : []
+    };
+
     return data;
   }
 
@@ -155,6 +189,7 @@ updateQuestion${questionID}: updateTaskSubmission(
 ) {
   UUID
   Status
+
 }`;
       mutations.push(singleQuery);
     }
