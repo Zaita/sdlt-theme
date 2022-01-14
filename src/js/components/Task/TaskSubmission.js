@@ -72,9 +72,7 @@ class TaskSubmission extends Component<Props> {
       </div>
     ) : null;
 
-    const isSRATaskFinalised = taskSubmission.taskType === 'risk questionnaire' && SecurityRiskAssessmentUtil.isSRATaskFinalised(taskSubmission.siblingSubmissions);
-
-    const editButton = showEditButton && !isSRATaskFinalised && taskSubmission.taskType !== "certification and accreditation"? (
+    const editButton = showEditButton  && taskSubmission.taskType !== "certification and accreditation"? (
       <LightButton
         title="Edit"
         onClick={editAnswers}
@@ -170,10 +168,6 @@ class TaskSubmission extends Component<Props> {
         {
           taskSubmission.status !== 'expired' && (
             <div>
-              {
-                taskSubmission.taskType === 'risk questionnaire' &&
-                isSRATaskFinalised ? SecurityRiskAssessmentUtil.getSraIsFinalisedAlert() : false
-              }
               {backLink}
               {body}
               <div className={`buttons ${viewAs != "approver" ? 'buttons-hideborder': ''}`}>

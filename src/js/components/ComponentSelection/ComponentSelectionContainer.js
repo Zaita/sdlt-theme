@@ -124,7 +124,6 @@ class ComponentSelectionContainer extends Component<Props> {
     }
     const isCurrentUserSubmitter = parseInt(currentUser.id) === parseInt(taskSubmission.submitter.id);
     const canEdit =  isCurrentUserSubmitter || currentUser.isSA || taskSubmission.isTaskCollborator;
-    const isSRATaskFinalised = SecurityRiskAssessmentUtil.isSRATaskFinalised(taskSubmission.siblingSubmissions);
     const showEditControlButton =
       (taskSubmission.status === "complete" || taskSubmission.status === "waiting_for_approval" ||taskSubmission.status === "denied") &&
       (taskSubmission.questionnaireSubmissionStatus === "submitted") &&
@@ -137,7 +136,7 @@ class ComponentSelectionContainer extends Component<Props> {
         }}
       />
     );
-    const editControlButton = showEditControlButton && !isSRATaskFinalised ? (
+    const editControlButton = showEditControlButton ? (
       <LightButton
         title="EDIT CONTROLS"
         onClick={ dispatchEditAnswersAction}
@@ -195,22 +194,18 @@ class ComponentSelectionContainer extends Component<Props> {
       case "complete":
         body = (
           <div>
-            <div className="ComponentSelectionReview">
-              {isSRATaskFinalised ? SecurityRiskAssessmentUtil.getSraIsFinalisedAlert() : false}
-            </div>
-
-          <ComponentSelectionReview
-            selectedComponents={taskSubmission.selectedComponents}
-            jiraTickets={taskSubmission.jiraTickets}
-            componentTarget={taskSubmission.componentTarget}
-            productAspects={taskSubmission.productAspects}
-            buttons={[(
-              <div key="component-selection-review-button-container">
-                {editControlButton}
-                {backButton}
-              </div>
-            )]}
-          />
+            <ComponentSelectionReview
+              selectedComponents={taskSubmission.selectedComponents}
+              jiraTickets={taskSubmission.jiraTickets}
+              componentTarget={taskSubmission.componentTarget}
+              productAspects={taskSubmission.productAspects}
+              buttons={[(
+                <div key="component-selection-review-button-container">
+                  {editControlButton}
+                  {backButton}
+                </div>
+              )]}
+            />
           </div>
         );
         break;

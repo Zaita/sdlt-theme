@@ -69,7 +69,6 @@ class SecurityRiskAssessmentContainer extends Component<Props> {
     dispatchLoadDataAction(uuid, secureToken);
   }
 
-
   render() {
     const {
       siteConfig,
@@ -109,7 +108,7 @@ class SecurityRiskAssessmentContainer extends Component<Props> {
     const isSubmitter = securityRiskAssessmentData.submitterID === currentUser.id;
     const canFinalise = isSubmitter || securityRiskAssessmentData.isTaskCollborator;
 
-    const finaliseButton = !isSRATaskFinalised && !isSiblingTaskPending && canFinalise
+    const finaliseButton = !isSiblingTaskPending && canFinalise
       ? (
         <DarkButton title="FINALISE"
           classes={["button ml-3"]}
@@ -129,8 +128,6 @@ class SecurityRiskAssessmentContainer extends Component<Props> {
         {
           securityRiskAssessmentData.status !== 'expired' && (
             <div className="SecurityRiskAssessmentResult">
-              {isSRATaskFinalised ? SecurityRiskAssessmentUtil.getSraIsFinalisedAlert() : false}
-
               <RiskAssessmentMatrixTableContainer
                 calculatedSRAData={sraData.calculatedSRAData}
                 hasProductAspects={sraData.hasProductAspects}

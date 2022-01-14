@@ -427,7 +427,6 @@ class Summary extends Component<Props> {
 
   renderTasks(submission: Submission) {
     const taskSubmissions = submission.taskSubmissions;
-    const isSRATaskFinalised = SecurityRiskAssessmentUtil.isSRATaskFinalised(submission.taskSubmissions);
 
     if (taskSubmissions.length === 0) {
       return null;
@@ -445,7 +444,6 @@ class Summary extends Component<Props> {
           (<span className="multiple-tasks-created">*</span>) may create new tasks, depending on your answers.
         </div>
           {unfinshedRQTaskMessage}
-          {isSRATaskFinalised ? SecurityRiskAssessmentUtil.getSraIsFinalisedAlert() : null}
         <div className="table-responsive table-continer">
           <table className="table">
             <thead className="task-thead">

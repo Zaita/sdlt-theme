@@ -98,7 +98,6 @@ type Props = {
 
 type State = {
   isCVATaskEditable: boolean,
-  isSRATaskFinalised: boolean,
   canEdit: boolean
 };
 
@@ -109,7 +108,6 @@ class ControlValidationAuditContainer extends Component<Props, State> {
     super(props);
     this.state = {
       isCVATaskEditable: false,
-      isSRATaskFinalised: false,
       canEdit: false
     }
   }
@@ -134,12 +132,10 @@ class ControlValidationAuditContainer extends Component<Props, State> {
 
       const isSubmitter = controlValidationAuditData.submitterID === currentUser.id;
       const canEdit = (isSubmitter || controlValidationAuditData.isTaskCollborator);
-      const isSRATaskFinalised = SecurityRiskAssessmentUtil.isSRATaskFinalised(controlValidationAuditData.siblingSubmissions);
-      const isCVATaskEditable = (canEdit && !isSRATaskFinalised);
+      const isCVATaskEditable = (canEdit);
 
       this.setState({
         canEdit: canEdit,
-        isSRATaskFinalised: isSRATaskFinalised,
         isCVATaskEditable: isCVATaskEditable
       });
 
@@ -440,7 +436,6 @@ class ControlValidationAuditContainer extends Component<Props, State> {
                   (this.state.canEdit || controlValidationAuditData.status == "complete") &&
                   (
                     <div>
-                      {this.state.isSRATaskFinalised ? SecurityRiskAssessmentUtil.getSraIsFinalisedAlert() : false}
                       {this.renderCVAQuestionsForm()}
                     </div>
                   )
