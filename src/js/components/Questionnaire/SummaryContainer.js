@@ -99,9 +99,9 @@ const mapDispatchToProps = (dispatch: Dispatch, props: *) => {
       dispatch(denyCertificationAction(submissionID));
     },
 
-    dispatchIssueAccreditationAction(submissionID: string)
+    dispatchIssueAccreditationAction(submissionID: string, accreditationPeriod: string)
     {
-      dispatch(issueAccreditationAction(submissionID));
+      dispatch(issueAccreditationAction(submissionID, accreditationPeriod));
     },
 
     dispatchDenyAccreditationAction(submissionID: string)
@@ -128,7 +128,7 @@ type reduxProps = {
   denyQuestionnaireSubmissionFromBusinessOwner: (submissionID: string) => void,
   dispatchGrantCertificationAction: (submissionID: string) => void,
   dispatchDenyCertificationAction: (submissionID: string) => void,
-  dispatchIssueAccreditationAction: (submissionID: string) => void,
+  dispatchIssueAccreditationAction: (submissionID: string, accreditationPeriod: string) => void,
   dispatchDenyAccreditationAction: (submissionID: string) => void,
   loadingState: object<*>
 };
@@ -394,14 +394,14 @@ class SummaryContainer extends Component<Props, State> {
     this.props.dispatchDenyCertificationAction(submission.submissionID);
   }
 
-  handleIssueAccreditationButtonClick() {
+  handleIssueAccreditationButtonClick(accreditationPeriod) {
     const {user, submission} = {...this.props.submissionState};
 
     if (!user || !submission) {
       return;
     }
 
-    this.props.dispatchIssueAccreditationAction(submission.submissionID);
+    this.props.dispatchIssueAccreditationAction(submission.submissionID, accreditationPeriod);
   }
 
   handleDenyAccreditationButtonClick() {

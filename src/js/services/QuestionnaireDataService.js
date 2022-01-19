@@ -129,6 +129,7 @@ query {
       TimeToComplete
       TimeToReview
       CanTaskCreateNewTasks
+      ResultForCertificationAndAccreditation
       TaskApprover {
         ID
         FirstName
@@ -245,6 +246,7 @@ query {
               timeToComplete: _.toString(_.get(item, "TimeToComplete", "")),
               timeToReview: _.toString(_.get(item, "TimeToReview", "")),
               canTaskCreateNewTasks: _.get(item, "CanTaskCreateNewTasks", "false") === "true",
+              resultForCertificationAndAccreditation: _.get(item, "ResultForCertificationAndAccreditation", "[]"),
             };
             return taskSubmission;
           }),
@@ -628,9 +630,9 @@ mutation {
   }
 
   // issue accreditation
-  static async issueAccreditation(submissionID: string, csrfToken: string) {
+  static async issueAccreditation(submissionID: string, csrfToken: string, accreditationPeriod: string) {
     const query = `mutation {
-     issueAccreditation(ID: "${submissionID}") {
+      issueAccreditation(ID: "${submissionID}", AccreditationPeriod: "${accreditationPeriod}") {
        UUID
      }
     }`;
