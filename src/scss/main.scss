@@ -42,7 +42,10 @@ body {
     @import "components/Common/Loading";
     @import "components/DSRA/SecurityRiskAssessment";
     @import "components/DSRA/ControlValidationAudit";
-    @import "components/DSRA/CertificateAndAccreditationReport"
+    @import "components/KanbanBoard/Board";
+    @import "components/KanbanBoard/Card";
+    @import "components/KanbanBoard/Column";
+    @import "components/KanbanBoard/BoardFilters";
   }
 }
 

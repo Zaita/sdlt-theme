@@ -21,6 +21,7 @@ import {parse} from "query-string";
 import { Loading } from "../Common/Loading.js";
 import { withRouter } from 'react-router-dom';
 import _ from "lodash";
+import Board from "../KanbanBoard/Board";
 
 const mapStateToProps = (state: RootState) => {
   return {
@@ -202,6 +203,15 @@ class MainApp extends Component<*> {
                 return (
                   <div className="gray-bg">
                     <MyProductList/>
+                  </div>
+                );
+              }}
+            </Route>
+            <Route path='/kanban'>
+              {({match}) => {
+                return (
+                  <div className="gray-bg">
+                    <Board />
                   </div>
                 );
               }}
