@@ -103,12 +103,7 @@ class AwaitingApprovalList extends Component<Props> {
 
     return (
       <div className="AnswersPreview">
-        <Header
-          title="Awaiting Approvals"
-          username={currentUser.name}
-          subtitle={siteConfig.siteTitle}
-          logopath={siteConfig.logoPath}
-        />
+        <Header pageTitle="Your approvals" logopath={siteConfig.logoPath}/>
         <div className="container tab-container mb-0">
           <button
             className={this.state.currentApprovalList == "QuestionnaireApproval" ? "tab-button active": "tab-button"}

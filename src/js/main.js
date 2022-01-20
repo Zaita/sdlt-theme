@@ -7,6 +7,7 @@ import {Provider} from "react-redux";
 import store from "./store/store";
 import VendorApp from "./components/App/VendorApp";
 import ReactModal from "react-modal";
+import {BrowserRouter} from "react-router-dom";
 
 window.addEventListener("load", () => {
 
@@ -34,22 +35,26 @@ window.addEventListener("load", () => {
   const mainContainer = document.getElementById("main-app");
   if (mainContainer) {
     ReactDOM.render((
-      <HashRouter>
-        <Provider store={store}>
-          <MainApp/>
-        </Provider>
-      </HashRouter>
+      <BrowserRouter>
+        <HashRouter>
+          <Provider store={store}>
+            <MainApp/>
+          </Provider>
+        </HashRouter>
+      </BrowserRouter>
     ), mainContainer);
   }
 
   const vendorContainer = document.getElementById("vendor-app");
   if (vendorContainer) {
     ReactDOM.render((
-      <HashRouter>
-        <Provider store={store}>
-          <VendorApp/>
-        </Provider>
-      </HashRouter>
+      <BrowserRouter>
+        <HashRouter>
+          <Provider store={store}>
+            <VendorApp/>
+          </Provider>
+        </HashRouter>
+      </BrowserRouter>
     ), vendorContainer);
   }
 });

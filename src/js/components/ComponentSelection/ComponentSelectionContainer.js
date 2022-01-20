@@ -146,6 +146,25 @@ class ComponentSelectionContainer extends Component<Props> {
       />
     ) : null;
 
+    // used to display breadcrumbs
+    let showSubmissionBreadcrumb = false;
+    let showApprovalBreadcrumb = false;
+
+    if (isCurrentUserSubmitter || taskSubmission.isTaskCollborator) {
+      showSubmissionBreadcrumb = true;
+    }
+
+    if (!showSubmissionBreadcrumb) {
+      if (taskSubmission.isCurrentUserAnApprover ||
+        currentUser.isSA ||
+        currentUser.isCISO ||
+        taskSubmission.isBusinessOwner ||
+        currentUser.isAccreditationAuthority ||
+        currentUser.isCertificationAuthority) {
+        showApprovalBreadcrumb = true;
+      }
+    }
+
     let body = null;
     switch (taskSubmission.status) {
       case "start":
@@ -221,7 +240,15 @@ class ComponentSelectionContainer extends Component<Props> {
 
     return (
       <div className="ComponentSelectionContainer">
-        <Header title="Component Selection" subtitle={siteConfig.siteTitle} logopath={siteConfig.logoPath} username={currentUser.name} />
+        <Header
+          pageTitle="Component Selection"
+          logopath={siteConfig.logoPath}
+          productName={taskSubmission.questionnaireSubmissionProductName}
+          questionnaireSubmissionUUID={taskSubmission.questionnaireSubmissionUUID}
+          isTaskApprover={taskSubmission.isCurrentUserAnApprover}
+          showSubmissionBreadcrumb={showSubmissionBreadcrumb}
+          showApprovalBreadcrumb={showApprovalBreadcrumb}
+        />
         {body}
         <Footer footerCopyrightText={siteConfig.footerCopyrightText}/>
       </div>

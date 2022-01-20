@@ -120,10 +120,35 @@ class SecurityRiskAssessmentContainer extends Component<Props> {
       )
       : null;
 
+    let showSubmissionBreadcrumb = false
+    let showApprovalBreadcrumb = false;
+
+    if (securityRiskAssessmentData.isSubmitter ||
+      securityRiskAssessmentData.isTaskCollborator) {
+      showSubmissionBreadcrumb = true;
+    }
+
+    if (!showSubmissionBreadcrumb) {
+      if (currentUser.isSA ||
+        currentUser.isCISO ||
+        securityRiskAssessmentData.isBusinessOwner ||
+        currentUser.isAccreditationAuthority ||
+        currentUser.isCertificationAuthority) {
+        showApprovalBreadcrumb = true;
+      }
+    }
+  
     return (
       <div className="SecurityRiskAssessmentContainer">
 
-        <Header title={securityRiskAssessmentData.taskName} subtitle={siteConfig.siteTitle} username={currentUser.name} logopath={siteConfig.logoPath} />
+        <Header
+          pageTitle={securityRiskAssessmentData.taskName}
+          logopath={siteConfig.logoPath}
+          productName={securityRiskAssessmentData.questionnaireSubmissionProductName}
+          questionnaireSubmissionUUID={securityRiskAssessmentData.questionnaireSubmissionUUID}
+          showSubmissionBreadcrumb={showSubmissionBreadcrumb}
+          showApprovalBreadcrumb={showApprovalBreadcrumb}
+        />
 
         {securityRiskAssessmentData.status === 'expired' && <SubmissionExpired/>}
         {

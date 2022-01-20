@@ -129,7 +129,7 @@ class MyProductList extends Component<Props> {
 
     return (
       <div className="AnswersPreview">
-        <Header title="My Products" subtitle={siteConfig.siteTitle} username={currentUser.name} logopath={siteConfig.logoPath} />
+        <Header pageTitle="My Products" logopath={siteConfig.logoPath} />
         {list(myProductList, currentUser)}
         <Footer footerCopyrightText={siteConfig.footerCopyrightText}/>
       </div>

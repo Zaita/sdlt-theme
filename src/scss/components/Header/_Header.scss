@@ -4,60 +4,80 @@ header.Header {
 
     padding-bottom: 45px;
 
-    .top-banner {
-        background-color: $blue;
-        height: 75px;
-        display: flex;
-        flex-direction: row;
-        justify-content: center;
-        align-items: center;
-    }
-
-    .logout-layout {
-        max-width: map_get($container-max-widths, xl);
-        margin-left: auto;
-        margin-right: auto;
-        margin-bottom: 50px;
-
-        .logout-block {
-            float: right;
-            display: flex;
-            align-items: center;
-            background: $blue;
-        }
-
-        .username {
-            color: $white;
-            margin-left: 0.5rem;
-            margin-right: 0.5rem;
-        }
-
-        .LogoutButton {
-            margin-top: -2px;
-        }
+    .main-header {
+      background-color: #005485;
+      height: 50px;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
     }
 
     .logo {
-        height: 41px;
-        width: auto;
-    }
-
-    h1, h2 {
-        font-weight: 300;
-        font-style: normal;
-        font-stretch: normal;
-        line-height: 1.22;
-        letter-spacing: normal;
-        text-align: center;
-        color: $blue;
+      height: 36px;
+      margin-left: 8px;
     }
 
     h1 {
-        font-size: 36px;
-        margin-bottom: 0.5em;
+      font-weight: 900;
+      font-size: 24px;
+      color: $white;
+      margin-top: 12px;
     }
 
     h2 {
-        font-size: 24px;
+      font-size: 24px;
+    }
+
+    .header-buttons {
+      display: inline-flex;
+      margin-left: auto;
+      margin-right: 0;
+    }
+
+    .home-icon {
+      margin-top: -2px;
+    }
+
+    .breadcrumbs-subheader {
+      background-color: #004771;
+      height: 104px;
+
+      nav, .page-title {
+        max-width: 1140px;
+        margin-left: auto;
+        margin-right: auto;
+        padding-top: 13px;
+      }
+
+      .MuiBreadcrumbs-ol {
+        cursor: pointer;
+        a:hover {
+          font-weight: 600;
+        }
+      }
+
+      .MuiTypography-body1 {
+        font-weight: 500;
+        font-size: 12px;
+        line-height: 14px;
+        display: flex;
+        align-items: center;
+        color: $white
+      }
+
+      .MuiBreadcrumbs-li {
+        text-decoration: underline;
+      }
+
+      .MuiTypography-colorPrimary {
+        color: $white;
+      }
+
+      .MuiBreadcrumbs-separator {
+        margin-left: 3px;
+        margin-right: 3px;
+        margin-top: 2px;
+        font-size: 17px;
+      }
     }
 }

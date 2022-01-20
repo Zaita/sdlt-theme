@@ -56,7 +56,11 @@ class StartContainer extends Component<Props> {
 
     return (
       <div className="StartContainer">
-        <Header title={title} subtitle={siteConfig.siteTitle} username={user.name} logopath={siteConfig.logoPath}/>
+        <Header
+          pageTitle="New submission"
+          logopath={siteConfig.logoPath}
+          showSubmissionBreadcrumb={true}
+        />
 
         <Start keyInformation={keyInformation}
                user={user}

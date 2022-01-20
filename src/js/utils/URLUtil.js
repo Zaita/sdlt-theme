@@ -90,4 +90,12 @@ export default class URLUtil {
   static redirectToHome() {
     window.location.href = "/";
   }
+
+  static redirectToApprovals() {
+    window.location.href = "#/AwaitingApprovals";
+  }
+
+  static redirectToSubmissions() {
+    window.location.href = "#/MySubmissions";
+  }
 }

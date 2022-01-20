@@ -19,6 +19,8 @@ query {
     TaskName
     QuestionnaireSubmission {
       UUID
+      ProductName
+      IsBusinessOwner
       TaskSubmissions {
         UUID
         Status
@@ -49,6 +51,8 @@ query {
       submitterID: toString(get(submissionJSONObject, "Submitter.ID", "")),
       isTaskCollborator: get(submissionJSONObject, "IsTaskCollborator", "false") === "true",
       questionnaireSubmissionUUID: toString(get(submissionJSONObject, "QuestionnaireSubmission.UUID", "")),
+      questionnaireSubmissionProductName: toString(get(submissionJSONObject, "QuestionnaireSubmission.ProductName", "")),
+      isBusinessOwner: get(submissionJSONObject, "QuestionnaireSubmission.IsBusinessOwner", "false") === "true",
       taskSubmissions: TaskParser.parseAlltaskSubmissionforQuestionnaire(submissionJSONObject),
       sraData: securityRiskAssessmentData
     };

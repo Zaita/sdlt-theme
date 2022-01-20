@@ -205,9 +205,39 @@ class SummaryContainer extends Component<Props, State> {
       }
     } while (false);
 
+    // used to display breadcrumbs
+    const collaborators = submission.collaborators;
+    let isCollaborator = false;
+    let showSubmissionBreadcrumb = false
+    let showApprovalBreadcrumb = false;
+
+    if (collaborators.some(e => e.value === parseInt(user.id))){
+      isCollaborator = true;
+    }
+
+    if (viewAs == "submitter" || isCollaborator) {
+      showSubmissionBreadcrumb = true;
+    }
+
+    if (!showSubmissionBreadcrumb) {
+      if (user.isSA ||
+        user.isCISO ||
+        submission.isBusinessOwner ||
+        user.isAccreditationAuthority ||
+        user.isCertificationAuthority) {
+        showApprovalBreadcrumb = true;
+      }
+    }
+
     return (
       <div className="SummaryContainer">
-        <Header title={title} subtitle="Summary" username={user.name} logopath={siteConfig.logoPath}/>
+        <Header
+          pageTitle={submission.productName}
+          logopath={siteConfig.logoPath}
+          productName={submission.productName}
+          showSubmissionBreadcrumb={showSubmissionBreadcrumb}
+          showApprovalBreadcrumb={showApprovalBreadcrumb}
+        />
         <Summary submission={submission}
                  handlePDFDownloadButtonClick={this.handlePDFDownloadButtonClick.bind(this)}
                  handleSubmitButtonClick={this.handleSubmitButtonClick.bind(this)}

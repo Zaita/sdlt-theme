@@ -75,6 +75,7 @@ query {
       keyInformation: _.get(questionnaireData, "KeyInformation", ""),
       user: UserParser.parseUserFromJSON(memberData),
     };
+
   }
 
   static async fetchSubmissionData(submissionHash: string, secureToken:string): Promise<QuestionnaireSubmissionState> {
@@ -158,6 +159,7 @@ query {
     CollaboratorList
     Created
     ReleaseDate
+    IsBusinessOwner
   }
   readSiteConfig {
     Title
@@ -255,6 +257,7 @@ query {
         created: _.toString(_.get(submissionJSON, "Created", "")),
         releaseDate: _.toString(_.get(submissionJSON, "ReleaseDate", "")),
         productAspects: _.has(submissionJSON, 'ProductAspects') ? JSON.parse(_.get(submissionJSON, "ProductAspects", "[]")) : "[]",
+        isBusinessOwner: _.get(submissionJSON, "IsBusinessOwner", "false") === "true",
       }
     };
 

@@ -90,7 +90,7 @@ class TaskStandaloneContainer extends Component<Props> {
 
     return (
       <div className="TaskSubmissionContainer">
-        <Header title={taskSubmission.taskName} subtitle={siteConfig.siteTitle} username={currentUser.name} logopath={siteConfig.logoPath}/>
+        <Header pageTitle={taskSubmission.taskName} logopath={siteConfig.logoPath}/>
         <TaskSubmission
           taskSubmission={taskSubmission}
           saveAnsweredQuestion={dispatchSaveAnsweredQuestionAction}
