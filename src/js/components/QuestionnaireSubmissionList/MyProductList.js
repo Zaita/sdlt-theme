@@ -12,6 +12,7 @@ import {loadMyProductList} from "../../actions/questionnaire";
 import moment from "moment";
 import {loadSiteConfig} from "../../actions/siteConfig";
 import type {SiteConfig} from "../../types/SiteConfig";
+import _ from "lodash";
 
 const mapStateToProps = (state: RootState) => {
   return {
@@ -41,7 +42,10 @@ type Props = {
 };
 
 const list = (myProductList: QuestionnaireSubmissionListItem, currentUser: User) => {
-  if(!myProductList.length)
+
+  const {questionnaireSubmissionList} = myProductList;
+
+  if (_.isEmpty(questionnaireSubmissionList))
   {
     return (
       <div className="container">
@@ -65,7 +69,7 @@ const list = (myProductList: QuestionnaireSubmissionListItem, currentUser: User)
             </tr>
           </thead>
           <tbody>
-            {myProductList.map((myProduct) => {
+            {questionnaireSubmissionList.map((myProduct) => {
               let url = "#/questionnaire/summary/" + myProduct.uuid;
               return (
                 <tr key={myProduct.id}>

@@ -461,7 +461,7 @@ export function editTaskRecommendation(uuid: string, updatedTaskRecommendationOb
 
 // Questionnaire Submissions list of pending approval list
 // for SA, CISO and Business owner
-export function loadAwaitingApprovalTaskList(): ThunkAction {
+export function loadAwaitingApprovalTaskList(limit: number, offset: number): ThunkAction {
   return async (dispatch: any, getState: () => RootState) => {
     const user = getState().currentUserState.user;
     if (!user) {
@@ -472,7 +472,7 @@ export function loadAwaitingApprovalTaskList(): ThunkAction {
 
     try {
       // Call re sync with jira data api
-      const data = await TaskDataService.fetchTaskSubmissionList(user.id, 'awaiting_approval_list');
+      const data = await TaskDataService.fetchTaskSubmissionList(user.id, 'awaiting_approval_list', limit, offset);
 
       dispatch({
         type: ActionType.TASK.FETCH_AWAITING_APPROVAL_TASK_LIST_SUCCESS,

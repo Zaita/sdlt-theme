@@ -42,7 +42,8 @@ body {
     @import "components/Common/Loading";
     @import "components/DSRA/SecurityRiskAssessment";
     @import "components/DSRA/ControlValidationAudit";
-    @import "components/DSRA/CertificateAndAccreditationReport"
+    @import "components/DSRA/CertificateAndAccreditationReport";
+    @import "components/Pagination/Pagination";
   }
 }
 

@@ -12,6 +12,7 @@ import UserParser from "../utils/UserParser";
 import TaskParser from "../utils/TaskParser";
 import SecurityComponentParser from "../utils/SecurityComponentParser";
 import JiraTicketParser from "../utils/JiraTicketParser";
+import type {PaginationInfo} from "../types/Pagination";
 
 type BatchUpdateTaskSubmissionDataArgument = {
   uuid: string,
@@ -355,42 +356,63 @@ mutation {
     }
 
   // load data for Awaiting Approvals
-  static async fetchTaskSubmissionList(userID: string, pageType: string): Promise<Array<TaskSubmissionListItem>> {
+  static async fetchTaskSubmissionList(userID: string, pageType: string, limit: number, offset: number): Promise<Array<TaskSubmissionListItem>> {
     const query = `query {
-      readTaskSubmission(UserID: "${userID}", PageType: "${pageType}") {
-        ID
-        UUID
-        Created
-        TaskName
-        QuestionnaireSubmission {
-          ProductName
+      paginatedReadTaskSubmissions(UserID: "${userID}", PageType: "${pageType}", limit: ${limit}, offset: ${offset}) {
+        edges {
+          node {
+            ID
+            UUID
+            Created
+            TaskName
+            QuestionnaireSubmission {
+              ProductName
+            }
+            Submitter {
+              FirstName
+              Surname
+            }
+            Status
+          }
         }
-        Submitter {
-          FirstName
-          Surname
+        pageInfo {
+          hasNextPage
+          hasPreviousPage
+          totalCount
         }
-        Status
       }
     }`;
 
     const json = await GraphQLRequestHelper.request({query});
+    const data = get(json, 'data.paginatedReadTaskSubmissions.edges', []);
+    const pageInfoData = get(json, 'data.paginatedReadTaskSubmissions.pageInfo', []);
 
     // TODO: parse data
-    const data = get(json, 'data.readTaskSubmission', []);
     if (!Array.isArray(data)) {
       throw 'error';
     }
 
-    return data.map((item: any) : TaskSubmissionListItem => {
+    const pageInfo : PaginationInfo = {
+      totalCount: get(pageInfoData, 'totalCount', 0),
+      hasNextPage: Boolean(get(pageInfoData, 'hasNextPage', false)),
+      hasPreviousPage: Boolean(get(pageInfoData, 'hasPreviousPage', false))
+    }
+
+    const taskSubmissionList = data.map((item: any) : TaskSubmissionListItem => {
       let obj = {};
-      obj['id'] = get(item, 'ID', '');
-      obj['uuid'] = get(item, 'UUID', '');
-      obj['created'] = get(item, 'Created', '');
-      obj['taskName'] = get(item, 'TaskName', '');
-      obj['productName'] = get(item, 'QuestionnaireSubmission.ProductName', '');
-      obj['submitterName'] = toString(get(item, "Submitter.FirstName", ""))+ ' ' + toString(get(item, "Submitter.Surname", ""));
-      obj['status'] = get(item, 'Status', '');
+      obj['id'] = get(item, 'node.ID', '');
+      obj['uuid'] = get(item, 'node.UUID', '');
+      obj['created'] = get(item, 'node.Created', '');
+      obj['taskName'] = get(item, 'node.TaskName', '');
+      obj['productName'] = get(item, 'node.QuestionnaireSubmission.ProductName', '');
+      obj['submitterName'] = toString(get(item, "node.Submitter.FirstName", ""))+ ' ' + toString(get(item, "node.Submitter.Surname", ""));
+      obj['status'] = get(item, 'node.Status', '');
       return obj;
     });
+
+    return {
+      taskSubmissionList,
+      pageInfo,
+    }
   }
 }

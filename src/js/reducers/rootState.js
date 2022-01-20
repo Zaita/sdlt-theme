@@ -13,6 +13,7 @@ import {securityRiskAssessmentState} from "./securityRiskAssessmentState";
 import {controlValidationAuditState} from "./controlValidationAuditState";
 import loadingState from './loadingState';
 import {memberState} from './memberState';
+import {paginationState} from "./paginationState";
 
 export default combineReducers<RootState>({
   homeState,
@@ -26,4 +27,5 @@ export default combineReducers<RootState>({
   controlValidationAuditState,
   loadingState,
   memberState,
+  paginationState
 });

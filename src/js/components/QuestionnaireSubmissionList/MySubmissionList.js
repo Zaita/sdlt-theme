@@ -12,6 +12,7 @@ import {loadMySubmissionList} from "../../actions/questionnaire";
 import moment from "moment";
 import {loadSiteConfig} from "../../actions/siteConfig";
 import type {SiteConfig} from "../../types/SiteConfig";
+import _ from "lodash";
 
 const mapStateToProps = (state: RootState) => {
   return {
@@ -41,7 +42,10 @@ type Props = {
 };
 
 const list = (mySubmissionList: QuestionnaireSubmissionListItem, currentUser: User) => {
-  if(!mySubmissionList.length)
+
+  const {questionnaireSubmissionList} = mySubmissionList;
+
+  if (_.isEmpty(questionnaireSubmissionList))
   {
     return (
       <div className="container">
@@ -65,7 +69,7 @@ const list = (mySubmissionList: QuestionnaireSubmissionListItem, currentUser: Us
             </tr>
           </thead>
           <tbody>
-            {mySubmissionList.map((mySubmission) => {
+            {questionnaireSubmissionList.map((mySubmission) => {
               let url = "";
               if (mySubmission.status === "in_progress") {
                 url = "#/questionnaire/submission/" + mySubmission.uuid;
