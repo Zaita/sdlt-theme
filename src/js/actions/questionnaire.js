@@ -474,12 +474,12 @@ export function denyCertificationAction (submissionID: string): ThunkAction {
 }
 
 // Issue Accreditation
-export function issueAccreditationAction (submissionID: string): ThunkAction {
+export function issueAccreditationAction (submissionID: string, accreditationPeriod: string): ThunkAction {
   return async (dispatch: any, getState: () => RootState) => {
     const csrfToken = await CSRFTokenService.getCSRFToken();
     try {
       // Call issueAccreditation data api
-      const {uuid} = await QuestionnaireDataService.issueAccreditation(submissionID, csrfToken);
+      const {uuid} = await QuestionnaireDataService.issueAccreditation(submissionID, csrfToken, accreditationPeriod);
 
       dispatch(loadQuestionnaireSubmissionState(uuid));
     }

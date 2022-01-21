@@ -139,7 +139,8 @@ class Summary extends Component<Props> {
       skipBoAndCisoApproval: false,
       enableApproveButton: true,
       showModal: false,
-      selectedCollaborators: props.submission.collaborators
+      selectedCollaborators: props.submission.collaborators,
+      accreditationPeriod: "",
     }
   }
 
@@ -153,21 +154,82 @@ class Summary extends Component<Props> {
   {
     if (this.props.submission.isCertificationAndAccreditationTaskExists) {
       if (this.props.viewAs === 'businessOwnerApprover' && this.props.submission.businessOwnerAcknowledgementText) {
-        return this.props.submission.businessOwnerAcknowledgementText;
+        return this.replaceAcknowledgementText(this.props.submission.businessOwnerAcknowledgementText);
       }
 
       if (this.props.viewAs === 'approver') {
         if (this.props.user.isCertificationAuthority && this.props.submission.certificationAuthorityAcknowledgementText) {
-          return this.props.submission.certificationAuthorityAcknowledgementText;
+          return this.replaceAcknowledgementText(this.props.submission.certificationAuthorityAcknowledgementText);
         }
 
         if (this.props.user.isAccreditationAuthority && this.props.submission.accreditationAuthorityAcknowledgementText) {
-          return this.props.submission.accreditationAuthorityAcknowledgementText;
+          return this.replaceAcknowledgementText(this.props.submission.accreditationAuthorityAcknowledgementText);
         }
       }
     }
 
     return "";
+  }
+
+  handleChangeForAccreditationPeriod = accreditationPeriod => this.setState({accreditationPeriod});
+
+  replaceAcknowledgementText(acknowledgementText) {
+    let updatedAcknowledgementText = acknowledgementText;
+
+    if (!this.props.user.isAccreditationAuthority) {
+      return (
+        <div dangerouslySetInnerHTML={{ __html: updatedAcknowledgementText}}/>
+      );
+    }
+
+    const taskSubmissions = this.props.submission.taskSubmissions;
+
+    const memoTaskSubmission = taskSubmissions.filter((taskSubmission) => {
+      return taskSubmission.taskType === "certification and accreditation";
+    });
+
+    const answersFromMemo = JSON.parse(memoTaskSubmission[0].resultForCertificationAndAccreditation);
+
+    const accreditationPeriodOptions = [
+      { value: "1 month", label: "1 month" },
+      { value: "3 months", label: "3 months" },
+      { value: "6 months", label: "6 months" },
+      { value: "9 months", label: "9 months" },
+      { value: "12 months", label: "12 months" },
+      { value: "18 months", label: "18 months" },
+      { value: "24 months", label: "24 months" },
+    ];
+
+    const initialAccreditationPeriod = answersFromMemo.accreditationPeriod + " (recommended)";
+    const accreditationPeriodDropdown = (
+      <Select
+        options={accreditationPeriodOptions}
+        defaultValue={{label: initialAccreditationPeriod, value: answersFromMemo.accreditationPeriod}}
+        className="react-select-container"
+        classNamePrefix="react-select"
+        placeholder={answersFromMemo.accreditationPeriod}
+        maxMenuHeight={110}
+        onChange={(selectedOption) => this.handleChangeForAccreditationPeriod(selectedOption.value)}
+      />
+    );
+
+    const acknowledgementTextParts = updatedAcknowledgementText.split(answersFromMemo.accreditationPeriod);
+
+    return (
+      <div className="acknowledgement-text-for-accreditation-authority">
+        <div
+          className="acknowledgement-text-before-dropdown"
+          dangerouslySetInnerHTML={{ __html: acknowledgementTextParts[0]}}
+        />
+        <div className="acknowledgement-text-dropdown">
+          {accreditationPeriodDropdown}
+        </div>
+        <div
+          className="acknowledgement-text-after-dropdown"
+          dangerouslySetInnerHTML={{ __html: acknowledgementTextParts.slice(1)}}
+        />
+      </div>
+    );
   }
 
   unfinishedTaskSubmissionMessage()
@@ -868,7 +930,7 @@ class Summary extends Component<Props> {
         <DarkButton title="Issue Accreditation"
                     classes={["button"]}
                     disabled={!this.state.enableApproveButton}
-                    onClick={() => handleIssueAccreditationButtonClick()}
+                    onClick={() => handleIssueAccreditationButtonClick(this.state.accreditationPeriod)}
         />
       );
 
