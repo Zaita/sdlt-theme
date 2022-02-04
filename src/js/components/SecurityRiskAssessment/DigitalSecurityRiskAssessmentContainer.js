@@ -29,6 +29,7 @@ import type {ImpactThreshold} from "../../types/ImpactThreshold";
 import SecurityRiskAssessmentUtil from "../../utils/SecurityRiskAssessmentUtil";
 import {SubmissionExpired} from "../Common/SubmissionExpired";
 import BackArrow from "../../../img/icons/back-arrow.svg";
+import Board from "../KanbanBoard/Board";
 
 const mapStateToProps = (state: RootState) => {
   return {
@@ -136,7 +137,9 @@ class DigitalSecurityRiskAssessmentContainer extends Component<Props> {
               <div className="help-text">{sraTaskHelpText}</div>
               <h4>Recommended Controls</h4>
               <div className="help-text">{sraTaskRecommendedControlHelpText}</div>
-
+              <div className="control-board">
+                <Board />
+              </div>
               <div className="bottom-container">
                 <div className="button-container">
                   <LightButton title="Exit" />

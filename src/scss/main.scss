@@ -45,6 +45,10 @@ body {
     @import "components/DSRA/ControlValidationAudit";
     @import "components/DSRA/CertificateAndAccreditationReport";
     @import "components/Pagination/Pagination";
+    @import "components/KanbanBoard/Board";
+    @import "components/KanbanBoard/Card";
+    @import "components/KanbanBoard/Column";
+    @import "components/KanbanBoard/BoardFilters";
   }
 }
 
