@@ -15,7 +15,7 @@ import ComponentSelectionContainer from "../ComponentSelection/ComponentSelectio
 import MySubmissionList from "../QuestionnaireSubmissionList/MySubmissionList";
 import AwaitingApprovalList from "../QuestionnaireSubmissionList/AwaitingApprovalList";
 import MyProductList from "../QuestionnaireSubmissionList/MyProductList";
-import SecurityRiskAssessmentContainer from "../SecurityRiskAssessment/SecurityRiskAssessmentContainer.js";
+import SecurityRiskAssessmentContainer from "../SecurityRiskAssessment/DigitalSecurityRiskAssessmentContainer.js";
 import ControlValidationAuditContainer from "../ControlValidationAudit/ControlValidationAuditContainer.js";
 import {parse} from "query-string";
 import { Loading } from "../Common/Loading.js";

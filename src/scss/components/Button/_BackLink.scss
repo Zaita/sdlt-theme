@@ -1,0 +1,14 @@
+.back-link {
+  color: $light-blue;
+  text-decoration: underline;
+  margin-bottom: 30px;
+  font-weight: 500;
+  cursor: pointer;
+  &:hover {
+    color:$dark-blue;
+  }
+
+  img {
+    margin-right: 8px;
+  }
+}

@@ -26,6 +26,8 @@ query {
       }
     }
     IsTaskCollborator
+    SraTaskHelpText
+    SraTaskRecommendedControlHelpText
     Submitter {
       ID
     }
@@ -40,12 +42,13 @@ query {
     if (!submissionJSONObject) {
       throw DEFAULT_NETWORK_ERROR;
     }
-
     const securityRiskAssessmentData = JSON.parse(get(submissionJSONObject, 'SecurityRiskAssessmentData', ''));
     const data: TaskSubmission = {
       uuid: submissionJSONObject && submissionJSONObject.UUID ? submissionJSONObject.UUID : '',
       taskName: toString(get(submissionJSONObject, "TaskName", "")),
       status: toString(get(submissionJSONObject, "Status", "")),
+      sraTaskHelpText: toString(get(submissionJSONObject, "SraTaskHelpText", "")),
+      sraTaskRecommendedControlHelpText: toString(get(submissionJSONObject, "SraTaskRecommendedControlHelpText", "")),
       submitterID: toString(get(submissionJSONObject, "Submitter.ID", "")),
       isTaskCollborator: get(submissionJSONObject, "IsTaskCollborator", "false") === "true",
       questionnaireSubmissionUUID: toString(get(submissionJSONObject, "QuestionnaireSubmission.UUID", "")),
