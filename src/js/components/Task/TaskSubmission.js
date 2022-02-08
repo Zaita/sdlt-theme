@@ -210,14 +210,21 @@ class TaskSubmission extends Component<Props> {
       return;
     }
 
-    PDFUtil.generatePDF({
-      questions: taskSubmission.questions,
-      submitter: taskSubmission.submitter.email ? taskSubmission.submitter : currentUser,
-      questionnaireTitle: taskSubmission.taskName,
-      siteConfig: siteConfig,
-      result: taskSubmission.result,
-      riskResults: taskSubmission.riskResults,
-    });
+    if (taskSubmission.taskType === "certification and accreditation") {
+      PDFUtil.downloadCertificate({
+        siteConfig: siteConfig,
+        resultForCertificationAndAccreditation:taskSubmission.resultForCertificationAndAccreditation
+      });
+    } else {
+      PDFUtil.generatePDF({
+        questions: taskSubmission.questions,
+        submitter: taskSubmission.submitter.email ? taskSubmission.submitter : currentUser,
+        questionnaireTitle: taskSubmission.taskName,
+        siteConfig: siteConfig,
+        result: taskSubmission.result,
+        riskResults: taskSubmission.riskResults,
+      });
+    }
   }
 
   handleTaskSaveDraftButtonClick() {

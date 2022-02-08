@@ -2,13 +2,15 @@
 
 import pdfMake from "pdfmake/build/pdfmake";
 import vfsFonts from "pdfmake/build/vfs_fonts";
-import type {AnswerAction, AnswerInput, Question} from "../types/Questionnaire";
+import type { AnswerAction, AnswerInput, Question } from "../types/Questionnaire";
 import React from "react";
 import StringUtil from "./StringUtil";
 import _ from "lodash";
-import type {User} from "../types/User";
+import type { User } from "../types/User";
 import moment from "moment";
 import SiteConfigParser from "../utils/SiteConfigParser";
+import html2canvas from "html2canvas";
+import htmlToPdfMake from "html-to-pdfmake"
 
 type GeneratePDFArgument = {
   questions: Array<Question>,
@@ -34,9 +36,115 @@ async function getImageDataByURL(imageURL: string) {
 }
 
 export default class PDFUtil {
+  static async downloadCertificate(args: GeneratePDFArgument) {
+    const { vfs } = vfsFonts.pdfMake;
+    pdfMake.vfs = vfs;
+
+    const { siteConfig } = { ...args };
+
+    const documentDefaultOverrides = {
+      defaultStyles: {
+        h5: {
+          fontSize: 10,
+          marginTop: 10,
+        },
+        h3: {
+          fontSize: 12,
+        },
+        p: {
+          margin: [0, 1, 0, 5],
+        },
+      },
+    };
+
+    // Header image
+    const headingImageData = await getImageDataByURL(siteConfig.pdfHeaderImageLink);
+
+    // Convert canvas to jpeg for pdfmake
+    const riskTableCanvasData = await html2canvas(
+      document.getElementById("risk-container"),
+      { scale: 3 }
+    ).then((canvas) => canvas.toDataURL("image/jpeg", 1));
+
+    const recommendationsTableCanvasData = await html2canvas(
+      document.getElementById("recommendations-table"),
+      { scale: 3 }
+    ).then((canvas) => canvas.toDataURL("image/jpeg", 1));
+
+    const taskTableCanvasData = await html2canvas(
+      document.getElementById("task-container"),
+      { scale: 3 }
+    ).then((canvas) => canvas.toDataURL("image/jpeg", 1));
+
+    // Parse HTML to make content pdfmake compatible
+    const reportHeadingLeftContent = htmlToPdfMake(
+      document.getElementsByClassName("report-heading-left-container")[0].innerHTML,
+      documentDefaultOverrides
+    );
+    const reportIntroContent = htmlToPdfMake(
+      document.getElementsByClassName("report-intro-container")[0].innerHTML,
+      documentDefaultOverrides
+    );
+    const certificateContent = htmlToPdfMake(
+      document.getElementById("certificate-container").innerHTML,
+      documentDefaultOverrides
+    );
+    const riskProfileContent = htmlToPdfMake(
+      document.getElementById("risk-profile").innerHTML,
+      documentDefaultOverrides
+    );
+
+    // PDF definition, and content order, and styles.
+    let documentDefinition = {
+      pageSize: "A4",
+      pageMargins: [50, 70, 50, 40],
+      header: {
+        image: headingImageData,
+        alignment: "center",
+        width: 500,
+      },
+      content: [
+        reportHeadingLeftContent,
+        reportIntroContent,
+        certificateContent,
+        riskProfileContent,
+        {
+          image: riskTableCanvasData,
+          fit: [750, 750],
+          margin: [0, 0, 0, 20],
+        },
+        {
+          image: recommendationsTableCanvasData,
+          fit: [750, 750],
+          margin: [0, 0, 0, 20],
+        },
+        {
+          image: taskTableCanvasData,
+          fit: [750, 750],
+          margin: [0, 0, 0, 20],
+        },
+      ],
+      pageBreakBefore: function (currentNode) {
+        return (currentNode.style && currentNode.style.indexOf("pdf-pagebreak-before") > -1);
+      },
+      defaultStyle: {
+        fontSize: 9,
+      },
+    };
+
+    const info = {
+      title: "Certification & Accreditation Report.pdf",
+    };
+
+    try {
+      await pdfMake.createPdf(documentDefinition).download(info.title);
+    } catch {
+      alert("Unable to generate your PDF. Maybe you have a browser Ad-Block extension enabled?");
+    }
+  }
 
   static async generatePDF(args: GeneratePDFArgument) {
-    const {questions, submitter, questionnaireTitle, siteConfig, result, riskResults} = {...args};
+    const { questions, submitter, questionnaireTitle, siteConfig, result, riskResults } = { ...args };
 
     const defaultFontSize = 12;
     const content = [];
@@ -49,7 +157,7 @@ export default class PDFUtil {
       },
       siteTitle: {
         bold: true,
-        fontSize: defaultFontSize ,
+        fontSize: defaultFontSize,
         color: "#004071",
         alignment: "center"
       },
@@ -69,7 +177,7 @@ export default class PDFUtil {
       title: `${questionnaireTitle} - ${submitter.name}.pdf`
     };
 
-    const {vfs} = vfsFonts.pdfMake;
+    const { vfs } = vfsFonts.pdfMake;
     pdfMake.vfs = vfs;
 
     // Header image
@@ -228,7 +336,7 @@ export default class PDFUtil {
       }
     });
 
-    if(typeof riskResults === 'object' && riskResults.length > 0) {
+    if (typeof riskResults === 'object' && riskResults.length > 0) {
       let results = [
         [
           { text: 'Risk Name', bold: true, alignment: 'center' },
@@ -237,8 +345,8 @@ export default class PDFUtil {
           { text: 'Rating', bold: true, alignment: 'center' },
         ]
       ];
-      riskResults.forEach(function(result, i){
-        let resultObj = { text: result.rating, alignment: 'center', color: '#'+result.colour, bold: true };
+      riskResults.forEach(function (result, i) {
+        let resultObj = { text: result.rating, alignment: 'center', color: '#' + result.colour, bold: true };
 
         if (result.rating == 'Unknown') {
           resultObj = { text: 'Unknown', alignment: 'center', color: '#000000', bold: true };
@@ -274,7 +382,7 @@ export default class PDFUtil {
     });
 
     try {
-      await pdfMake.createPdf({info, content, styles, defaultStyle}).download(info.title);
+      await pdfMake.createPdf({ info, content, styles, defaultStyle }).download(info.title);
     } catch {
       alert("Unable to generate your PDF. Maybe you have a browser Ad-Block extension enabled?");
     }
@@ -284,7 +392,7 @@ export default class PDFUtil {
   static async blobToDataURL(blob: Blob): Promise<string> {
     return new Promise((resolve) => {
       const reader = new FileReader();
-      reader.onload = function(event) {
+      reader.onload = function (event) {
         resolve(event.target.result);
       };
       reader.readAsDataURL(blob);

@@ -71,7 +71,6 @@ class CertificationAndAccreditationResultContainer extends Component<Props> {
 
     return (
       <div className="certification-and-accreditation-report-container">
-
         <div className="about-report-container">
           <div className="report-heading">
             <div className="report-heading-left-container">
@@ -90,66 +89,69 @@ class CertificationAndAccreditationResultContainer extends Component<Props> {
             <p className="report-intro">Delivered to {businessOwnerName} as part of the {productName} delivery.</p>
           </div>
         </div>
-
-        <div className="about-product-container sub-container">
-          <h5>About {productName}</h5>
-          <div
-            dangerouslySetInnerHTML={{
-              __html: productDescription
-            }}
-          >
+        <div id="certificate-container">
+          <div className="about-product-container sub-container">
+            <h5>About {productName}</h5>
+            <div
+              dangerouslySetInnerHTML={{
+                __html: productDescription
+              }}
+            >
+            </div>
           </div>
-        </div>
 
-        <div className="certificate-recommendation-container sub-container">
-          <h5>Certification Recommendation</h5>
-          <p className="intro-container">It has been recommended by {securityArchitectName} that
-          this change {productName} be certified against {accreditationLevel} with an accreditation
-          level of: {accreditationType} for a period of no longer than {accreditationPeriod}.</p>
-          <p>Re-certification after this period should be conditional on the following
-          post go-live remediations being resolved:</p>
-          <div
-            dangerouslySetInnerHTML={{
-              __html: accreditationRenewalRecommendations
-            }}
-          >
+          <div className="certificate-recommendation-container sub-container">
+            <h5>Certification Recommendation</h5>
+            <p className="intro-container">It has been recommended by {securityArchitectName} that
+            this change {productName} be certified against {accreditationLevel} with an accreditation
+            level of: {accreditationType} for a period of no longer than {accreditationPeriod}.</p>
+            <p>Re-certification after this period should be conditional on the following
+            post go-live remediations being resolved:</p>
+            <div
+              dangerouslySetInnerHTML={{
+                __html: accreditationRenewalRecommendations
+              }}
+            >
+            </div>
           </div>
-        </div>
 
-        <div className="information-classification-container sub-container">
-        <h5>Information Classification</h5>
-        <p className="intro-container">This memo certifies {serviceName} has been endorsed to store, transmit
-        and receive data to an Information Classification up to {classificationLevel}.</p>
-        </div>
+          <div className="information-classification-container sub-container">
+          <h5>Information Classification</h5>
+          <p className="intro-container">This memo certifies {serviceName} has been endorsed to store, transmit
+          and receive data to an Information Classification up to {classificationLevel}.</p>
+          </div>
 
-        <div className="certificate-scope-container sub-container">
-          <h5>Certification Scope</h5>
-          <p className="intro-container">
-            This certification is a {accreditationLevel} level certification for {serviceName}.
-            It covers {serviceName} and the following dependencies only.
-          </p>
-          <div
-            className="certificate-scope-description"
-            dangerouslySetInnerHTML={{
-              __html: accreditationDescription
-            }}
-          >
+          <div className="certificate-scope-container sub-container">
+            <h5>Certification Scope</h5>
+            <p className="intro-container">
+              This certification is a {accreditationLevel} level certification for {serviceName}.
+              It covers {serviceName} and the following dependencies only.
+            </p>
+            <div
+              className="certificate-scope-description"
+              dangerouslySetInnerHTML={{
+                __html: accreditationDescription
+              }}
+            >
+            </div>
           </div>
         </div>
 
         <div className="risk-profile-container sub-container">
-          <h5>Risk Profile</h5>
-          <p className="intro-container">After completing a risk assessment process,
-          it was determined that the residual risk ratings for this delivery are:</p>
+          <div id="risk-profile">
+            <h5 className="pdf-pagebreak-before">Risk Profile</h5>
+            <p className="intro-container">After completing a risk assessment process,
+            it was determined that the residual risk ratings for this delivery are:</p>
+          </div>
           {this.renderRiskProfile(riskProfileData)}
         </div>
 
-        <div className="recommendation-container sub-container">
-          <h5>Recommendations against {productName}</h5>
+        <div id="recommendations-table" className="recommendation-container sub-container">
+            <h5>Recommendations against {productName}</h5>
           {this.renderTaskRecommendation(taskRecommendations)}
         </div>
 
-        <div className="task-container sub-container">
+        <div id="task-container" className="task-container sub-container">
           <h5>Tasks Completed</h5>
           <p className="intro-container">
             The certification of {serviceName} for {productName} was
@@ -169,7 +171,7 @@ class CertificationAndAccreditationResultContainer extends Component<Props> {
     const riskProfileData = JSON.parse(riskProfileDataStr);
 
     return (
-      <div className="risk-container">
+      <div id="risk-container" className="risk-container">
         {
           riskProfileData.isDisplayMessage && (<div className="alert alert-danger">{riskProfileData.message}</div>)
         }
