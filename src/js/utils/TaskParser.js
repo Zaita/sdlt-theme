@@ -73,4 +73,13 @@ export default class TaskParser {
       }
     });
   }
+
+  static parseServiceRegister(serviceRegister) {
+    return serviceRegister.map((serviceInventory) => {
+      return {
+        value: toString(get(serviceInventory, "ID")),
+        label: toString(get(serviceInventory, "ServiceName"))
+      }
+    });
+  }
 }

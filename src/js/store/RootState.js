@@ -14,6 +14,7 @@ import type {
   MySubmissionListState,
   QuestionnaireSubmissionListState
 } from "./QuestionnaireSubmissionListState";
+import type {PaginationState} from "./PaginationState";
 
 export type RootState = {
   homeState: HomeState,
@@ -27,5 +28,6 @@ export type RootState = {
   securityRiskAssessmentState: SecurityRiskAssessmentState,
   controlValidatioAuditState: ControlValidatioAuditState,
   loadingState: LoadingState,
-  memberState: MemberState
+  memberState: MemberState,
+  paginationState: PaginationState
 }

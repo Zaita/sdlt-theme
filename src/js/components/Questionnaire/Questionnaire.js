@@ -10,7 +10,11 @@ import _ from "lodash";
 type Props = {
   questions: Array<Question>,
   saveAnsweredQuestion: (question: Question) => void,
-  onLeftBarItemClick: (question: Question) => void
+  onLeftBarItemClick: (question: Question) => void,
+  serviceRegister: Array<*>,
+  informationClassificationTaskResult: string,
+  riskProfileData: Array<*>,
+  resultForCertificationAndAccreditation: Array<*>
 };
 
 class Questionnaire extends Component<Props> {
@@ -61,8 +65,36 @@ class Questionnaire extends Component<Props> {
     saveAnsweredQuestion(answeredQuestion);
   }
 
+  handleNextButtonClickForDisplayField() {
+    const {questions, saveAnsweredQuestion} = {...this.props};
+
+    // Generate new question with data
+    const currentQuestion = questions.find((question) => {
+      return question.isCurrent === true;
+    });
+    if (!currentQuestion) {
+      return;
+    }
+
+    const answeredQuestion = {...currentQuestion};
+    answeredQuestion.hasAnswer = true;
+    answeredQuestion.isApplicable = true;
+
+    saveAnsweredQuestion(answeredQuestion);
+  }
+
   render() {
-    const {questions, onLeftBarItemClick} = {...this.props};
+    const {
+      questions,
+      onLeftBarItemClick,
+      serviceRegister,
+      informationClassificationTaskResult,
+      riskProfileData,
+      resultForCertificationAndAccreditation,
+      handleTaskSaveDraftButtonClick,
+      handleTaskSubmitButtonClick,
+      loadResultForCertificationAndAccreditation
+    } = {...this.props};
 
     const currentQuestion = questions.find((question) => {
       return question.isCurrent === true;
@@ -73,13 +105,27 @@ class Questionnaire extends Component<Props> {
     return (
       <div className="Questionnaire mx-1">
         <div className="major">
-          <LeftBar questions={questions} onItemClick={onLeftBarItemClick}/>
-          {currentQuestion && <QuestionForm
-            index={currentQuestionIndex}
-            key={currentQuestion.id}
-            question={currentQuestion}
-            handleFormSubmit={this.handleFormSubmit.bind(this)}
-            handleActionClick={this.handleActionClick.bind(this)}/>}
+          <div className="title">Questions</div>
+          <div className="form-container">
+            <LeftBar questions={questions} onItemClick={onLeftBarItemClick}/>
+            {
+              currentQuestion &&
+              <QuestionForm
+                index={currentQuestionIndex}
+                key={currentQuestion.id}
+                question={currentQuestion}
+                serviceRegister={serviceRegister}
+                riskProfileData={riskProfileData}
+                resultForCertificationAndAccreditation={resultForCertificationAndAccreditation}
+                loadResultForCertificationAndAccreditation={loadResultForCertificationAndAccreditation}
+                informationClassificationTaskResult={informationClassificationTaskResult}
+                handleTaskSaveDraftButtonClick={handleTaskSaveDraftButtonClick}
+                handleFormSubmit={this.handleFormSubmit.bind(this)}
+                handleActionClick={this.handleActionClick.bind(this)}
+                handleNextButtonClickForDisplayField={this.handleNextButtonClickForDisplayField.bind(this)}
+              />
+            }
+          </div>
         </div>
       </div>
     );

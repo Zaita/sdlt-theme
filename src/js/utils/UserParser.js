@@ -15,6 +15,8 @@ export default class UserParser {
       email: get(jsonObject, "Email"),
       isSA: toString(get(jsonObject, "IsSA")) === "true",
       isCISO: toString(get(jsonObject, "IsCISO")) === "true",
+      isCertificationAuthority: toString(get(jsonObject, "IsCertificationAuthority")) === "true",
+      isAccreditationAuthority: toString(get(jsonObject, "IsAccreditationAuthority")) === "true",
     }
   }
 

@@ -7,11 +7,12 @@ import uniq from "lodash/uniq";
 import {DEFAULT_NETWORK_ERROR} from "../constants/errors";
 import type {Question, SubmissionQuestionData} from "../types/Questionnaire";
 import QuestionParser from "../utils/QuestionParser";
-import type {Task, TaskSubmission, TaskSubmissionListItem} from "../types/Task";
+import type {Task, TaskSubmission, TaskSubmissionListItem, TaskRecommendation} from "../types/Task";
 import UserParser from "../utils/UserParser";
 import TaskParser from "../utils/TaskParser";
 import SecurityComponentParser from "../utils/SecurityComponentParser";
 import JiraTicketParser from "../utils/JiraTicketParser";
+import type {PaginationInfo} from "../types/Pagination";
 
 type BatchUpdateTaskSubmissionDataArgument = {
   uuid: string,
@@ -56,6 +57,8 @@ query {
     }
     QuestionnaireData
     AnswerData
+    RiskProfileData
+    ResultForCertificationAndAccreditation
     SelectedComponents {
       ID
       ProductAspect
@@ -79,14 +82,23 @@ query {
     IsTaskApprovalRequired
     IsCurrentUserAnApprover
     RiskResultData
+    IsDisplayPreventMessage
+    PreventMessage
+    TaskRecommendationData
     ComponentTarget
     ProductAspects
     HideWeightsAndScore
+    InformationClassificationTaskResult
+  }
+  readServiceInventory {
+    ID
+    ServiceName
   }
 }`;
 
     const responseJSONObject = await GraphQLRequestHelper.request({query});
     const submissionJSONObject = get(responseJSONObject, "data.readTaskSubmission.0", null);
+    const serviceRegister = get(responseJSONObject, "data.readServiceInventory", null);
 
     if (!submissionJSONObject) {
       throw DEFAULT_NETWORK_ERROR;
@@ -99,6 +111,7 @@ query {
       taskType: toString(get(submissionJSONObject, "TaskType", "")),
       status: toString(get(submissionJSONObject, "Status", "")),
       result: toString(get(submissionJSONObject, "Result", "")),
+      informationClassificationTaskResult: toString(get(submissionJSONObject, "InformationClassificationTaskResult", "")),
       submitter: UserParser.parseUserFromJSON(get(submissionJSONObject, "Submitter")),
       lockWhenComplete: Boolean(get(submissionJSONObject, "LockAnswersWhenComplete", false)),
       questionnaireSubmissionUUID: toString(get(submissionJSONObject, "QuestionnaireSubmission.UUID", "")),
@@ -113,12 +126,46 @@ query {
       isCurrentUserAnApprover:  get(submissionJSONObject, "IsCurrentUserAnApprover", "false") === "true",
       isTaskApprovalRequired: get(submissionJSONObject, "IsTaskApprovalRequired", false) === "true",
       riskResults: _.has(submissionJSONObject, 'RiskResultData') ? JSON.parse(get(submissionJSONObject, "RiskResultData", "[]")) : "[]",
+      taskRecommendations: _.has(submissionJSONObject, 'TaskRecommendationData') ? JSON.parse(_.defaultTo(get(submissionJSONObject, "TaskRecommendationData", "[]"), "[]")) : "[]",
       productAspects:  _.has(submissionJSONObject, 'ProductAspects') ? JSON.parse(get(submissionJSONObject, "ProductAspects", [])) : [],
       componentTarget: toString(get(submissionJSONObject, "ComponentTarget", "")),
       hideWeightsAndScore: _.get(submissionJSONObject, "HideWeightsAndScore", "false") === "true",
       isTaskCollborator: _.get(submissionJSONObject, "IsTaskCollborator", "false") === "true",
-      siblingSubmissions: TaskParser.parseAlltaskSubmissionforQuestionnaire(submissionJSONObject)
+      isDisplayPreventMessage: _.get(submissionJSONObject, "IsDisplayPreventMessage", "false") === "true",
+      preventMessage: toString(get(submissionJSONObject, "PreventMessage", "")),
+      siblingSubmissions: TaskParser.parseAlltaskSubmissionforQuestionnaire(submissionJSONObject),
+      serviceRegister: TaskParser.parseServiceRegister(serviceRegister),
+      riskProfileData:  _.has(submissionJSONObject, 'RiskProfileData') ? JSON.parse(get(submissionJSONObject, "RiskProfileData", [])) : [],
+      resultForCertificationAndAccreditation:  _.has(submissionJSONObject, 'ResultForCertificationAndAccreditation') ? JSON.parse(get(submissionJSONObject, "ResultForCertificationAndAccreditation", [])) : []
     };
+
+    return data;
+  }
+
+  static async fetchResultForCertificationAndAccreditation(args: { uuid: string, secureToken?: string }): Promise<TaskSubmission> {
+    const {uuid, secureToken} = {...args};
+    const query = `
+query {
+  readTaskSubmission(UUID: "${uuid}", SecureToken: "${secureToken || ""}") {
+    ID
+    UUID
+    ResultForCertificationAndAccreditation
+  }
+}`;
+
+    const responseJSONObject = await GraphQLRequestHelper.request({query});
+    const submissionJSONObject = get(responseJSONObject, "data.readTaskSubmission.0", null);
+
+    if (!submissionJSONObject) {
+      throw DEFAULT_NETWORK_ERROR;
+    }
+
+    const data: TaskSubmission = {
+      id: toString(get(submissionJSONObject, "ID", "")),
+      uuid: toString(get(submissionJSONObject, "UUID", "")),
+      resultForCertificationAndAccreditation:  _.has(submissionJSONObject, 'ResultForCertificationAndAccreditation') ? JSON.parse(get(submissionJSONObject, "ResultForCertificationAndAccreditation", [])) : []
+    };
+
     return data;
   }
 
@@ -143,6 +190,7 @@ updateQuestion${questionID}: updateTaskSubmission(
 ) {
   UUID
   Status
+
 }`;
       mutations.push(singleQuery);
     }
@@ -279,50 +327,92 @@ mutation {
 }`;
     const json = await GraphQLRequestHelper.request({query, csrfToken});
     const status = toString(
-      get(json, "data.updateTaskStatusToDenied.Status", null));
+      get(json, "data.updateTaskStatusToDenied.Status", null)
+    );
     if (!status || !uuid) {
       throw DEFAULT_NETWORK_ERROR;
     }
     return {status};
   }
 
+    static async updateTaskRecommendation(argument: { uuid: string, csrfToken: string, taskRecommendations: Array<TaskRecommendation> }): Promise<{ uuid: string }> {
+      const {uuid, csrfToken, taskRecommendations} = {...argument};
+      const query = `
+  mutation {
+    updateTaskRecommendation(
+      UUID: "${uuid}",
+      TaskRecommendationData: "${window.btoa(unescape(encodeURIComponent(JSON.stringify(taskRecommendations))))}"
+    ) {
+     TaskRecommendationData
+     UUID
+   }
+  }`;
+      const json = await GraphQLRequestHelper.request({query, csrfToken});
+      const taskRecommendationData = _.has(json, 'TaskRecommendationData') ? JSON.parse(get(submissionJSONObject, "TaskRecommendationData", "[]")) : "[]";
+      if (!taskRecommendationData || !uuid) {
+        throw DEFAULT_NETWORK_ERROR;
+      }
+      return {taskRecommendationData};
+    }
+
   // load data for Awaiting Approvals
-  static async fetchTaskSubmissionList(userID: string, pageType: string): Promise<Array<TaskSubmissionListItem>> {
+  static async fetchTaskSubmissionList(userID: string, pageType: string, limit: number, offset: number): Promise<Array<TaskSubmissionListItem>> {
     const query = `query {
-      readTaskSubmission(UserID: "${userID}", PageType: "${pageType}") {
-        ID
-        UUID
-        Created
-        TaskName
-        QuestionnaireSubmission {
-          ProductName
+      paginatedReadTaskSubmissions(UserID: "${userID}", PageType: "${pageType}", limit: ${limit}, offset: ${offset}) {
+        edges {
+          node {
+            ID
+            UUID
+            Created
+            TaskName
+            QuestionnaireSubmission {
+              ProductName
+            }
+            Submitter {
+              FirstName
+              Surname
+            }
+            Status
+          }
         }
-        Submitter {
-          FirstName
-          Surname
+        pageInfo {
+          hasNextPage
+          hasPreviousPage
+          totalCount
         }
-        Status
       }
     }`;
 
     const json = await GraphQLRequestHelper.request({query});
+    const data = get(json, 'data.paginatedReadTaskSubmissions.edges', []);
+    const pageInfoData = get(json, 'data.paginatedReadTaskSubmissions.pageInfo', []);
 
     // TODO: parse data
-    const data = get(json, 'data.readTaskSubmission', []);
     if (!Array.isArray(data)) {
       throw 'error';
     }
 
-    return data.map((item: any) : TaskSubmissionListItem => {
+    const pageInfo : PaginationInfo = {
+      totalCount: get(pageInfoData, 'totalCount', 0),
+      hasNextPage: Boolean(get(pageInfoData, 'hasNextPage', false)),
+      hasPreviousPage: Boolean(get(pageInfoData, 'hasPreviousPage', false))
+    }
+
+    const taskSubmissionList = data.map((item: any) : TaskSubmissionListItem => {
       let obj = {};
-      obj['id'] = get(item, 'ID', '');
-      obj['uuid'] = get(item, 'UUID', '');
-      obj['created'] = get(item, 'Created', '');
-      obj['taskName'] = get(item, 'TaskName', '');
-      obj['productName'] = get(item, 'QuestionnaireSubmission.ProductName', '');
-      obj['submitterName'] = toString(get(item, "Submitter.FirstName", ""))+ ' ' + toString(get(item, "Submitter.Surname", ""));
-      obj['status'] = get(item, 'Status', '');
+      obj['id'] = get(item, 'node.ID', '');
+      obj['uuid'] = get(item, 'node.UUID', '');
+      obj['created'] = get(item, 'node.Created', '');
+      obj['taskName'] = get(item, 'node.TaskName', '');
+      obj['productName'] = get(item, 'node.QuestionnaireSubmission.ProductName', '');
+      obj['submitterName'] = toString(get(item, "node.Submitter.FirstName", ""))+ ' ' + toString(get(item, "node.Submitter.Surname", ""));
+      obj['status'] = get(item, 'node.Status', '');
       return obj;
     });
+
+    return {
+      taskSubmissionList,
+      pageInfo,
+    }
   }
 }

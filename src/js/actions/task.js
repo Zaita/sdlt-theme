@@ -7,13 +7,13 @@ import type {Question} from "../types/Questionnaire";
 import SubmissionDataUtil from "../utils/SubmissionDataUtil";
 import _ from "lodash";
 import CSRFTokenService from "../services/CSRFTokenService";
-import type {Task, TaskSubmission} from "../types/Task";
+import type {Task, TaskSubmission, TaskRecommendation} from "../types/Task";
 import ErrorUtil from "../utils/ErrorUtil";
 import type {
   LoadTaskSubmissionAction,
   MarkQuestionsNotApplicableInTaskSubmissionAction,
   MoveToQuestionInTaskSubmissionAction,
-  PutDataInTaskSubmissionAction,
+  PutDataInTaskSubmissionAction
 } from "./ActionType";
 import {loadSelectedComponents} from "./componentSelection";
 import type {User} from "../types/User";
@@ -45,6 +45,30 @@ export function loadTaskSubmission(args: {uuid: string, secureToken?: string, ty
     }
   };
 }
+
+export function loadResultForCertificationAndAccreditation(args: {uuid: string, secureToken?: string, }): ThunkAction {
+  const {uuid, secureToken} = {...args};
+
+  return async (dispatch) => {
+    try {
+      const payload = await TaskDataService.fetchResultForCertificationAndAccreditation({
+        uuid,
+        secureToken
+      });
+
+      const action: LoadTaskSubmissionAction = {
+        type: ActionType.TASK.LOAD_RESULT_FOR_CERTIFICATION_AND_ACCREDITATION,
+        payload,
+      };
+
+      await dispatch(action);
+    }
+    catch (error) {
+      ErrorUtil.displayError(error);
+    }
+  };
+}
+
 
 export function loadStandaloneTaskSubmission(args: {taskId: string}): ThunkAction {
   const {taskId} = {...args};
@@ -379,6 +403,18 @@ export function approveTaskSubmission(uuid: string): ThunkAction {
   }
 }
 
+export function inProgressTaskSubmission(uuid: string): ThunkAction {
+  return async (dispatch, getState) => {
+    try {
+      const csrfToken = await CSRFTokenService.getCSRFToken();
+      const {status} = await TaskDataService.editTaskSubmission({uuid, csrfToken, secureToken: ''});
+      await dispatch(loadTaskSubmission({uuid, secureToken: ''}));
+    } catch(error) {
+      ErrorUtil.displayError(error.message);
+    }
+  }
+}
+
 export function denyTaskSubmission(uuid: string): ThunkAction {
   return async (dispatch, getState) => {
     try {
@@ -391,9 +427,41 @@ export function denyTaskSubmission(uuid: string): ThunkAction {
   }
 }
 
+export function addTaskRecommendation(uuid: string, newTaskRecommendationObj: TaskRecommendation, taskRecommendations: Array<TaskRecommendation>): ThunkAction {
+  return async (dispatch, getState) => {
+    try {
+      // push new task recommendation in existing taskRecommendations object
+      taskRecommendations.push(newTaskRecommendationObj);
+      const csrfToken = await CSRFTokenService.getCSRFToken();
+      const {taskRecommendationData} = await TaskDataService.updateTaskRecommendation({uuid, csrfToken, taskRecommendations});
+      await dispatch(loadTaskSubmission({uuid}));
+    } catch(error) {
+      ErrorUtil.displayError(error.message);
+    }
+  }
+}
+
+export function editTaskRecommendation(uuid: string, updatedTaskRecommendationObj: TaskRecommendation, taskRecommendations: Array<TaskRecommendation>): ThunkAction {
+  return async (dispatch, getState) => {
+    try {
+      // edit task recommendation in existing taskRecommendations object
+      taskRecommendations = taskRecommendations.map(taskRecommendation =>
+        taskRecommendation.id === updatedTaskRecommendationObj.id ?
+        {...taskRecommendations, ...updatedTaskRecommendationObj} : taskRecommendation
+      );
+
+      const csrfToken = await CSRFTokenService.getCSRFToken();
+      const {taskRecommendationData} = await TaskDataService.updateTaskRecommendation({uuid, csrfToken, taskRecommendations});
+      await dispatch(loadTaskSubmission({uuid}));
+    } catch(error) {
+      ErrorUtil.displayError(error.message);
+    }
+  }
+}
+
 // Questionnaire Submissions list of pending approval list
 // for SA, CISO and Business owner
-export function loadAwaitingApprovalTaskList(): ThunkAction {
+export function loadAwaitingApprovalTaskList(limit: number, offset: number): ThunkAction {
   return async (dispatch: any, getState: () => RootState) => {
     const user = getState().currentUserState.user;
     if (!user) {
@@ -404,7 +472,7 @@ export function loadAwaitingApprovalTaskList(): ThunkAction {
 
     try {
       // Call re sync with jira data api
-      const data = await TaskDataService.fetchTaskSubmissionList(user.id, 'awaiting_approval_list');
+      const data = await TaskDataService.fetchTaskSubmissionList(user.id, 'awaiting_approval_list', limit, offset);
 
       dispatch({
         type: ActionType.TASK.FETCH_AWAITING_APPROVAL_TASK_LIST_SUCCESS,

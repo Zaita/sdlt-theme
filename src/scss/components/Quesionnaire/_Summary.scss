@@ -26,8 +26,8 @@
         }
 
         .add-collaborators-btn {
-          color: $blue;
-          font-size: 14px ;
+          color: $light-blue;
+          font-size: 12px;
           font-weight: bold;
           margin-left: -15px;
           margin-top: 10px;
@@ -35,10 +35,20 @@
           &:active {
             box-shadow: none !important;
           }
+          img {
+            margin-right: 5px;
+            margin-top: -2px;
+          }
         }
 
-        .collaborators-name-container {
-          margin-top: 10px;
+        .collaborator-name, .component-name {
+          margin-top: 20px;
+          background: $white;
+          border-radius: 5px;
+          padding: 5px 10px 5px 10px;
+          font-weight: $headings-font-weight;
+          display: inline-block;
+          margin-right: 9px;
         }
 
         .AnswersPreview {
@@ -49,7 +59,7 @@
            @extend .base-section;
         }
 
-        .approvals {
+        .sub-container {
             @extend .base-section;
         }
 
@@ -62,20 +72,23 @@
         .buttons {
             display: flex;
             flex-direction: row;
-            justify-content: space-between;
+            justify-content: flex-start;
             align-items: stretch;
-            margin-top: 40px;
-
-            div {
-                display: flex;
-                flex-direction: row;
-                justify-content: flex-start;
-                align-items: stretch;
-            }
 
             .BaseButton {
                 margin-right: 16px;
             }
+            .buttons-right {
+              margin-left: auto;
+              margin-right: -16px;
+            }
+        }
+
+        .approver-action {
+          font-weight: bold;
+          font-size: 12px;
+          margin-right: 10px;
+          line-height: 13px;
         }
     }
 
@@ -103,6 +116,253 @@
       position: absolute;
       top: -7px;
       right: 7px;
+    }
+  }
+
+  .submission-approval-container {
+      border-top: 2px solid $light-gray;
+      padding: 25px 0;
+      margin-top: 25px;
+      .approval-status {
+          margin-left: 5px;
+      }
+
+      .unassigned-approver {
+          font-style: italic;
+          color: #707070;
+      }
+  }
+
+  .acknowledgement-container {
+    margin-bottom: 25px;
+    width: 100%;
+
+    .form-check-input {
+      margin-top: 0.21rem;
+    }
+  }
+
+  h4 {
+    font-size: 15px;
+    margin-bottom: 20px;
+    font-weight: bold;
+  }
+
+  .tasks-container {
+    border-top: 2px solid #d9d9d9;
+    padding-top: 25px;
+    margin-top: 5px;
+    margin-bottom: 25px;
+
+    .task-instruction-message {
+      margin-bottom: 15px;
+    }
+
+    .task-status {
+      margin-left: 7px;
+    }
+
+    .task-faq {
+      color: $light-blue;
+      font-weight: bold;
+      text-decoration: underline;
+      margin-top: 15px;
+      img {
+        margin-left: 5px;
+        cursor: pointer;
+      }
+    }
+  }
+
+  h3 {
+    font-weight: bold;
+    margin-bottom: 25px;
+    font-size: 18px;
+  }
+
+  .submission-details-container {
+    display: flex;
+    .product-name {
+      font-weight: 500;
+      font-size: 14px;
+    }
+
+    .submission-status {
+      background: $white;
+      border-radius: 5px;
+      padding: 10px 15px 10px 18px;
+      font-weight: bold;
+      display: inline-flex;
+      width: fit-content;
+      img {
+        margin-right: 16px;
+      }
+    }
+  }
+
+ .submission-details-data, .submission-details-label {
+    min-width: 110px;
+    display: inline-block;
+  }
+
+  .submission-details-label {
+    margin-right: 13px;
+    font-weight: 500;
+  }
+
+  .submission-details-data {
+    height: 14px;
+  }
+
+  .submitter-name-created-date-row {
+    margin-top: 25px;
+  }
+
+
+  .collaborators-components-container {
+    display: flex;
+    border-top: 2px solid #d9d9d9;
+    padding-top: 25px;
+    margin-top: 25px;
+    margin-bottom: 25px;
+  }
+
+  .task-table-title-data {
+    font-weight: $headings-font-weight;
+  }
+
+  .collaborator-message {
+    margin-right: 60px;
+    a {
+      color: $light-blue;
+      font-weight: bold;
+      text-decoration: underline;
+    }
+  }
+
+  .collaborators-container,
+  .components-container,
+  .submission-detail-left-container,
+  .submission-detail-right-container {
+    flex: 1;
+  }
+
+  .hide-components-container {
+    display: none;
+  }
+
+  .multiple-tasks-created {
+    color: $red;
+  }
+
+  .task-thead, .submission-approval-thead {
+    th:first-child {
+      width: 23%;
+    }
+  }
+
+  .submission-approval-thead {
+    th:first-child {
+      width: 23%;
+    }
+
+    th:last-child {
+      width: 58%;
+    }
+  }
+
+  .task-thead {
+    .completion-time-col {
+      width: 19%;
+    }
+  }
+
+  .acknowledgement-container {
+    white-space: pre-line;
+    .acknowledgement-text-after-dropdown,
+    .acknowledgement-text-dropdown,
+    .acknowledgement-text-before-dropdown {
+      display: inline;
+    }
+
+    .react-select-container {
+      min-width: 178px;
+      padding: 5px 6px 5px 10px;
+      display: inline-block;
+    }
+
+    .react-select__indicator-separator {
+      display: none;
+    }
+
+    .react-select__control {
+      border: solid 1px $light-blue;
+      min-width: 190px;
+    }
+
+    .react-select__placeholder {
+      color: $black;
+    }
+
+    .react-select__indicator {
+      color: $light-blue;
+      height: 30px;
+      padding: 5px;
+    }
+
+    .react-select__control--is-focused {
+      box-shadow: none !important;
+      border: solid 1px $light-blue;
+    }
+
+    .react-select__menu {
+      max-width: 190px;
+      margin-top: -4px;
+      border: solid 1px $light-blue;
+    }
+
+    .react-select__option--is-selected {
+      background-color: $light-blue;
+      color: $white;
+    }
+
+    .react-select__option--is-focused {
+      background-color: #E1E7EB;
+      color: $black;
+    }
+
+     // for chrome
+     ::-webkit-scrollbar {
+      width: 12px;
+      height: 8px;
+    }
+
+    /* Track */
+    ::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 5px $white;
+      -webkit-border-radius: 5px;
+      border-radius: 5px;
+      margin-top: 10px;
+      margin-bottom: 10px;
+    }
+
+    /* Handle */
+    ::-webkit-scrollbar-thumb {
+      padding: 0 4px;
+      border-right:4px solid transparent;
+      border-left:4px solid transparent;
+      -webkit-border-radius: 5px;
+      border-radius: 5px;
+      background: $light-blue;
+      background-clip: padding-box;
+      -webkit-box-shadow: inset 0 0 5px $light-blue;
+    }
+
+    // for firefox
+    .acknowledgement-text-dropdown {
+      scrollbar-color: $light-blue $white;
+      scrollbar-width: thin;
+      border-radius: 5px;
     }
   }
 }

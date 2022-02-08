@@ -30,6 +30,7 @@ body {
     @import "components/Quesionnaire/TaskSubmission";
     @import "components/Button/BaseButton";
     @import "components/Button/LightButton";
+    @import "components/Button/RedButton";
     @import "components/Button/DarkButton";
     @import "components/Button/HeaderButton";
     @import "components/Button/tab";
@@ -37,10 +38,12 @@ body {
     @import "components/ComponentSelection/ComponentSelectionReview";
     @import "components/ComponentSelection/ComponentInfo";
     @import "components/ComponentSelection/ControlInfo";
-    @import "components/Common/RiskResult";
+    @import "components/Common/Table";
     @import "components/Common/Loading";
     @import "components/DSRA/SecurityRiskAssessment";
     @import "components/DSRA/ControlValidationAudit";
+    @import "components/DSRA/CertificateAndAccreditationReport";
+    @import "components/Pagination/Pagination";
   }
 }
 

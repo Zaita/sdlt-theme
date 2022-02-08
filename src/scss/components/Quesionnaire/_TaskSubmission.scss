@@ -1,38 +1,218 @@
 @import "../../variables";
 
 .TaskSubmissionContainer {
+  h4 {
+    font-size: 15px;
+    margin-bottom: 15px;
+  }
 
-    .TaskSubmission {
-        max-width: map_get($container-max-widths, xl);
-        margin-left: auto;
-        margin-right: auto;
-        margin-bottom: 80px;
+  .TaskSubmission {
+    max-width: map_get($container-max-widths, xl);
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 80px;
+  }
+
+  .Questionnaire {
+    margin-bottom: 40px;
+  }
+
+  .AnswersPreview, .risk-result-container, .recommendation-container {
+    margin-bottom: 40px;
+  }
+
+  .recommendation-container {
+    margin-bottom: 25px;
+  }
+
+  .result {
+    @extend .mx-0;
+    background-color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 2rem;
+    padding: 20px;
+  }
+
+  .buttons {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: stretch;
+    border-top: 2px solid $light-gray;
+    padding-top: 30px;
+
+    .BaseButton {
+      margin-right: 16px;
+    }
+    .buttons-right {
+      margin-left: auto;
+      margin-right: -16px;
+    }
+  }
+
+  .buttons-hideborder {
+    border-top: none;
+    padding-top: 0;
+  }
+
+  .back-link {
+    color: $light-blue;
+    text-decoration: underline;
+    margin-bottom: 30px;
+    font-weight: 500;
+    cursor: pointer;
+    &:hover {
+      color:$dark-blue;
     }
 
-
-    .Questionnaire {
-        margin-bottom: 40px;
+    img {
+      margin-right: 8px;
     }
+  }
 
-    .AnswersPreview {
-        margin-bottom: 40px;
-    }
+  .approver-action {
+    font-weight: bold;
+    font-size: 12px;
+    margin-right: 10px;
+    line-height: 13px;
+  }
 
-    .result {
-        @extend .mx-0;
-        background-color: rgba(255, 255, 255, 0.7);
-        margin-bottom: 1rem;
-        padding: 20px;
-    }
+  .issue-title-col {
+    min-width: 150px;
+  }
 
-    .buttons {
-        display: flex;
-        flex-direction: row;
-        justify-content: flex-start;
-        align-items: stretch;
+  .edit-col {
+    min-width: 50px;
+    text-align: center;
+  }
 
-        .BaseButton {
-            margin-right: 16px;
+  .ReactModalPortal {
+    .ReactModal__Content {
+      border-radius: 5px;
+
+      .modal-header {
+        border-bottom: 1px solid $light-gray;
+        margin: -20px;
+        padding-left: 20px;
+        margin-bottom: 10px;
+        color: $dark-blue;
+
+        .header-title {
+          font-size: 1.125rem;
+          font-weight: 900;
         }
+
+        .close-icon-container {
+          cursor: pointer;
+        }
+      }
+
+      .title-and-status-container {
+        width: 100%;
+        float: left;
+
+        .title-field-container {
+          float: left;
+          width: 70%;
+        }
+
+        .status-field-container {
+          float: right;
+          padding-left: 20px;
+          width: 30%;
+        }
+      }
+
+      .issue-container {
+        width: 100%;
+        float: left;
+      }
+
+      label {
+        font-weight: 500;
+        padding: 10px 0;
+      }
+
+      input, select, textarea {
+        border: 1px solid $light-blue;
+        border-radius: 5px;
+        margin-top: 5px;
+        width: 100%;
+        min-height: 30px;
+      }
+
+      input, label, select, textarea {
+        display: block;
+        width: 100%
+      }
+
+      .input-error {
+        border: solid 1px $red;
+      }
+
+      .error {
+        padding-top: 5px;
+        font-weight:  400;
+        color: $red;
+      }
+
+      select {
+        padding-top: 4px;
+        background-color: $white;
+      }
+
+      textarea {
+        height: 120px;
+        resize: none;
+      }
+
+      .buttons{
+        margin-top: 20px;
+        margin-left: -20px;
+        margin-right: -20px;
+        padding-left: 20px;
+        border-top: 1px solid $light-gray;
+      }
+
+      #float {
+          float: right;
+      }
+
+      .content{
+          width: 659px;
+      }
+
+      span {
+        display: block;
+        overflow: hidden;
+      }
     }
+  }
+
+  .add-recommendation-link {
+      color: $light-blue;
+      vertical-align: middle;
+      margin-top: 15px;
+      font-weight: bold;
+      line-height: 14px;
+      cursor: pointer;
+      &:hover{
+          text-decoration: underline;
+      }
+  }
+
+  .edit-icon {
+      cursor: pointer;
+  }
+
+  .summary {
+      padding-bottom: 15px;
+  }
+
+  .prevent-message-container {
+    padding-bottom: 0;
+
+    p, pre, div {
+      margin-bottom: 12px
+    }
+  }
 }

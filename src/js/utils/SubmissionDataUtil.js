@@ -94,7 +94,7 @@ export default class SubmissionDataUtil {
     };
 
     // Process for input question
-    if (answeredQuestion.type === "input") {
+    if (answeredQuestion.type === "input" || answeredQuestion.type === "display") {
       if (isLastQuestion) {
         // Mark complete if this is the last question
         returnPackage.complete = true;

@@ -11,6 +11,7 @@ import type {MemberState} from "../../store/MemberState";
 import {
   approveQuestionnaireSubmission,
   denyQuestionnaireSubmission,
+  sendBackForChangesSubmission,
   notApproveQuestionnaireSubmissionforSA,
   editQuestionnaireSubmission,
   loadQuestionnaireSubmissionState,
@@ -18,7 +19,11 @@ import {
   approveQuestionnaireSubmissionAsBusinessOwner,
   denyQuestionnaireSubmissionAsBusinessOwner,
   assignToSecurityArchitectQuestionnaireSubmission,
-  addCollaboratorAction
+  addCollaboratorAction,
+  grantCertificationAction,
+  denyCertificationAction,
+  issueAccreditationAction,
+  denyAccreditationAction
 } from "../../actions/questionnaire";
 import {loadMember} from "../../actions/user";
 import Summary from "./Summary";
@@ -70,11 +75,8 @@ const mapDispatchToProps = (dispatch: Dispatch, props: *) => {
       dispatch(denyQuestionnaireSubmission(submissionID, skipBoAndCisoApproval));
     },
 
-    // as a SA not approve the submission
-    dispatchNotApproveSubmissionAction(submissionID: string, skipBoAndCisoApproval: boolean) {
-      console.log(submissionID);
-      console.log(skipBoAndCisoApproval);
-      dispatch(notApproveQuestionnaireSubmissionforSA(submissionID, skipBoAndCisoApproval));
+    dispatchSendBackForChangesSubmissionAction(submissionID: string) {
+      dispatch(sendBackForChangesSubmission(submissionID));
     },
 
     // As a SA assign the submission to cureent logged in user
@@ -85,6 +87,26 @@ const mapDispatchToProps = (dispatch: Dispatch, props: *) => {
     dispatchAddCollaboratorAction(submissionID: string, selectedCollaborators:Array<Collaborator>)
     {
       dispatch(addCollaboratorAction(submissionID, selectedCollaborators));
+    },
+
+    dispatchGrantCertificationAction(submissionID: string)
+    {
+      dispatch(grantCertificationAction(submissionID));
+    },
+
+    dispatchDenyCertificationAction(submissionID: string)
+    {
+      dispatch(denyCertificationAction(submissionID));
+    },
+
+    dispatchIssueAccreditationAction(submissionID: string, accreditationPeriod: string)
+    {
+      dispatch(issueAccreditationAction(submissionID, accreditationPeriod));
+    },
+
+    dispatchDenyAccreditationAction(submissionID: string)
+    {
+      dispatch(denyAccreditationAction(submissionID));
     }
   };
 };
@@ -104,6 +126,10 @@ type reduxProps = {
   dispatchEditSubmissionAction: (submissionID: string) => void,
   approveQuestionnaireSubmissionFromBusinessOwner: (submissionID: string) => void,
   denyQuestionnaireSubmissionFromBusinessOwner: (submissionID: string) => void,
+  dispatchGrantCertificationAction: (submissionID: string) => void,
+  dispatchDenyCertificationAction: (submissionID: string) => void,
+  dispatchIssueAccreditationAction: (submissionID: string, accreditationPeriod: string) => void,
+  dispatchDenyAccreditationAction: (submissionID: string) => void,
   loadingState: object<*>
 };
 
@@ -185,17 +211,22 @@ class SummaryContainer extends Component<Props, State> {
         <Summary submission={submission}
                  handlePDFDownloadButtonClick={this.handlePDFDownloadButtonClick.bind(this)}
                  handleSubmitButtonClick={this.handleSubmitButtonClick.bind(this)}
+                 handleSendBackForChangesButtonClick={this.handleSendBackForChangesButtonClick.bind(this)}
                  handleApproveButtonClick={this.handleApproveButtonClick.bind(this)}
-                 handleNotApproveButtonClick={this.handleNotApproveButtonClick.bind(this)}
                  handleDenyButtonClick={this.handleDenyButtonClick.bind(this)}
                  handleEditButtonClick={this.handleOpenModal.bind(this)}
                  handleAssignToMeButtonClick={this.handleAssignToMeButtonClick.bind(this)}
                  handleCollaboratorAddButtonClick={this.handleCollaboratorAddButtonClick.bind(this)}
+                 handleGrantCertificationButtonClick={this.handleGrantCertificationButtonClick.bind(this)}
+                 handleDenyCertificationButtonClick={this.handleDenyCertificationButtonClick.bind(this)}
+                 handleIssueAccreditationButtonClick={this.handleIssueAccreditationButtonClick.bind(this)}
+                 handleDenyAccreditationButtonClick={this.handleDenyAccreditationButtonClick.bind(this)}
                  viewAs={viewAs}
                  user={user}
                  token={secureToken}
                  members={members}
                  showNotApproveButton={showNotApproveButton}
+                 securityTeamEmail={siteConfig.securityTeamEmail}
         />
         <Footer footerCopyrightText={siteConfig.footerCopyrightText}/>
         <ReactModal
@@ -268,24 +299,6 @@ class SummaryContainer extends Component<Props, State> {
     }
   }
 
-  handleNotApproveButtonClick(skipBoAndCisoApproval: boolean = false) {
-    const {secureToken} = {...this.props};
-    const {
-      user,
-      submission,
-      isCurrentUserApprover,
-      isCurrentUserABusinessOwnerApprover
-    } = {...this.props.submissionState};
-
-    if (!user || !submission) {
-      return;
-    }
-
-    if (isCurrentUserApprover) {
-      this.props.dispatchNotApproveSubmissionAction(submission.submissionID, skipBoAndCisoApproval);
-    }
-  }
-
   handleDenyButtonClick(skipBoAndCisoApproval: boolean = false) {
     const {secureToken} = {...this.props};
     const {
@@ -303,6 +316,18 @@ class SummaryContainer extends Component<Props, State> {
       this.props.dispatchBusinessOwnerDenySubmissionAction(submission.submissionID, secureToken);
     } else if (isCurrentUserApprover) {
       this.props.dispatchDenySubmissionAction(submission.submissionID, skipBoAndCisoApproval);
+    }
+  }
+
+  handleSendBackForChangesButtonClick() {
+    const {user, submission, isCurrentUserApprover} = {...this.props.submissionState};
+
+    if (!user || !submission) {
+      return;
+    }
+
+    if (isCurrentUserApprover) {
+      this.props.dispatchSendBackForChangesSubmissionAction(submission.submissionID);
     }
   }
 
@@ -347,6 +372,46 @@ class SummaryContainer extends Component<Props, State> {
     }
 
     this.props.dispatchAddCollaboratorAction(submission.submissionID, selectedCollaborators);
+  }
+
+  handleGrantCertificationButtonClick() {
+    const {user, submission} = {...this.props.submissionState};
+
+    if (!user || !submission) {
+      return;
+    }
+
+    this.props.dispatchGrantCertificationAction(submission.submissionID);
+  }
+
+  handleDenyCertificationButtonClick() {
+    const {user, submission} = {...this.props.submissionState};
+
+    if (!user || !submission) {
+      return;
+    }
+
+    this.props.dispatchDenyCertificationAction(submission.submissionID);
+  }
+
+  handleIssueAccreditationButtonClick(accreditationPeriod) {
+    const {user, submission} = {...this.props.submissionState};
+
+    if (!user || !submission) {
+      return;
+    }
+
+    this.props.dispatchIssueAccreditationAction(submission.submissionID, accreditationPeriod);
+  }
+
+  handleDenyAccreditationButtonClick() {
+    const {user, submission} = {...this.props.submissionState};
+
+    if (!user || !submission) {
+      return;
+    }
+
+    this.props.dispatchDenyAccreditationAction(submission.submissionID);
   }
 }
 

@@ -3,77 +3,305 @@
 .QuestionForm {
   background-color: $white;
   width: 840px;
-  padding: 45px;
+  min-height: 510px;
+  padding: 25px 25px 70px 25px;
   font-size: 14px;
   color: $black;
   position: relative;
 
   .heading {
-    font-size: 24px;
-    font-weight: 300;
+    font-size: 14px;
+    font-weight: bold;
     color: $blue;
-    margin-bottom: 1rem;
+    margin-bottom: 20px;
     white-space: pre-line;
+    line-height: 16px;
   }
 
   .description {
-    margin-bottom: 1rem;
-  }
-
-  .saveText {
-    position: absolute;
-    bottom: 2rem;
-  }
-
-  .saveMessage {
+    margin-bottom: 25px;
     font-size: 12px;
-    font-weight: 400;
-    margin-left: 5px;
+    line-height: 16px;
   }
 
-  td {
-    padding-bottom: 1rem;
-    vertical-align: top;
-    max-width: 500px;
+  .field-container {
+    padding-bottom: 20px;
+
+    .label {
+      margin-bottom: 5px;
+      font-weight: 500;
+      font-size: 11px;
+      line-height: 13px;
+    }
+
+    input, textarea {
+      @extend .rounded-0;
+      border: solid 1px $light-blue;
+      width: 355px;
+      font-size: 12px;
+      height: 30px;
+      padding: 5px;
+      background-color: $white;
+      border-radius: 5px !important;
+    }
+
+    .dropdown-container {
+      width: 380px;
+
+      .react-select__control {
+        border: solid 1px $light-blue;
+        font-size: 11px;
+        min-height: 30px;
+        height: 30px;
+        background-color: $white;
+      }
+
+      .react-select-error {
+        .react-select__control {
+          background-color: $light-red;
+          border: solid 1px $dark-red;
+        }
+      }
+
+      .react-select__control--is-focused {
+        box-shadow: none !important;
+        border: solid 1px $light-blue;
+      }
+
+      .react-select__control--menu-is-open {
+        border-bottom-right-radius: 0;
+        border-bottom-left-radius: 0;
+      }
+
+      .react-select__value-container {
+        padding: 0 5px;
+        min-height: 30px;
+        height: 30px;
+      }
+
+      .react-select__single-value {
+        position: sticky;
+      }
+
+      .react-select__placeholder {
+        position: sticky;
+        color: $black;
+      }
+
+      .react-select__indicator {
+        color: $light-blue;
+        height: 30px;
+        padding: 5px;
+      }
+
+      .react-select__indicator-separator {
+        display: none;
+        width: 0;
+      }
+
+      .react-select__menu {
+        margin-top: -1px;
+        border: solid 1px $light-blue;
+        border-top-right-radius: 0;
+        border-top-left-radius: 0;
+        font-size: 11px;
+      }
+
+      .react-select__option--is-selected {
+        background-color: $light-blue;
+        color: $white;
+      }
+
+
+      .react-select__option--is-focused {
+        background-color: #E1E7EB;
+        color: $black;
+      }
+    }
+
+    textarea {
+      width: 100%;
+      height: 275px;
+      font-size: 12px;
+    }
+
+    input.error, textarea.error, .select-error {
+      background-color: $light-red !important;
+      border: solid 1px $dark-red;
+    }
+
+    .radio-container-error,
+    .checkbox-container-error {
+      padding-left: 15px;
+      background-color: $light-red;
+      padding-bottom: 15px;
+      margin-bottom: 5px;
+      border: solid 1px $dark-red;
+    }
+
+    .error-message-container {
+      margin: 5px 0 20px;
+      position: relative;
+
+      .error-icon {
+        position: absolute;
+        font-size: 13px;
+        top: 1px;
+        left: -4px;
+        color: $dark-red !important;
+      }
+
+      .error-message {
+        left: 16px;
+        top: 2px;
+        position: absolute;
+        font-weight: 500;
+        font-size: 10px;
+        line-height: 12px;
+        color: $dark-red;
+      }
+    }
+
+    .actions {
+      margin-top: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .action-message {
+      font-size: 11px;
+      margin-top: 20px !important;
+    }
+
+    .DarkButton, .LightButton {
+      min-width: 84px;
+    }
+
+    .checkbox-label,
+    .radio-label {
+      font-size: 12px;
+      line-height: 13px;
+      margin-bottom: 0px;
+      display: inline !important ;
+      margin: 0px;
+    }
+
+    .radio-container, .checkbox-container {
+      position: relative;
+      top: -10px;
+    }
+
+    .accreditation-level-option {
+      display: inline !important;
+      margin-right: 38px;
+    }
+
+    .radio,
+    .checkbox {
+      font-size: 12px;
+      line-height: 13px;
+      position: relative !important;
+      width: auto;
+      margin: 0 7px 7px 0;
+      top: 11px;
+    }
+
+    .required:after {
+      content:" *";
+      color: $dark-red;
+    }
+
+    .mce-panel {
+      border: solid 1px $light-blue;
+      background-color: $white;
+    }
+
+    .mce-btn {
+      border: none;
+      background: none;
+      color: $light-blue;
+    }
+    .mce-first{
+      border: none;
+    }
   }
 
-  td.label {
-    width: auto;
-    padding-right: 1rem;
+  .bottom-container {
+    position: absolute;
+    bottom: 25px;
+    width: 95%;
+    .message-container {
+      position: absolute;
+      bottom: 2px;
+      float: left;
+      width: 80%;
+      .saveMessage {
+        font-size: 10px;
+        line-height: 14px;
+        margin-left: 5px;
+      }
+    }
+    .button-container {
+      left: 25px;
+      float: right;
+      width: 10%;
+    }
   }
 
-  input, textarea {
-    @extend .rounded-0;
-    border: solid 1px #959595;
-    width: 355px;
+  .review-button-container {
+    margin-bottom: -45px !important;
   }
 
-  textarea {
-    height: 119px;
+  // for chrome
+  ::-webkit-scrollbar {
+    width: 12px;
+    height: 8px;
   }
 
-  input.error, textarea.error {
-    border: solid 1px $red;
+  /* Track */
+  ::-webkit-scrollbar-track {
+   -webkit-box-shadow: inset 0 0 5px $white;
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
   }
 
-  .actions {
-    margin-top: 1.5rem;
-    margin-bottom: 2rem;
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    padding: 0 4px;
+    border-right:4px solid transparent;
+    border-left:4px solid transparent;
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
+    background: $light-blue;
+    background-clip: padding-box;
+    -webkit-box-shadow: inset 0 0 5px $light-blue;
   }
 
-  .message {
-    font-size: 16px;
+  // for firefox
+  .scroller {
+    scrollbar-color: $light-blue $white;
+    scrollbar-width: thin;
   }
 
-  .DarkButton, .LightButton {
-    min-width: 84px;
-  }
+  .risk-profile-container {
+    font-size: 12px;
 
-  .radio,
-  .checkbox {
-    position: relative;
-    width: auto;
-    margin: 0 7px 7px 0;
-    top: 3px;
+    .product-aspect-container {
+      margin-bottom: 10px;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    .risk-profile-table-container {
+      margin-bottom: 40px;
+
+      .table {
+        border: 1px solid $light-gray;
+        border-radius: 5px;
+
+        td {
+          font-size: 11px;
+        }
+      }
+    }
   }
 }

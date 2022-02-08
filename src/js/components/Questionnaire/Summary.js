@@ -5,8 +5,18 @@ import {Link} from "react-router-dom";
 import type {Submission} from "../../types/Questionnaire";
 import LightButton from "../Button/LightButton";
 import DarkButton from "../Button/DarkButton";
-import pdfIcon from "../../../img/icons/pdf.svg";
-import editIcon from "../../../img/icons/edit.svg";
+import RedButton from "../Button/RedButton";
+import pdfIcon from "../../../img/icons/download.svg";
+import editIcon from "../../../img/icons/edit-icon.svg";
+import approveIcon from "../../../img/icons/approve.svg";
+import notApprovedIcon from "../../../img/icons/not-approved.svg";
+import awaitingApprovalIcon from "../../../img/icons/awaiting-approval.svg";
+import inProgressIcon from "../../../img/icons/in-progress.svg";
+import startIcon from "../../../img/icons/start.svg";
+import submittedIcon from "../../../img/icons/submitted.svg";
+import incompleteTasksIcon from "../../../img/icons/incomplete-tasks.svg";
+import chevronRightIcon from "../../../img/icons/chevron-right-link.svg";
+import submitSubmissionIcon from "../../../img/icons/submit-submission.svg";
 import _ from "lodash";
 import URLUtil from "../../utils/URLUtil";
 import SubmissionDataUtil from "../../utils/SubmissionDataUtil";
@@ -18,11 +28,12 @@ import {
 } from "../../constants/values";
 import SecurityRiskAssessmentUtil from "../../utils/SecurityRiskAssessmentUtil";
 import {SubmissionExpired} from "../Common/SubmissionExpired";
-import AddIcon from '@material-ui/icons/AddCircleOutline';
+import AddIcon from "../../../img/icons/add-circle.svg";
 import CloseIcon from '@material-ui/icons/Close';
 import ReactModal from "react-modal";
 import IconButton from '@material-ui/core/IconButton';
 import Select from 'react-select'
+import moment from "moment";
 
 type Props = {
   submission: Submission | null,
@@ -31,17 +42,23 @@ type Props = {
   handleAssignToMeButtonClick: () => void,
   handleApproveButtonClick: (skipBoAndCisoApproval: boolean) => void,
   handleDenyButtonClick: (skipBoAndCisoApproval: boolean) => void,
-  handleNotApproveButtonClick: (skipBoAndCisoApproval: boolean) => void,
+  handleSendBackForChangesButtonClick: () => void,
   handleEditButtonClick: () => void,
+  handleGrantCertificationButtonClick: () => void,
+  handleDenyCertificationButtonClick: () => void,
+  handleIssueAccreditationButtonClick: () => void,
+  handleDenyAccreditationButtonClick: () => void,
   handleCollaboratorAddButtonClick: (selectedCollaborators: Array<Collaborator>) => void,
   viewAs: "submitter" | "approver" | "others",
   token: string,
   user: User | null,
-  members: Array<User> | null
+  members: Array<User> | null,
+  securityTeamEmail: string
 };
 
 type State = {
-  showModal: boolean
+  showModal: boolean,
+  enableApproveButton: boolean
 };
 
 const prettifyStatus = (status: string) => {
@@ -56,32 +73,163 @@ const prettifyStatus = (status: string) => {
     .join(" ");
 };
 
+const prettifyApprovalStatus = (status: string, role:string) => {
+  if (!status) {
+    return;
+  }
+
+  if (status == "pending") {
+    return "Awaiting approval";
+  }
+
+  if (status == "not_required") {
+    return "Not required";
+  }
+
+  if (status == "approved" && role == "Certification Authority") {
+    return "Certification granted";
+  }
+
+  if (status == "denied" && role == "Certification Authority") {
+    return "Certification denied";
+  }
+
+  if (status == "approved" && role == "Accreditation Authority") {
+    return "Accreditation issued";
+  }
+
+  if (status == "denied" && role == "Accreditation Authority") {
+    return "Accreditation denied";
+  }
+
+  if (status == "denied") {
+    return "Not approved";
+  }
+
+  return prettifyStatus(status);
+}
+
 class Summary extends Component<Props> {
 
   static defaultProps = {
     submission: null,
     handlePDFDownloadButtonClick: () => {},
     handleSubmitButtonClick: () => {},
+    handleSendBackForChangesButtonClick: () => {},
     handleApproveButtonClick: () => {},
-    handleNotApproveButtonClick: () => {},
     handleDenyButtonClick: () => {},
     handleEditButtonClick: () => {},
     handleAssignToMeButtonClick: () => {},
     handleCollaboratorAddButtonClick: () => {},
+    handleGrantCertificationButtonClick: () => {},
+    handleDenyCertificationButtonClick: () => {},
+    handleIssueAccreditationButtonClick: () => {},
+    handleDenyAccreditationButtonClick: () => {},
     viewAs: "others",
     showNotApproveButton: false,
     token: "",
     user: null,
-    members: null
+    members: null,
+    securityTeamEmail: "",
   };
 
   constructor(props) {
     super(props);
     this.state = {
       skipBoAndCisoApproval: false,
+      enableApproveButton: true,
       showModal: false,
-      selectedCollaborators: props.submission.collaborators
+      selectedCollaborators: props.submission.collaborators,
+      accreditationPeriod: "",
     }
+  }
+
+  componentDidMount() {
+    if (this.getAcknowledgeText() !== "") {
+      this.setState({ enableApproveButton: false });
+    }
+  }
+
+  getAcknowledgeText()
+  {
+    if (this.props.submission.isCertificationAndAccreditationTaskExists) {
+      if (this.props.viewAs === 'businessOwnerApprover' && this.props.submission.businessOwnerAcknowledgementText) {
+        return this.replaceAcknowledgementText(this.props.submission.businessOwnerAcknowledgementText);
+      }
+
+      if (this.props.viewAs === 'approver') {
+        if (this.props.user.isCertificationAuthority && this.props.submission.certificationAuthorityAcknowledgementText) {
+          return this.replaceAcknowledgementText(this.props.submission.certificationAuthorityAcknowledgementText);
+        }
+
+        if (this.props.user.isAccreditationAuthority && this.props.submission.accreditationAuthorityAcknowledgementText) {
+          return this.replaceAcknowledgementText(this.props.submission.accreditationAuthorityAcknowledgementText);
+        }
+      }
+    }
+
+    return "";
+  }
+
+  handleChangeForAccreditationPeriod = accreditationPeriod => this.setState({accreditationPeriod});
+
+  replaceAcknowledgementText(acknowledgementText) {
+    let updatedAcknowledgementText = acknowledgementText;
+
+    if (!this.props.user.isAccreditationAuthority) {
+      return (
+        <div dangerouslySetInnerHTML={{ __html: updatedAcknowledgementText}}/>
+      );
+    }
+
+    const taskSubmissions = this.props.submission.taskSubmissions;
+
+    const memoTaskSubmission = taskSubmissions.filter((taskSubmission) => {
+      return taskSubmission.taskType === "certification and accreditation";
+    });
+
+    const answersFromMemo = JSON.parse(memoTaskSubmission[0].resultForCertificationAndAccreditation);
+
+    const accreditationPeriodOptions = [
+      { value: "1 month", label: "1 month" },
+      { value: "3 months", label: "3 months" },
+      { value: "6 months", label: "6 months" },
+      { value: "9 months", label: "9 months" },
+      { value: "12 months", label: "12 months" },
+      { value: "18 months", label: "18 months" },
+      { value: "24 months", label: "24 months" },
+    ];
+
+    const initialAccreditationPeriod = answersFromMemo.accreditationPeriod + " (recommended)";
+    const accreditationPeriodDropdown = (
+      <Select
+        options={accreditationPeriodOptions}
+        defaultValue={{label: initialAccreditationPeriod, value: answersFromMemo.accreditationPeriod}}
+        className="react-select-container"
+        classNamePrefix="react-select"
+        placeholder={answersFromMemo.accreditationPeriod}
+        maxMenuHeight={110}
+        onChange={(selectedOption) => this.handleChangeForAccreditationPeriod(selectedOption.value)}
+      />
+    );
+
+    const acknowledgementTextParts = updatedAcknowledgementText.split(answersFromMemo.accreditationPeriod);
+
+    return (
+      <div className="acknowledgement-text-for-accreditation-authority">
+        <div
+          className="acknowledgement-text-before-dropdown"
+          dangerouslySetInnerHTML={{ __html: acknowledgementTextParts[0]}}
+        />
+        <div className="acknowledgement-text-dropdown">
+          {accreditationPeriodDropdown}
+        </div>
+        <div
+          className="acknowledgement-text-after-dropdown"
+          dangerouslySetInnerHTML={{ __html: acknowledgementTextParts.slice(1)}}
+        />
+      </div>
+    );
   }
 
   unfinishedTaskSubmissionMessage()
@@ -148,9 +296,9 @@ class Summary extends Component<Props> {
     if (submission.status === "in_progress" && viewAs === "submitter") {
       return (
         <div className="Summary">
-          <h3>
+          <h4>
             Questionnaire Submission has not been completed...
-          </h3>
+          </h4>
         </div>
       );
     }
@@ -163,7 +311,9 @@ class Summary extends Component<Props> {
 
     return (
       <div className="Summary">
-        {this.renderSubmitterAndCollaboratorInfo(submission, members)}
+        <h3>Submission details</h3>
+        {this.renderSubmissionDetails(submission)}
+        {this.renderCollboratorsAndComponentsInfo(submission, members)}
         {this.renderTasks(submission)}
         {this.renderApprovals(submission)}
         <RiskResultContainer
@@ -171,6 +321,7 @@ class Summary extends Component<Props> {
           hideWeightsAndScore={submission.hideWeightsAndScore}
         />
         {this.renderSkipCheckbox(submission, viewAs, user)}
+        {this.renderAcknowledgements(submission, viewAs, user)}
         {this.renderButtons(submission)}
       </div>
     );
@@ -184,7 +335,7 @@ class Summary extends Component<Props> {
         parentSelector={() => {return document.querySelector(".Summary");}}
       >
         <div className="collaborator-model-title">
-          <span><h3>Add Collaborators</h3></span>
+          <span><h4>Add Collaborators</h4></span>
           <IconButton
             aria-label="close"
             component="span"
@@ -213,16 +364,85 @@ class Summary extends Component<Props> {
     )
   }
 
+  renderSubmissionDetails(submission: Submission) {
+    const submitter = submission.submitter;
+    let status = prettifyStatus(submission.status)
+    let statusIcon = awaitingApprovalIcon;
+
+    if (status == "Submitted" &&
+      SubmissionDataUtil.existsIncompleteTaskSubmission(submission.taskSubmissions)) {
+      status = "Tasks to complete"
+      statusIcon = incompleteTasksIcon;
+    } else if (status == "Submitted" &&
+      !SubmissionDataUtil.existsIncompleteTaskSubmission(submission.taskSubmissions)) {
+      status = "Ready to submit"
+      statusIcon = submittedIcon
+    }
+
+    if (status == "In progress") {
+      statusIcon = inProgressIcon;
+    }
+
+    if (status == "Approved") {
+      statusIcon = approveIcon;
+    }
+
+    if (status == "Denied") {
+      statusIcon = notApprovedIcon;
+    }
+
+    let productName = submission.productName;
+
+    if (productName == '') {
+      productName = "Product Name: Please add a product name";
+    }
+
+    return (
+      <div className="submission-details-container">
+        <div className="submission-detail-left-container">
+          <div>
+            <span className="product-name">{productName}</span>
+          </div>
+          <span>{submission.questionnaireTitle}</span>
+          <div className="submitter-name-created-date-row">
+            <span className="submission-details-label">Submission created: </span>
+            <span className="submission-details-data">{moment(submission.created).format("DD/MM/YYYY")}</span>
+          </div>
+          <div>
+            <span className="submission-details-label">Go live date: </span>
+            <span className="submission-details-data">{submission.releaseDate ? moment(submission.releaseDate).format("DD/MM/YYYY") : ''}</span>
+          </div>
+        </div>
+        <div className="submission-detail-right-container">
+          <div>
+            <span className="submission-status"><img src={statusIcon}/>{status}</span>
+          </div>
+          <div className="submitter-name-created-date-row">
+            <span className="submission-details-label">Submitted by: </span>
+            <span className="submission-details-data">{submitter.name}</span>
+          </div>
+          <div>
+            <span className="submission-details-label">Email: </span>
+            <span className="submission-details-data">{submitter.email}</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   renderCollboratorsInfo(submission: Submission, members) {
     return (
-      <div>
-        <h3>Collaborators</h3>
-        <div><b>Add people to help complete your submission.</b></div>
+      <div className="collaborators-container">
+        <h4>Collaborators</h4>
+        <div className="collaborator-message">
+          You can add people to help complete your submission.
+          Please contact the&nbsp;<a href ={"mailto:" + this.props.securityTeamEmail}>security team</a>&nbsp;for more information.
+        </div>
         {submission.collaborators.length > 0 && (
-          <div className="collaborators-name-container">
+          <div>
             {submission.collaborators.map(({label}, index) =>
               {
-                return(<div key={index}>{label}</div>)
+                return(<div className="collaborator-name" key={index}>{label}</div>)
               }
             )}
           </div>
@@ -230,8 +450,7 @@ class Summary extends Component<Props> {
         {this.props.viewAs === "submitter" && (
           <div>
             <button className="btn add-collaborators-btn" onClick={this.handleOpenModalForCollaborators.bind(this)}>
-              <AddIcon className="icon-blue"/>
-              Add collaborators
+             <img src={AddIcon}/> Add collaborators
             </button>
           </div>
         )}
@@ -240,31 +459,31 @@ class Summary extends Component<Props> {
     );
   }
 
-  renderSubmitterInfo(submission: Submission) {
-    const submitter = submission.submitter;
+  renderComponentsInfo(submission: Submission){
+    const productAspects = submission.productAspects;
     return (
-      <div>
-        <h3>Request Information</h3>
-        <div><b>Product Name:</b> {submission.productName} </div>
-        <div><b>Submitted by:</b> {submitter.name}</div>
-        <div><b>Email:</b> {submitter.email}</div>
-        <div><b>Status:</b> {prettifyStatus(submission.status)}</div>
+      <div className={productAspects.length > 0 ? 'components-container' : 'hide-components-container'}>
+        <h4>Components</h4>
+        <div>Please specify if there are multiple components impacted for this submission.
+          This will help group your tasks per component.
+        </div>
+        <div>
+          {productAspects.map((productAspect, index) =>
+            {
+              return(<div className="component-name" key={index}>{productAspect}</div>)
+            }
+          )}
+        </div>
       </div>
     );
   }
 
-  renderSubmitterAndCollaboratorInfo(submission: Submission, members) {
+  renderCollboratorsAndComponentsInfo(submission: Submission, members) {
     return (
-      <div>
-        <div className="card-group">
-          <div className="card mr-2 request-info">
-            {this.renderSubmitterInfo(submission)}
-          </div>
-          <div className="card ml-2 request-info">
-            {this.renderCollboratorsInfo(submission, members)}
-          </div>
+        <div className="collaborators-components-container">
+          {this.renderCollboratorsInfo(submission, members)}
+          {this.renderComponentsInfo(submission)}
         </div>
-      </div>
     );
   }
 
@@ -281,52 +500,270 @@ class Summary extends Component<Props> {
     ) : null;
 
     return (
-      <div className="tasks">
-        <h3>Tasks</h3>
-        {unfinshedRQTaskMessage}
-        {isSRATaskFinalised ? SecurityRiskAssessmentUtil.getSraIsFinalisedAlert() : null}
+      <div className="tasks-container">
+        <h4>Tasks</h4>
+        <div className="task-instruction-message">
+          Please complete the tasks below. Note the tasks marked with a red asterisk
+          (<span className="multiple-tasks-created">*</span>) may create new tasks, depending on your answers.
+        </div>
+          {unfinshedRQTaskMessage}
+          {isSRATaskFinalised ? SecurityRiskAssessmentUtil.getSraIsFinalisedAlert() : null}
+        <div className="table-responsive table-continer">
+          <table className="table">
+            <thead className="task-thead">
+              <tr key="task-table-header">
+                <th>Task</th>
+                <th className="completion-time-col">Time to complete</th>
+                <th>Approved by</th>
+                <th>Time to review</th>
+                <th>Task status</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {taskSubmissions.map(({uuid, taskName, taskType, status, approver, isTaskApprovalRequired, timeToComplete, timeToReview, canTaskCreateNewTasks}) => {
+              let statusIcon = startIcon;
 
-        {taskSubmissions.map(({uuid, taskName, taskType, status, approver}) => {
-          let taskNameAndStatus = taskName + ' (' + prettifyStatus(status) + ')';
+              if (status == "start") {
+                status = "To do";
+              }
 
-          if (status === "start") {
-            taskNameAndStatus = taskName + ' (Please complete me)';
-          }
+              if (status == "in_progress") {
+                statusIcon = inProgressIcon;
+              }
 
-          if ((status === "approved" || status === "denied") && approver.name) {
-            taskNameAndStatus = taskName + ' (' + prettifyStatus(status) + ' by ' + approver.name + ')';
-          }
+              if (status == "waiting_for_approval") {
+                statusIcon = awaitingApprovalIcon;
+              }
 
-          const {token} = {...this.props};
+              if (status == "approved" || status == "complete") {
+                statusIcon = approveIcon;
+              }
 
-          let taskRedirectURL = URLUtil.redirectToTaskSubmission(uuid, token, "urlString");
+              if (status == "denied") {
+                statusIcon = notApprovedIcon;
+              }
 
-          if (taskType === "selection") {
-            taskRedirectURL = URLUtil.redirectToComponentSelectionSubmission(uuid, token, "urlString");
-          }
+              const {token} = {...this.props};
 
-          if (taskType === "security risk assessment") {
-            taskRedirectURL = URLUtil.redirectToSecurityRiskAssessment(uuid, token, "urlString");
-          }
+              let taskRedirectURL = URLUtil.redirectToTaskSubmission(uuid, token, "urlString");
 
-          if (taskType === "control validation audit") {
-            taskRedirectURL = URLUtil.redirectToControlValidationAudit(uuid, token, "urlString");
-          }
+              if (taskType === "selection") {
+                taskRedirectURL = URLUtil.redirectToComponentSelectionSubmission(uuid, token, "urlString");
+              }
 
-          const links = (
-            <Link to={taskRedirectURL}>
-              {taskNameAndStatus}
-            </Link>
-          );
+              if (taskType === "security risk assessment") {
+                taskRedirectURL = URLUtil.redirectToSecurityRiskAssessment(uuid, token, "urlString");
+              }
 
-          return (
-            <div key={uuid}>
-              {unfinshedRQTaskMessage && taskType === 'security risk assessment' ? null : links}
-            </div>
-          );
-        })}
+              if (taskType === "control validation audit") {
+                taskRedirectURL = URLUtil.redirectToControlValidationAudit(uuid, token, "urlString");
+              }
+
+              const links = (
+                <Link to={taskRedirectURL}>
+                  <img src={chevronRightIcon}/>
+                </Link>
+              );
+
+              let approvedBy = "";
+
+              if (isTaskApprovalRequired) {
+                approvedBy = approver.name;
+              } else {
+                approvedBy = "No approval needed";
+              }
+
+              return (
+                <tr key={uuid}>
+                  <td className="task-table-title-data">
+                    {taskName}
+                    {canTaskCreateNewTasks ? (<span className='multiple-tasks-created'> *</span>) : null}
+                  </td>
+                  <td>{timeToComplete}</td>
+                  <td>{approvedBy}</td>
+                  <td>{timeToReview}</td>
+                  <td>
+                    <img src={statusIcon} />
+                    <span className="task-status">{prettifyStatus(status)}</span>
+                  </td>
+                  <td>
+                  {unfinshedRQTaskMessage && taskType === 'security risk assessment' ? null : links}
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+         </table>
+        </div>
+        {/**TODO: Add FAQ link */}
+        {/* <div className = "task-faq">
+        <a href="#"> Learn more about the task descriptions and statuses</a>
+          <img src={chevronRightIcon}/>
+        </div> */}
+        </div>
+    );
+  }
+
+  renderApprovals(submission: Submission) {
+    // TODO: Refactor - consider using constants instead of string literal
+    if (submission.status === "in_progress" ||
+      submission.status === "submitted"
+    ) {
+      return null;
+    }
+
+
+    const approvalStatus = submission.approvalStatus;
+    const securityArchitectApprover = submission.securityArchitectApprover;
+    const cisoApprover = submission.cisoApprover;
+    const certificationAuthorityApprover = submission.certificationAuthorityApprover;
+    const accreditationAuthorityApprover = submission.accreditationAuthorityApprover;
+
+    const securityArchitectApprovalStatus = prettifyApprovalStatus(approvalStatus.securityArchitect);
+    let securityArchitectName = "Unassigned";
+    if (securityArchitectApprover.firstName) {
+      securityArchitectName = securityArchitectApprover.firstName + " " + securityArchitectApprover.surname;
+    }
+
+    const cisoApprovalStatus = prettifyApprovalStatus(approvalStatus.chiefInformationSecurityOfficer);
+    let cisoApproverName = "Unassigned";
+    if (cisoApprover.firstName) {
+      cisoApproverName = cisoApprover.firstName + " " + cisoApprover.surname;
+    }
+
+    const businessOwnerApprovalStatus = prettifyApprovalStatus(approvalStatus.businessOwner)
+    const businessOwnerName = submission.businessOwnerApproverName ? submission.businessOwnerApproverName : "Unassigned";
+
+    let approvalStatusDetails = [
+      {"role": "Security Architect", "name": securityArchitectName, "status": securityArchitectApprovalStatus},
+      {"role": "Chief Information Security Officer", "name": cisoApproverName, "status": cisoApprovalStatus},
+      {"role": "Business Owner", "name": businessOwnerName, "status": businessOwnerApprovalStatus}
+    ];
+
+    if (this.props.submission.isCertificationAndAccreditationTaskExists) {
+      const certificationAuthorityApprovalStatus = prettifyApprovalStatus(approvalStatus.certificationAuthority, 'Certification Authority');
+      let certificationAuthorityApproverName = "Unassigned";
+      if (certificationAuthorityApprover.firstName) {
+        certificationAuthorityApproverName = certificationAuthorityApprover.firstName + " " + certificationAuthorityApprover.surname;
+      }
+
+      const accreditationAuthorityApprovalStatus = prettifyApprovalStatus(approvalStatus.accreditationAuthority, 'Accreditation Authority');
+      let accreditationAuthorityApproverName = "Unassigned";
+      if (accreditationAuthorityApprover.firstName) {
+        accreditationAuthorityApproverName = accreditationAuthorityApprover.firstName + " " + accreditationAuthorityApprover.surname;
+      }
+
+      approvalStatusDetails.push(
+        {"role": "Certification Authority", "name":certificationAuthorityApproverName, "status": certificationAuthorityApprovalStatus},
+        {"role": "Accreditation Authority", "name":accreditationAuthorityApproverName, "status": accreditationAuthorityApprovalStatus}
+      );
+    }
+
+    return (
+      <div className="submission-approval-container">
+        <h4>Submission approvals</h4>
+        <div className="table-responsive table-continer">
+          <table className="table">
+            <thead className="submission-approval-thead">
+              <tr key="approval_table_header">
+                <th>Role</th>
+                <th>Name</th>
+                <th>Approval status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {approvalStatusDetails.map((approvalStatusDetail, index) => {
+                const status = approvalStatusDetail.status;
+                let statusIcon = awaitingApprovalIcon;
+
+                if (status == "Approved" || status == "Certification granted" || status == "Accreditation issued") {
+                  statusIcon = approveIcon;
+                }
+
+                if (status == "Not approved" || status == "Certification denied" ||
+                  status == "Accreditation denied" || status == "Not required") {
+                    statusIcon = notApprovedIcon;
+                }
+
+                return (
+                  <tr key={index+1}>
+                    <td className="table-title-data">{approvalStatusDetail.role}</td>
+                    <td className={approvalStatusDetail.name == "Unassigned" ? "unassigned-approver" : ""}>
+                      {approvalStatusDetail.name}
+                    </td>
+                    <td>
+                      <img src={statusIcon} />
+                      <span className="approval-status"> {status} </span>
+                    </td>
+                  </tr>
+                );
+                })}
+            </tbody>
+          </table>
+        </div>
       </div>
     );
+  }
+
+  renderSkipCheckbox(submission: Submission, viewAs: string, user: User) {
+    if ((user && !user.isSA) || !submission.isApprovalOverrideBySecurityArchitect) {
+      return null;
+    }
+    if (viewAs === 'approver' && user.isSA &&
+      submission.status === "waiting_for_security_architect_approval") {
+        return (
+          <div className="sub-container">
+            <h4>Skip Business Owner and CISO approval</h4>
+            <label>
+              <input
+              type="checkbox"
+              checked={this.state.skipBoAndCisoApproval}
+              onChange={event => {
+                this.setState({
+                  skipBoAndCisoApproval: event.target.checked
+                });
+              }} />
+              &nbsp; This deliverable does not modify the current risk rating for this
+              project. Business Owner and CISO approval is not required
+            </label>
+          </div>
+        );
+    }
+
+    return null;
+  }
+
+  renderAcknowledgements(submission: Submission, viewAs: string, user: User) {
+    if (!submission.isCertificationAndAccreditationTaskExists) {
+      return null;
+    }
+
+    const acknowledgementText = this.getAcknowledgeText();
+
+    if (acknowledgementText !== "" ) {
+        return (
+          <div className="acknowledgement-container">
+            <h4>Acknowledgements</h4>
+            <div className="sub-container">
+              <div className="form-check">
+                <input
+                type="checkbox"
+                className="form-check-input"
+                checked={this.state.enableApproveButton}
+                onChange={event => {
+                  this.setState({
+                    enableApproveButton: event.target.checked
+                  });
+                }} />
+                <label className="form-check-label">{acknowledgementText}</label>
+              </div>
+            </div>
+          </div>
+        );
+    }
+
+    return null;
   }
 
   renderButtons(submission: Submission) {
@@ -337,16 +774,20 @@ class Summary extends Component<Props> {
       token,
       handleSubmitButtonClick,
       handlePDFDownloadButtonClick,
+      handleSendBackForChangesButtonClick,
       handleApproveButtonClick,
       handleOptionalApproveButtonClick,
       handleAssignToMeButtonClick,
-      handleNotApproveButtonClick,
       handleDenyButtonClick,
-      handleEditButtonClick
+      handleEditButtonClick,
+      handleGrantCertificationButtonClick,
+      handleDenyCertificationButtonClick,
+      handleIssueAccreditationButtonClick,
+      handleDenyAccreditationButtonClick
     } = {...this.props};
 
     const downloadPDFButton = (
-      <LightButton title="DOWNLOAD PDF"
+      <LightButton title="PDF"
                    iconImage={pdfIcon}
                    classes={["button"]}
                    onClick={handlePDFDownloadButtonClick}/>
@@ -364,7 +805,7 @@ class Summary extends Component<Props> {
     if (viewAs === "submitter") {
       // Render edit answers button for submitter in all cases
       const editAnswersButton = (
-        <LightButton title="EDIT ANSWERS"
+        <LightButton title="Edit"
                      iconImage={editIcon}
                      classes={["button"]}
                      onClick={handleEditButtonClick}
@@ -373,7 +814,8 @@ class Summary extends Component<Props> {
 
       // Render send for approval button for submitter only in specific submission status
       const sendForApprovalButton = (
-        <DarkButton title="SEND FOR APPROVAL"
+        <DarkButton title="Submit for approval"
+                    iconImage={submitSubmissionIcon}
                     classes={["button"]}
                     disabled={SubmissionDataUtil.existsIncompleteTaskSubmission(submission.taskSubmissions)}
                     onClick={handleSubmitButtonClick}
@@ -383,12 +825,13 @@ class Summary extends Component<Props> {
       if (submission.status === "submitted") {
         return (
           <div className="buttons">
-            <div>
+            <div className="buttons-left">
               {editAnswersButton}
               {downloadPDFButton}
+            </div>
+            <div className="buttons-right">
               {sendForApprovalButton}
             </div>
-            <div/>
           </div>
         );
       }
@@ -424,24 +867,77 @@ class Summary extends Component<Props> {
                     onClick={handleAssignToMeButtonClick}
         />
       );
-      const approveButton = (
-        <DarkButton title="APPROVE"
+      const sendBackForChangesButton = (
+        <LightButton title="Send back for changes"
                     classes={["button"]}
+                    onClick={() => handleSendBackForChangesButtonClick()}
+        />
+      );
+
+      let approveButtonTitle = "Approve";
+
+      if (user.isSA) {
+        approveButtonTitle = "Endorsed";
+      }
+
+      if (user.isCISO) {
+        approveButtonTitle = "Recommend Approval";
+      }
+
+      if (viewAs === "businessOwnerApprover") {
+        approveButtonTitle = "Accept risks and approve";
+      }
+
+      const approveButton = (
+        <DarkButton title={approveButtonTitle}
+                    classes={["button"]}
+                    disabled={!this.state.enableApproveButton}
                     onClick={() => handleApproveButtonClick(this.state.skipBoAndCisoApproval)}
         />
       );
 
-      const notApproveButton = (
-       <DarkButton title="NOT APPROVED"
-                   classes={["button"]}
-                   onClick={() => handleNotApproveButtonClick(this.state.skipBoAndCisoApproval)}
-       />
-     );
+      let denyButtonTitle = "Not approved";
+      if (user.isSA) {
+        denyButtonTitle = "Not endorsed";
+      }
+      if (user.isCISO) {
+        denyButtonTitle = "Recommend Rejection";
+      }
 
       const denyButton = (
-        <LightButton title="DENY"
+        <RedButton title={denyButtonTitle}
                      classes={["button"]}
                      onClick={() => handleDenyButtonClick(this.state.skipBoAndCisoApproval)}
+        />
+      );
+
+      const grantCertification = (
+        <DarkButton title="Grant Certification"
+                    classes={["button"]}
+                    disabled={!this.state.enableApproveButton}
+                    onClick={() => handleGrantCertificationButtonClick()}
+        />
+      );
+
+      const denyCertification = (
+        <RedButton title="Deny Certification"
+                    classes={["button"]}
+                    onClick={() => handleDenyCertificationButtonClick()}
+        />
+      );
+
+      const issueAccreditation = (
+        <DarkButton title="Issue Accreditation"
+                    classes={["button"]}
+                    disabled={!this.state.enableApproveButton}
+                    onClick={() => handleIssueAccreditationButtonClick(this.state.accreditationPeriod)}
+        />
+      );
+
+      const denyAccreditation = (
+        <RedButton title="Deny Accreditation"
+                    classes={["button"]}
+                    onClick={() => handleDenyAccreditationButtonClick()}
         />
       );
 
@@ -460,9 +956,11 @@ class Summary extends Component<Props> {
       if (submission.status === "awaiting_security_architect_review") {
         return (
           <div className="buttons">
-            <div>
+            <div className="buttons-left">
               {viewAnswersButton}
               {downloadPDFButton}
+            </div>
+            <div className="buttons-right">
               {assignToMeButton}
             </div>
             <div/>
@@ -473,14 +971,46 @@ class Summary extends Component<Props> {
       if (submission.status === "waiting_for_security_architect_approval") {
         return (
           <div className="buttons">
-            <div>
+            <div className="buttons-left">
               {viewAnswersButton}
               {downloadPDFButton}
             </div>
-            <div>
-              {approveButton}
-              {showNotApproveButton ? notApproveButton : null}
+            <div className="buttons-right">
+              <span className="approver-action">Approver action: </span>
               {denyButton}
+              {approveButton}
+            </div>
+          </div>
+        );
+      }
+
+      if (user.isCertificationAuthority && (submission.status === "awaiting_certification_and_accreditation" || submission.status === "awaiting_certification")) {
+        return (
+          <div className="buttons">
+            <div className="buttons-left">
+              {viewAnswersButton}
+              {downloadPDFButton}
+            </div>
+            <div className="buttons-right">
+              <span className="approver-action">Approver action: </span>
+              {denyCertification}
+              {grantCertification}
+            </div>
+          </div>
+        );
+      }
+
+      if (user.isAccreditationAuthority && (submission.status === "awaiting_certification_and_accreditation" || submission.status === "awaiting_accreditation")) {
+        return (
+          <div className="buttons">
+            <div className="buttons-left">
+              {viewAnswersButton}
+              {downloadPDFButton}
+            </div>
+            <div className="buttons-right">
+              <span className="approver-action">Approver action: </span>
+              {denyAccreditation}
+              {issueAccreditation}
             </div>
           </div>
         );
@@ -488,13 +1018,14 @@ class Summary extends Component<Props> {
 
       return (
         <div className="buttons">
-          <div>
+          <div className="buttons-left">
             {viewAnswersButton}
             {downloadPDFButton}
           </div>
-          <div>
-            {approveButton}
+          <div className="buttons-right">
+            <span className="approver-action">Approver action: </span>
             {denyButton}
+            {approveButton}
           </div>
         </div>
       );
@@ -510,89 +1041,6 @@ class Summary extends Component<Props> {
         <div/>
       </div>
     );
-  }
-
-  renderApprovals(submission: Submission) {
-    // TODO: Refactor - consider using constants instead of string literal
-    if (submission.status === "in_progress" ||
-      submission.status === "submitted"
-    ) {
-      return null;
-    }
-
-    const approvalStatus = submission.approvalStatus;
-    const securityArchitectApprover = submission.securityArchitectApprover;
-    const cisoApprover = submission.cisoApprover;
-
-    let securityArchitectApprovalStatus = prettifyStatus(approvalStatus.securityArchitect);
-
-    if (securityArchitectApprovalStatus == "Approved" || securityArchitectApprovalStatus == "Not Approved") {
-      securityArchitectApprovalStatus = securityArchitectApprover.firstName + " " +
-        securityArchitectApprover.surname + " - " + securityArchitectApprovalStatus;
-    }
-
-    if (submission.status === "waiting_for_security_architect_approval") {
-      securityArchitectApprovalStatus = "Being Reviewed by " + securityArchitectApprover.firstName + " " +
-        securityArchitectApprover.surname;
-    }
-
-    let cisoApprovalStatus = prettifyStatus(approvalStatus.chiefInformationSecurityOfficer);
-    if (cisoApprovalStatus !== "Pending" && cisoApprovalStatus !== "Not Required") {
-      cisoApprovalStatus = cisoApprover.firstName + " " + cisoApprover.surname + " - " + cisoApprovalStatus;
-    }
-
-    let businessOwnerApprovalStatus = prettifyStatus(approvalStatus.businessOwner)
-    if (businessOwnerApprovalStatus !== "Pending" && businessOwnerApprovalStatus !== 'Not Required') {
-      businessOwnerApprovalStatus = submission.businessOwnerApproverName + " - " + businessOwnerApprovalStatus;
-    }
-    return (
-      <div className="approvals">
-        <h3>Approvals</h3>
-        <div>
-          <b>Security Architect</b>
-          &nbsp;-&nbsp;
-          {securityArchitectApprovalStatus}
-        </div>
-        <div>
-          <b>Chief Information Security Officer</b>
-          &nbsp;-&nbsp;
-          {cisoApprovalStatus}
-        </div>
-        <div>
-          <b>Business Owner</b>
-          &nbsp;-&nbsp;
-          {businessOwnerApprovalStatus}
-        </div>
-      </div>
-    );
-  }
-
-  renderSkipCheckbox(submission: Submission, viewAs: string, user: User) {
-    if ((user && !user.isSA) || !submission.isApprovalOverrideBySecurityArchitect) {
-      return null;
-    }
-    if (viewAs === 'approver' && user.isSA &&
-      submission.status === "waiting_for_security_architect_approval") {
-        return (
-          <div className="approvals">
-            <h3>Skip Business Owner and CISO approval</h3>
-            <label>
-              <input
-              type="checkbox"
-              checked={this.state.skipBoAndCisoApproval}
-              onChange={event => {
-                this.setState({
-                  skipBoAndCisoApproval: event.target.checked
-                });
-              }} />
-              &nbsp; This deliverable does not modify the current risk rating for this
-              project. Business Owner and CISO approval is not required
-            </label>
-          </div>
-        );
-    }
-
-    return null;
   }
 }
 

@@ -15,7 +15,11 @@ export type TaskSubmissionDisplay = {
   uuid: string,
   taskName: string,
   taskType: "questionnaire" | "selection",
-  status: string
+  status: string,
+  isTaskApprovalRequired: boolean,
+  timeToComplete: string,
+  timeToReview: string,
+  canTaskCreateNewTasks: boolean
 };
 
 export type TaskSubmission = {
@@ -37,7 +41,8 @@ export type TaskSubmission = {
   isTaskApprovalRequired: boolean,
   isCurrentUserAnApprover: boolean,
   hideWeightsAndScore: boolean,
-  productAspects: Array<ProductAspect>,
+  productAspects: Array<*>,
+  taskRecommendations: Array<TaskRecommendation>
 };
 
 export type SecurityRiskAssessment = {
@@ -54,11 +59,6 @@ export type LikelihoodThreshold = {
   name:string
 }
 
-export type ProductAspect = {
-  id: string,
-  uuid: value
-};
-
 export type RiskRatingThreshold = {
   riskRating: string
   colour: string,
@@ -74,3 +74,11 @@ export type TaskSubmissionListItem = {
   status: string,
   submitterName: string
 };
+
+export type TaskRecommendation = {
+  id: string,
+  title: string,
+  status: string,
+  description: string,
+  recommendation: string,
+}

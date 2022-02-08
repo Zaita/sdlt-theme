@@ -85,7 +85,7 @@ export default class QuestionParser {
           if (type === "multiple-choice: multiple selection") {
             type = "checkbox"
           }
-          const validTypes = ["text", "email", "textarea", "product aspects", "date", "url", "radio", "checkbox", "release date"];
+          const validTypes = ["text", "email", "textarea", 'rich text editor', "service register", "information classification", "dropdown", "product aspects", "date", "url", "radio", "checkbox", "release date"];
           if (!validTypes.includes(type)) {
             type = "text";
           }
@@ -172,7 +172,7 @@ export default class QuestionParser {
         title: _.toString(_.get(questionSchema, "Title", "")),
         heading: _.toString(_.get(questionSchema, "QuestionHeading", "")),
         description: _.toString(_.get(questionSchema, "Description", "")),
-        type: _.toString(_.get(questionSchema, "AnswerFieldType", "")).toLowerCase() === "input" ? "input" : "action",
+        type: _.toString(_.get(questionSchema, "AnswerFieldType", "")).toLowerCase(),
         isCurrent: isCurrent,
         hasAnswer: hasAnswer,
         isApplicable: isApplicable,

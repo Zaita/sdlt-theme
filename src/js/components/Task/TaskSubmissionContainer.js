@@ -10,14 +10,21 @@ import type {Question} from "../../types/Questionnaire";
 import {
   editCompletedTaskSubmission,
   loadTaskSubmission,
+  loadResultForCertificationAndAccreditation,
   moveToPreviousQuestionInTaskSubmission,
   saveAnsweredQuestionInTaskSubmission,
   approveTaskSubmission,
-  denyTaskSubmission
+  denyTaskSubmission,
+  inProgressTaskSubmission,
+  addTaskRecommendation,
+  editTaskRecommendation
 } from "../../actions/task";
 import TaskSubmission from "./TaskSubmission";
 import type {User} from "../../types/User";
-import type {TaskSubmission as TaskSubmissionType} from "../../types/Task";
+import type {
+  TaskSubmission as TaskSubmissionType,
+  TaskRecommendation
+} from "../../types/Task";
 import {loadCurrentUser} from "../../actions/user";
 import {loadSiteConfig} from "../../actions/siteConfig";
 import type {SiteConfig} from "../../types/SiteConfig";
@@ -39,6 +46,9 @@ const mapDispatchToProps = (dispatch: Dispatch, props: *) => {
       dispatch(loadSiteConfig());
       dispatch(loadTaskSubmission({uuid, secureToken}));
     },
+    dispatchLoadResultForCertificationAndAccreditation(uuid: string, secureToken: string) {
+      dispatch(loadResultForCertificationAndAccreditation({uuid, secureToken}));
+    },
     dispatchSaveAnsweredQuestionAction(answeredQuestion: Question) {
       dispatch(saveAnsweredQuestionInTaskSubmission({answeredQuestion}));
     },
@@ -53,6 +63,15 @@ const mapDispatchToProps = (dispatch: Dispatch, props: *) => {
     },
     dispatchDenyTaskSubmissionAction(uuid: string) {
       dispatch(denyTaskSubmission(uuid));
+    },
+    dispatchSendBackForChangesTaskSubmissionAction(uuid: string) {
+      dispatch(inProgressTaskSubmission(uuid));
+    },
+    dispatchAddTaskRecommendationAction(uuid: string, newTaskRecommendation:TaskRecommendation, taskRecommendations: Array<TaskRecommendation>) {
+      dispatch(addTaskRecommendation(uuid, newTaskRecommendation, taskRecommendations))
+    },
+    dispatchEditTaskRecommendationAction(uuid: string, updatedTaskRecommendation:TaskRecommendation, taskRecommendations: Array<TaskRecommendation>) {
+      dispatch(editTaskRecommendation(uuid, updatedTaskRecommendation, taskRecommendations))
     }
   };
 };
@@ -66,9 +85,13 @@ type Props = {
   dispatchLoadDataAction?: (uuid: string, secureToken: string) => void,
   dispatchApproveTaskSubmissionAction?: (uuid: string) => void,
   dispatchDenyTaskSubmissionAction?: (uuid: string) => void,
+  dispatchSendBackForChangesTaskSubmissionAction?: (uuid: string) => void,
   dispatchSaveAnsweredQuestionAction?: (answeredQuestion: Question) => void,
   dispatchMoveToPreviousQuestionAction?: (targetQuestion: Question) => void,
-  dispatchEditAnswersAction?: () => void
+  dispatchEditAnswersAction?: () => void,
+  dispatchAddTaskRecommendationAction?: (uuid: string, newTaskRecommendation:TaskRecommendation, taskRecommendations: Array<TaskRecommendation>) => void,
+  dispatchEditTaskRecommendationAction?: (uuid: string, updatedTaskRecommendation:TaskRecommendation, taskRecommendations: Array<TaskRecommendation>) => void,
+
 };
 
 class TaskSubmissionContainer extends Component<Props> {
@@ -88,6 +111,9 @@ class TaskSubmissionContainer extends Component<Props> {
       dispatchEditAnswersAction,
       dispatchApproveTaskSubmissionAction,
       dispatchDenyTaskSubmissionAction,
+      dispatchSendBackForChangesTaskSubmissionAction,
+      dispatchAddTaskRecommendationAction,
+      dispatchEditTaskRecommendationAction,
       secureToken
     } = {...this.props};
 
@@ -136,7 +162,11 @@ class TaskSubmissionContainer extends Component<Props> {
           canUpdateAnswers={canUpdateAnswers}
           handleApproveButtonClick={this.handleApproveButtonClick.bind(this)}
           handleDenyButtonClick={this.handleDenyButtonClick.bind(this)}
-          showBackButton={!!taskSubmission.questionnaireSubmissionUUID}
+          handleSendBackForChangesButtonClick={this.handleSendBackForChangesButtonClick.bind(this)}
+          handleAddTaskRecommendationButtonClick={this.handleAddTaskRecommendationButtonClick.bind(this)}
+          handleEditTaskRecommendationButtonClick={this.handleEditTaskRecommendationButtonClick.bind(this)}
+          loadResultForCertificationAndAccreditation={this.loadResultForCertificationAndAccreditation.bind(this)}
+          showBackLink={!!taskSubmission.questionnaireSubmissionUUID}
           viewAs={viewAs}
           siteConfig={siteConfig}
           secureToken={secureToken}
@@ -156,6 +186,16 @@ class TaskSubmissionContainer extends Component<Props> {
     this.props.dispatchApproveTaskSubmissionAction(uuid);
   }
 
+  handleSendBackForChangesButtonClick() {
+    const {user, isCurrentUserAnApprover, uuid} = {...this.props.taskSubmission};
+
+    if (!user && !uuid && !isCurrentUserAnApprover) {
+      return;
+    }
+
+    this.props.dispatchSendBackForChangesTaskSubmissionAction(uuid);
+  }
+
   handleDenyButtonClick() {
     const {user, isCurrentUserAnApprover, uuid} = {...this.props.taskSubmission};
 
@@ -163,6 +203,31 @@ class TaskSubmissionContainer extends Component<Props> {
       return;
     }
     this.props.dispatchDenyTaskSubmissionAction(uuid);
+  }
+
+  handleAddTaskRecommendationButtonClick(recommendationObj) {
+    const {user, isCurrentUserAnApprover, uuid, taskRecommendations} = {...this.props.taskSubmission};
+
+    if (!user && !uuid && !isCurrentUserAnApprover && !taskRecommendations) {
+      return;
+    }
+
+    this.props.dispatchAddTaskRecommendationAction(uuid, recommendationObj, taskRecommendations);
+  }
+
+  handleEditTaskRecommendationButtonClick(updatedRecommendationObj) {
+    const {user, isCurrentUserAnApprover, uuid, taskRecommendations} = {...this.props.taskSubmission};
+
+    if (!user && !uuid && !isCurrentUserAnApprover && !taskRecommendations) {
+      return;
+    }
+
+    this.props.dispatchEditTaskRecommendationAction(uuid, updatedRecommendationObj, taskRecommendations);
+  }
+
+  loadResultForCertificationAndAccreditation() {
+    const {uuid, dispatchLoadResultForCertificationAndAccreditation, secureToken} = {...this.props};
+    dispatchLoadResultForCertificationAndAccreditation(uuid, secureToken);
   }
 }
 

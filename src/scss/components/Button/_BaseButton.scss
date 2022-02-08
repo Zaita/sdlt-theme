@@ -2,23 +2,45 @@
 
 .BaseButton {
     padding: 10px 15px;
-    font-size: 14px;
+    font-size: 12px;
     font-weight: bold;
-    line-height: 1.57;
+    line-height: 14px;
+    position: relative;
 
     img {
         margin-right: 10px;
+        margin-top: -2px;
+    }
+
+    .img-right {
+      margin-left: 10px;
+      margin-right: 0;
+    }
+
+    &:hover{
+      text-decoration: underline;
+    }
+    &:hover:after {
+      content:"\A";
+      width:100%;
+      height:100%;
+      background-color: $black;
+      opacity: 0.2;
+      position:absolute;
+      top:0;
+      left:0;
     }
 }
 
 .BaseButton.disabled {
-    background-color: $gray-600;
-    color: $gray-200;
-    border: none;
+    border: 2px solid $dark-gray;
+    box-sizing: border-box;
+    border-radius: 5px;
+    background-color: $dark-gray;
+    color: $white;
 
     &:hover {
-        background-color: $gray-600;
+        background-color: $dark-gray;
         color: $gray-200;
-        border: none;
     }
 }

@@ -9,7 +9,7 @@ import QuestionParser from "../utils/QuestionParser";
 import UserParser from "../utils/UserParser";
 import SiteConfigParser from "../utils/SiteConfigParser";
 import type {Collaborator} from "../types/User";
-
+import type {PaginationInfo} from "../types/Pagination";
 export default class QuestionnaireDataService {
 
   static async createInProgressSubmission(argument: { questionnaireID: string, csrfToken: string }): Promise<string> {
@@ -87,19 +87,26 @@ query {
     Surname
     IsSA
     IsCISO
+    IsCertificationAuthority
+    IsAccreditationAuthority
   }
   readQuestionnaireSubmission(UUID: "${submissionHash}", SecureToken: "${secureToken}") {
     ID
     UUID
     ApprovalLinkToken
+    BusinessOwnerAcknowledgementText
+    CertificationAuthorityAcknowledgementText
+    AccreditationAuthorityAcknowledgementText
+    IsCertificationAndAccreditationTaskExists
+    ProductAspects
     User {
       ID
     }
-    SubmitterName,
-    SubmitterEmail,
-    QuestionnaireStatus,
-    BusinessOwnerApproverName,
-    RiskResultData,
+    SubmitterName
+    SubmitterEmail
+    QuestionnaireStatus
+    BusinessOwnerApproverName
+    RiskResultData
     Questionnaire {
       ID
       Name
@@ -118,6 +125,11 @@ query {
       TaskName
       TaskType
       Status
+      IsTaskApprovalRequired
+      TimeToComplete
+      TimeToReview
+      CanTaskCreateNewTasks
+      ResultForCertificationAndAccreditation
       TaskApprover {
         ID
         FirstName
@@ -132,8 +144,20 @@ query {
       FirstName
       Surname
     }
+    CertificationAuthorityApprover {
+      FirstName
+      Surname
+    }
+    AccreditationAuthorityApprover {
+      FirstName
+      Surname
+    }
+    CertificationAuthorityApprovalStatus
+    AccreditationAuthorityApprovalStatus
     ApprovalOverrideBySecurityArchitect
     CollaboratorList
+    Created
+    ReleaseDate
   }
   readSiteConfig {
     Title
@@ -142,6 +166,7 @@ query {
     HomePageBackgroundImagePath
     PdfHeaderImageLink
     PdfFooterImageLink
+    SecurityTeamEmail
   }
 }`;
     const json = await GraphQLRequestHelper.request({query});
@@ -180,6 +205,8 @@ query {
           chiefInformationSecurityOfficer: _.toString(_.get(submissionJSON, "CisoApprovalStatus", "")),
           businessOwner: _.toString(_.get(submissionJSON, "BusinessOwnerApprovalStatus", "")),
           securityArchitect: _.toString(_.get(submissionJSON, "SecurityArchitectApprovalStatus", "")),
+          certificationAuthority: _.toString(_.get(submissionJSON, "CertificationAuthorityApprovalStatus", "")),
+          accreditationAuthority: _.toString(_.get(submissionJSON, "AccreditationAuthorityApprovalStatus", ""))
         },
         securityArchitectApprover: {
           firstName: _.toString(_.get(submissionJSON, "SecurityArchitectApprover.FirstName", "")),
@@ -189,11 +216,23 @@ query {
           firstName: _.toString(_.get(submissionJSON, "CisoApprover.FirstName", "")),
           surname: _.toString(_.get(submissionJSON, "CisoApprover.Surname", "")),
         },
+        certificationAuthorityApprover: {
+          firstName: _.toString(_.get(submissionJSON, "CertificationAuthorityApprover.FirstName", "")),
+          surname: _.toString(_.get(submissionJSON, "CertificationAuthorityApprover.Surname", "")),
+        },
+        accreditationAuthorityApprover: {
+          firstName: _.toString(_.get(submissionJSON, "AccreditationAuthorityApprover.FirstName", "")),
+          surname: _.toString(_.get(submissionJSON, "AccreditationAuthorityApprover.Surname", "")),
+        },
         questions: QuestionParser.parseQuestionsFromJSON({
           schemaJSON: _.toString(_.get(submissionJSON, "QuestionnaireData", "")),
           answersJSON: _.toString(_.get(submissionJSON, "AnswerData", "")),
         }),
         businessOwnerApproverName: _.toString(_.get(submissionJSON, "BusinessOwnerApproverName", "")),
+        businessOwnerAcknowledgementText: _.toString(_.get(submissionJSON, "BusinessOwnerAcknowledgementText", "")),
+        certificationAuthorityAcknowledgementText: _.toString(_.get(submissionJSON, "CertificationAuthorityAcknowledgementText", "")),
+        accreditationAuthorityAcknowledgementText: _.toString(_.get(submissionJSON, "AccreditationAuthorityAcknowledgementText", "")),
+        isCertificationAndAccreditationTaskExists: _.get(submissionJSON, "IsCertificationAndAccreditationTaskExists", "false") === "true",
         taskSubmissions: _
           .toArray(_.get(submissionJSON, "TaskSubmissions", []))
           .map((item) => {
@@ -203,12 +242,20 @@ query {
               taskType: _.toString(_.get(item, "TaskType", "")),
               status: _.toString(_.get(item, "Status", "")),
               approver: UserParser.parseUserFromJSON(_.get(item, "TaskApprover")),
+              isTaskApprovalRequired: _.get(item, "IsTaskApprovalRequired", "false") === "true",
+              timeToComplete: _.toString(_.get(item, "TimeToComplete", "")),
+              timeToReview: _.toString(_.get(item, "TimeToReview", "")),
+              canTaskCreateNewTasks: _.get(item, "CanTaskCreateNewTasks", "false") === "true",
+              resultForCertificationAndAccreditation: _.get(item, "ResultForCertificationAndAccreditation", "[]"),
             };
             return taskSubmission;
           }),
         collaborators: UserParser.parserCollaboratorsFromJSON(_.get(submissionJSON, "CollaboratorList", [])),
-        riskResults: _.has(submissionJSON, 'RiskResultData') ? JSON.parse(_.get(submissionJSON, "RiskResultData", "[]")) : "[]"
-      },
+        riskResults: _.has(submissionJSON, 'RiskResultData') ? JSON.parse(_.get(submissionJSON, "RiskResultData", "[]")) : "[]",
+        created: _.toString(_.get(submissionJSON, "Created", "")),
+        releaseDate: _.toString(_.get(submissionJSON, "ReleaseDate", "")),
+        productAspects: _.has(submissionJSON, 'ProductAspects') ? JSON.parse(_.get(submissionJSON, "ProductAspects", "[]")) : "[]",
+      }
     };
 
     return data;
@@ -371,25 +418,6 @@ mutation {
     return {uuid};
   }
 
-  // Not approve questionnaire for sa
-  static async NotApproveQuestionnaireSubmission(argument: { submissionID: string, csrfToken: string, skipBoAndCisoApproval: boolean}): Promise<{ uuid: string }> {
-    const {submissionID, csrfToken, skipBoAndCisoApproval} = {...argument};
-    const query = `
-mutation {
- updateQuestionnaireSAStatusToNotApprove(ID: "${submissionID}", SkipBoAndCisoApproval: ${skipBoAndCisoApproval}) {
-   QuestionnaireStatus
-   UUID
- }
-}`;
-    const json = await GraphQLRequestHelper.request({query, csrfToken});
-    const status = _.toString(_.get(json, "data.updateQuestionnaireSAStatusToNotApprove.QuestionnaireStatus", null));
-    const uuid = _.toString(_.get(json, "data.updateQuestionnaireSAStatusToNotApprove.UUID", null));
-    if (!status || !uuid) {
-      throw DEFAULT_NETWORK_ERROR;
-    }
-    return {uuid};
-  }
-
   static async editQuestionnaireSubmission(argument: { submissionID: string, csrfToken: string }): Promise<{ uuid: string }> {
     const {submissionID, csrfToken} = {...argument};
     const query = `
@@ -408,55 +436,96 @@ mutation {
     return {uuid};
   }
 
-  // load data for Awaiting Approvals
-  static async fetchQuestionnaireSubmissionList(userID: string, pageType: string): Promise<Array<QuestionnaireSubmissionListItem>> {
+
+  static async updateQuestionnaireStatusToSendBackForChanges(argument: { submissionID: string, csrfToken: string }): Promise<{ uuid: string }> {
+    const {submissionID, csrfToken} = {...argument};
+    const query = `
+mutation {
+ updateQuestionnaireStatusToSendBackForChanges(ID: "${submissionID}") {
+   QuestionnaireStatus
+   UUID
+ }
+}`;
+    const json = await GraphQLRequestHelper.request({query, csrfToken});
+    const status = _.toString(_.get(json, "data.updateQuestionnaireStatusToSendBackForChanges.QuestionnaireStatus", null));
+    const uuid = _.toString(_.get(json, "data.updateQuestionnaireStatusToSendBackForChanges.UUID", null));
+    if (!status || !uuid) {
+      throw DEFAULT_NETWORK_ERROR;
+    }
+    return {uuid};
+  }
+
+  // load data for Awaiting Approvals, submissions list, product list
+  static async fetchQuestionnaireSubmissionList(userID: string, pageType: string, limit: number, offset: number): Promise<Array<QuestionnaireSubmissionListItem>> {
     const query = `query {
-      readQuestionnaireSubmission(UserID: "${userID}", PageType: "${pageType}") {
-        ID
-        UUID
-        QuestionnaireStatus
-        QuestionnaireName
-        Created
-        ProductName
-        ReleaseDate
-        BusinessOwnerApproverName
-        SubmitterName
-        SecurityArchitectApprover {
-          FirstName
-          Surname
-          ID
+      paginatedReadQuestionnaireSubmissions(UserID: "${userID}", PageType: "${pageType}", limit: ${limit}, offset: ${offset}) {
+        edges {
+          node {
+            ID
+            UUID
+            QuestionnaireStatus
+            QuestionnaireName
+            Created
+            ProductName
+            ReleaseDate
+            BusinessOwnerApproverName
+            SubmitterName
+            SecurityArchitectApprover {
+              FirstName
+              Surname
+              ID
+            }
+            CisoApprovalStatus
+            BusinessOwnerApprovalStatus
+          }
         }
-        CisoApprovalStatus
-        BusinessOwnerApprovalStatus
+        pageInfo {
+          hasNextPage,
+          hasPreviousPage,
+          totalCount
+        }
       }
     }`;
 
     const json = await GraphQLRequestHelper.request({query});
 
     // TODO: parse data
-    const data = _.get(json, 'data.readQuestionnaireSubmission', []);
+    const data = _.get(json, 'data.paginatedReadQuestionnaireSubmissions.edges', []);
+    const pageInfoData = _.get(json, 'data.paginatedReadQuestionnaireSubmissions.pageInfo', []);
+
     if (!Array.isArray(data)) {
       throw 'error';
     }
 
-    return data.map((item: any) : QuestionnaireSubmissionListItem => {
+    const pageInfo : PaginationInfo = {
+      totalCount: _.get(pageInfoData, 'totalCount', 0),
+      hasNextPage: Boolean(_.get(pageInfoData, 'hasNextPage', false)),
+      hasPreviousPage: Boolean(_.get(pageInfoData, 'hasPreviousPage', false))
+    }
+
+    const questionnaireSubmissionList = data.map((item: any) : QuestionnaireSubmissionListItem => {
       let obj = {};
-      obj['id'] = _.get(item, 'ID', '');
-      obj['uuid'] = _.get(item, 'UUID', '');
-      obj['status'] = _.get(item, 'QuestionnaireStatus', '');
-      obj['productName'] = _.get(item, 'ProductName', '');
-      obj['questionnaireName'] = _.get(item, 'QuestionnaireName', '');
-      obj['created'] = _.get(item, 'Created', '');
-      obj['releaseDate'] = _.get(item, 'ReleaseDate', '');
-      obj['businessOwner'] = _.get(item, 'BusinessOwnerApproverName', '');
-      obj['submitterName'] = _.get(item, 'SubmitterName', '');
-      obj['SecurityArchitectApprover'] = _.toString(_.get(item, 'SecurityArchitectApprover.FirstName', '') + " " + _.get(item, 'SecurityArchitectApprover.Surname', ''));
-      obj['SecurityArchitectApproverID'] = _.get(item, 'SecurityArchitectApprover.ID', '');
-      obj['CisoApprovalStatus'] = _.get(item, 'CisoApprovalStatus', '');
-      obj['BusinessOwnerApprovalStatus'] =  _.get(item, 'BusinessOwnerApprovalStatus', '');
+      obj['id'] = _.get(item, 'node.ID', '');
+      obj['uuid'] = _.get(item, 'node.UUID', '');
+      obj['status'] = _.get(item, 'node.QuestionnaireStatus', '');
+      obj['productName'] = _.get(item, 'node.ProductName', '');
+      obj['questionnaireName'] = _.get(item, 'node.QuestionnaireName', '');
+      obj['created'] = _.get(item, 'node.Created', '');
+      obj['releaseDate'] = _.get(item, 'node.ReleaseDate', '');
+      obj['businessOwner'] = _.get(item, 'node.BusinessOwnerApproverName', '');
+      obj['submitterName'] = _.get(item, 'node.SubmitterName', '');
+      obj['SecurityArchitectApprover'] = _.toString(_.get(item, 'node.SecurityArchitectApprover.FirstName', '') + " " + _.get(item, 'node.SecurityArchitectApprover.Surname', ''));
+      obj['SecurityArchitectApproverID'] = _.get(item, 'node.SecurityArchitectApprover.ID', '');
+      obj['CisoApprovalStatus'] = _.get(item, 'node.CisoApprovalStatus', '');
+      obj['BusinessOwnerApprovalStatus'] =  _.get(item, 'node.BusinessOwnerApprovalStatus', '');
       obj['']
       return obj;
     });
+
+    return {
+      questionnaireSubmissionList,
+      pageInfo
+    }
   }
 
   static async approveQuestionnaireSubmissionAsBusinessOwner(
@@ -480,6 +549,7 @@ mutation {
     return {uuid};
   }
 
+  // deny by business owner
   static async denyQuestionnaireSubmissionAsBusinessOwner(
     argument: { submissionID: string, csrfToken: string, secureToken: string },
   ): Promise<{ uuid: string }> {
@@ -500,6 +570,7 @@ mutation {
     return {uuid};
   }
 
+  // add collaborator
   static async addCollaborator(submissionID: string, selectedCollaborators: Array<Collaborator>, csrfToken: string) {
     let selectedCollaboratorIDs = [];
     if (selectedCollaborators && selectedCollaborators.length > 0) {
@@ -518,6 +589,74 @@ mutation {
     const json = await GraphQLRequestHelper.request({query, csrfToken});
 
     const uuid = _.toString(_.get(json, "data.addCollaborator.UUID", null));
+    if (!uuid) {
+      throw DEFAULT_NETWORK_ERROR;
+    }
+    return {uuid};
+  }
+
+  // grant certification
+  static async grantCertification(submissionID: string, csrfToken: string) {
+    const query = `mutation {
+     grantCertification(ID: "${submissionID}") {
+       UUID
+     }
+    }`;
+
+    const json = await GraphQLRequestHelper.request({query, csrfToken});
+
+    const uuid = _.toString(_.get(json, "data.grantCertification.UUID", null));
+    if (!uuid) {
+      throw DEFAULT_NETWORK_ERROR;
+    }
+    return {uuid};
+  }
+
+  // deny certification
+  static async denyCertification(submissionID: string, csrfToken: string) {
+    const query = `mutation {
+     denyCertification(ID: "${submissionID}") {
+       UUID
+     }
+    }`;
+
+    const json = await GraphQLRequestHelper.request({query, csrfToken});
+
+    const uuid = _.toString(_.get(json, "data.denyCertification.UUID", null));
+    if (!uuid) {
+      throw DEFAULT_NETWORK_ERROR;
+    }
+    return {uuid};
+  }
+
+  // issue accreditation
+  static async issueAccreditation(submissionID: string, csrfToken: string, accreditationPeriod: string) {
+    const query = `mutation {
+      issueAccreditation(ID: "${submissionID}", AccreditationPeriod: "${accreditationPeriod}") {
+       UUID
+     }
+    }`;
+
+    const json = await GraphQLRequestHelper.request({query, csrfToken});
+
+    const uuid = _.toString(_.get(json, "data.issueAccreditation.UUID", null));
+    if (!uuid) {
+      throw DEFAULT_NETWORK_ERROR;
+    }
+    return {uuid};
+  }
+
+  // deny accreditation
+  static async denyAccreditation(submissionID: string, csrfToken: string) {
+    const query = `mutation {
+     denyAccreditation(ID: "${submissionID}") {
+       UUID
+     }
+    }`;
+
+    const json = await GraphQLRequestHelper.request({query, csrfToken});
+
+    const uuid = _.toString(_.get(json, "data.denyAccreditation.UUID", null));
     if (!uuid) {
       throw DEFAULT_NETWORK_ERROR;
     }

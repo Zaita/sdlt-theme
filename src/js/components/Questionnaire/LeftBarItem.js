@@ -2,7 +2,10 @@
 
 import React, {Component} from "react";
 import type {Question} from "../../types/Questionnaire";
-import QuesiontEditingIcon from "../../../img/icons/question-editing.svg";
+import QuestionEditingIcon from "../../../img/icons/create.svg";
+import QuestionPendingIcon from "../../../img/icons/check-box-blank.svg";
+import QuestionCompletedIcon from "../../../img/icons/check-box.svg";
+import QuestionNotApplicableIcon from "../../../img/icons/not-applicable.svg";
 
 type Props = {
   question: Question,
@@ -22,8 +25,9 @@ export default class LeftBarItem extends Component<Props> {
                 disabled={!question.isApplicable}
                 onClick={(event) => {
                   onItemClick(question);
-                }}>
-          {index+1}. {question.title}
+                }}
+        >
+          {index+1}.  {question.title}
         </button>
       </div>
     );
@@ -34,24 +38,24 @@ export default class LeftBarItem extends Component<Props> {
 
     if (isCurrent) {
       return (
-        <img src={QuesiontEditingIcon} />
+        <img src={QuestionEditingIcon} />
       );
     }
 
     if (!isApplicable) {
       return (
-        <i className="fas fa-question-circle not-applicable"/>
+        <img src={QuestionNotApplicableIcon} />
       );
     }
 
     if (hasAnswer && isApplicable) {
       return (
-        <i className="fas fa-check-circle success"/>
+        <img src={QuestionCompletedIcon} />
       );
     }
 
     return (
-      <i className="fas fa-check-circle pending"/>
+      <img src={QuestionPendingIcon} />
     );
   }
 }

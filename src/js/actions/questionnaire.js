@@ -258,6 +258,20 @@ export function assignToSecurityArchitectQuestionnaireSubmission(submissionID: s
   }
 }
 
+// Send back for changes
+export function sendBackForChangesSubmission(submissionID: string): ThunkAction {
+  return async (dispatch, getState) => {
+    try {
+      const csrfToken = await CSRFTokenService.getCSRFToken();
+      const {uuid} = await QuestionnaireDataService.updateQuestionnaireStatusToSendBackForChanges({submissionID, csrfToken});
+      dispatch(loadQuestionnaireSubmissionState(uuid));
+    } catch(error) {
+      // TODO: errors
+      alert(error);
+    }
+  }
+}
+
 // Approve the Questionnaire Submission as a SA / CISO
 export function approveQuestionnaireSubmission(submissionID: string, skipBoAndCisoApproval: boolean): ThunkAction {
   return async (dispatch, getState) => {
@@ -278,20 +292,6 @@ export function denyQuestionnaireSubmission(submissionID: string, skipBoAndCisoA
     try {
       const csrfToken = await CSRFTokenService.getCSRFToken();
       const {uuid} = await QuestionnaireDataService.denyQuestionnaireSubmission({submissionID, csrfToken, skipBoAndCisoApproval});
-      dispatch(loadQuestionnaireSubmissionState(uuid));
-    } catch(error) {
-      // TODO: errors
-      alert(error);
-    }
-  }
-}
-
-// Not approve questionnaire submission as a sa
-export function notApproveQuestionnaireSubmissionforSA(submissionID: string, skipBoAndCisoApproval: boolean): ThunkAction {
-  return async (dispatch, getState) => {
-    try {
-      const csrfToken = await CSRFTokenService.getCSRFToken();
-      const {uuid} = await QuestionnaireDataService.NotApproveQuestionnaireSubmission({submissionID, csrfToken, skipBoAndCisoApproval});
       dispatch(loadQuestionnaireSubmissionState(uuid));
     } catch(error) {
       // TODO: errors
@@ -353,7 +353,8 @@ export function loadMySubmissionList(): ThunkAction {
 
     try {
       // Call re sync with jira data api
-      const data = await QuestionnaireDataService.fetchQuestionnaireSubmissionList(user.id, 'my_submission_list');
+      // limit and offset for pagination query set to 0
+      const data = await QuestionnaireDataService.fetchQuestionnaireSubmissionList(user.id, 'my_submission_list', 0, 0);
 
       dispatch({
         type: ActionType.QUESTIONNAIRE.FETCH_MY_SUBMISSION_LIST_SUCCESS,
@@ -369,7 +370,7 @@ export function loadMySubmissionList(): ThunkAction {
 
 // Questionnaire Submissions list of pending approval list
 // for SA, CISO and Business owner
-export function loadAwaitingApprovalList(): ThunkAction {
+export function loadAwaitingApprovalList(limit: number, offset: number): ThunkAction {
   return async (dispatch: any, getState: () => RootState) => {
     const user = getState().currentUserState.user;
     if (!user) {
@@ -380,8 +381,7 @@ export function loadAwaitingApprovalList(): ThunkAction {
 
     try {
       // Call re sync with jira data api
-      const data = await QuestionnaireDataService.fetchQuestionnaireSubmissionList(user.id, 'awaiting_approval_list');
-
+      const data = await QuestionnaireDataService.fetchQuestionnaireSubmissionList(user.id, 'awaiting_approval_list', limit, offset);
       dispatch({
         type: ActionType.QUESTIONNAIRE.FETCH_AWAITING_APPROVAL_LIST_SUCCESS,
         payload: data
@@ -406,7 +406,8 @@ export function loadMyProductList(): ThunkAction {
 
     try {
       // Call re sync with jira data api
-      const data = await QuestionnaireDataService.fetchQuestionnaireSubmissionList(user.id, 'my_product_list');
+      // limit and offset for pagination query set to 0
+      const data = await QuestionnaireDataService.fetchQuestionnaireSubmissionList(user.id, 'my_product_list', 0, 0);
 
       dispatch({
         type: ActionType.QUESTIONNAIRE.FETCH_MY_PRODUCT_LIST_SUCCESS,
@@ -428,6 +429,74 @@ export function addCollaboratorAction (submissionID: string, selectedCollaborato
     try {
       // Call addCollaborator data api
       const {uuid} = await QuestionnaireDataService.addCollaborator(submissionID, selectedCollaborators, csrfToken);
+
+      dispatch(loadQuestionnaireSubmissionState(uuid));
+    }
+    catch (error) {
+      // TODO: errors
+      alert(error);
+    }
+  }
+}
+
+// Grant certification
+export function grantCertificationAction (submissionID: string): ThunkAction {
+  return async (dispatch: any, getState: () => RootState) => {
+    const csrfToken = await CSRFTokenService.getCSRFToken();
+    try {
+      // Call grantCertification data api
+      const {uuid} = await QuestionnaireDataService.grantCertification(submissionID, csrfToken);
+
+      dispatch(loadQuestionnaireSubmissionState(uuid));
+    }
+    catch (error) {
+      // TODO: errors
+      alert(error);
+    }
+  }
+}
+
+// Deny certification
+export function denyCertificationAction (submissionID: string): ThunkAction {
+  return async (dispatch: any, getState: () => RootState) => {
+    const csrfToken = await CSRFTokenService.getCSRFToken();
+    try {
+      // Call denyCertification data api
+      const {uuid} = await QuestionnaireDataService.denyCertification(submissionID, csrfToken);
+
+      dispatch(loadQuestionnaireSubmissionState(uuid));
+    }
+    catch (error) {
+      // TODO: errors
+      alert(error);
+    }
+  }
+}
+
+// Issue Accreditation
+export function issueAccreditationAction (submissionID: string, accreditationPeriod: string): ThunkAction {
+  return async (dispatch: any, getState: () => RootState) => {
+    const csrfToken = await CSRFTokenService.getCSRFToken();
+    try {
+      // Call issueAccreditation data api
+      const {uuid} = await QuestionnaireDataService.issueAccreditation(submissionID, csrfToken, accreditationPeriod);
+
+      dispatch(loadQuestionnaireSubmissionState(uuid));
+    }
+    catch (error) {
+      // TODO: errors
+      alert(error);
+    }
+  }
+}
+
+// Deny Accreditation
+export function denyAccreditationAction (submissionID: string): ThunkAction {
+  return async (dispatch: any, getState: () => RootState) => {
+    const csrfToken = await CSRFTokenService.getCSRFToken();
+    try {
+      // Call denyAccreditation data api
+      const {uuid} = await QuestionnaireDataService.denyAccreditation(submissionID, csrfToken);
 
       dispatch(loadQuestionnaireSubmissionState(uuid));
     }
