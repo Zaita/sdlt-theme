@@ -9,7 +9,7 @@ import Footer from "../Footer/Footer";
 import {loadCurrentUser} from "../../actions/user";
 import LikelihoodLegendContainer from "./LikelihoodLegendContainer";
 import ImpactThresholdContainer from "./ImpactThresholdContainer";
-import RiskAssessmentMatrixTableContainer from "./RiskAssessmentMatrixTableContainer";
+import RiskAssessmentTableContainer from "./RiskAssessmentTableContainer";
 import RiskRatingThresholdContainer from "./RiskRatingThresholdContainer";
 import type {User} from "../../types/User";
 import {
@@ -134,9 +134,16 @@ class DigitalSecurityRiskAssessmentContainer extends Component<Props> {
             <div className="SecurityRiskAssessment">
               {backLink}
               <h4>Your risk assessment results</h4>
-              <div className="help-text">{sraTaskHelpText}</div>
+              <div className="help-text">
+                {sraTaskHelpText}
+              </div>
+              <div className="help-text">
+                <RiskAssessmentTableContainer />
+              </div>
               <h4>Recommended Controls</h4>
-              <div className="help-text">{sraTaskRecommendedControlHelpText}</div>
+              <div className="help-text">
+                {sraTaskRecommendedControlHelpText}
+              </div>
               <div className="control-board">
                 <Board />
               </div>
