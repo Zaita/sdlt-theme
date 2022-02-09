@@ -1,0 +1,65 @@
+.material-card {
+    margin: 5px;
+    margin-bottom: 8px;
+    border-radius: 5px;
+    padding: 15px;
+    height: auto;
+}
+
+.card-content {
+    display: flex;
+    flex-direction: column;
+}
+
+
+.card-header {
+    display: flex;
+    padding: 0;
+    background-color: inherit;
+    position: relative;
+    overflow-wrap: anywhere;
+    border: none;
+
+}
+
+.card-title {
+    word-wrap: break-word;
+    flex: 1;
+
+}
+
+.card-chevron {
+    .MuiSvgIcon-root {
+        fill: #2471a7;
+        padding: 0;
+    }
+
+    button {
+        padding: 0;
+    }
+} 
+
+.card-key-control {
+    padding-right: 5px;
+}
+
+.card-footer {
+    display: flex;
+    position: relative;
+    padding: 0;
+    background-color: inherit;
+    border: none;
+}
+
+.card-risk-category {
+    padding: 0 5px;
+    color: #2471a7;
+    border: 1px solid #2471a7;
+    border-radius: 2px;
+    word-wrap: break-word;
+    margin-right: 10px;
+}
+
+.card-weight {
+    color: #2471a7;
+}

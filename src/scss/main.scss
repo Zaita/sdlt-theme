@@ -34,16 +34,21 @@ body {
     @import "components/Button/DarkButton";
     @import "components/Button/HeaderButton";
     @import "components/Button/tab";
+    @import "components/Button/BackLink";
     @import "components/ComponentSelection/ComponentSelection";
     @import "components/ComponentSelection/ComponentSelectionReview";
     @import "components/ComponentSelection/ComponentInfo";
     @import "components/ComponentSelection/ControlInfo";
     @import "components/Common/Table";
     @import "components/Common/Loading";
-    @import "components/DSRA/SecurityRiskAssessment";
+    @import "components/DSRA/DigitalSecurityRiskAssessment";
     @import "components/DSRA/ControlValidationAudit";
     @import "components/DSRA/CertificateAndAccreditationReport";
     @import "components/Pagination/Pagination";
+    @import "components/KanbanBoard/Board";
+    @import "components/KanbanBoard/Card";
+    @import "components/KanbanBoard/Column";
+    @import "components/KanbanBoard/BoardFilters";
   }
 }
 

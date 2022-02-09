@@ -15,12 +15,13 @@ import ComponentSelectionContainer from "../ComponentSelection/ComponentSelectio
 import MySubmissionList from "../QuestionnaireSubmissionList/MySubmissionList";
 import AwaitingApprovalList from "../QuestionnaireSubmissionList/AwaitingApprovalList";
 import MyProductList from "../QuestionnaireSubmissionList/MyProductList";
-import SecurityRiskAssessmentContainer from "../SecurityRiskAssessment/SecurityRiskAssessmentContainer.js";
+import SecurityRiskAssessmentContainer from "../SecurityRiskAssessment/DigitalSecurityRiskAssessmentContainer.js";
 import ControlValidationAuditContainer from "../ControlValidationAudit/ControlValidationAuditContainer.js";
 import {parse} from "query-string";
 import { Loading } from "../Common/Loading.js";
 import { withRouter } from 'react-router-dom';
 import _ from "lodash";
+import Board from "../KanbanBoard/Board";
 
 const mapStateToProps = (state: RootState) => {
   return {
@@ -202,6 +203,15 @@ class MainApp extends Component<*> {
                 return (
                   <div className="gray-bg">
                     <MyProductList/>
+                  </div>
+                );
+              }}
+            </Route>
+            <Route path='/kanban'>
+              {({match}) => {
+                return (
+                  <div className="gray-bg">
+                    <Board />
                   </div>
                 );
               }}

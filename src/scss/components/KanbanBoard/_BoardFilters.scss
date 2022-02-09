@@ -1,0 +1,19 @@
+.board-filters {
+    display: flex;
+    justify-content: space-between;
+    margin: 25px;
+}
+
+.board-search-input{
+    width: 300px;
+    background-color: white;
+}
+
+.board-select-input {
+    min-width: 300px;
+    background-color: white;
+}
+
+.board-filter-label {
+    color: black;
+}
