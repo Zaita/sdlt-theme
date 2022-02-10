@@ -9,7 +9,7 @@ import Footer from "../Footer/Footer";
 import {loadCurrentUser} from "../../actions/user";
 import LikelihoodLegendContainer from "./LikelihoodLegendContainer";
 import ImpactThresholdContainer from "./ImpactThresholdContainer";
-import RiskAssessmentMatrixTableContainer from "./RiskAssessmentMatrixTableContainer";
+import RiskAssessmentTableContainer from "./RiskAssessmentTableContainer";
 import RiskRatingThresholdContainer from "./RiskRatingThresholdContainer";
 import type {User} from "../../types/User";
 import {
@@ -134,16 +134,42 @@ class DigitalSecurityRiskAssessmentContainer extends Component<Props> {
             <div className="SecurityRiskAssessment">
               {backLink}
               <h4>Your risk assessment results</h4>
+<<<<<<< HEAD
               <div className="help-text">{sraTaskHelpText}</div>
               <h4>Recommended Controls</h4>
               <div className="help-text">{sraTaskRecommendedControlHelpText}</div>
+=======
+              <div className="help-text">
+                {sraTaskHelpText}
+              </div>
+              <div className="help-text">
+                <RiskAssessmentTableContainer />
+              </div>
+              <h4>Recommended Controls</h4>
+              <div className="help-text">
+                {sraTaskRecommendedControlHelpText}
+              </div>
+>>>>>>> 26210d80f0e56374b51aecd0d4cbccd7fcfcfce3
               <div className="control-board">
                 <Board />
               </div>
               <div className="bottom-container">
+<<<<<<< HEAD
                 <div className="button-container">
                   <LightButton title="Exit" />
                   <DarkButton title="Submit" />
+=======
+                <div className="container-right">
+                  <div className="message-container">
+                    <span>Note: Changes are automatically saved</span>
+                  </div>
+                  <div className="button-container">
+                    <LightButton classes={["button"]} title="Exit" onClick={() => {
+                      URLUtil.redirectToQuestionnaireSummary(questionnaireSubmissionUUID, secureToken);
+                    }} />
+                    <DarkButton classes={["button button-submit"]} title="Submit" />
+                  </div>
+>>>>>>> 26210d80f0e56374b51aecd0d4cbccd7fcfcfce3
                 </div>
               </div>
             </div>

@@ -16,4 +16,32 @@
     line-height: 16px;
     margin: 20px 0 35px;
   }
+
+  .bottom-container {
+    width: 100%;
+    margin-top:5px;
+    padding-top: 18px;
+    border-top: 2px solid $light-gray;
+
+    .container-right {
+      float: right;
+      .message-container {
+        float: left;
+        position: relative;
+        width: 230px;
+        height: 38px;
+        span {
+          position: absolute;
+          top: 10px;
+        }
+      }
+      .button-container {
+        float: left;
+
+        .button-submit {
+          margin-left: 15px;
+        }
+      }
+    }
+  }
 }
