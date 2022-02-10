@@ -37,11 +37,8 @@ class RiskAssessmentTableContainer extends Component<Props> {
   {
     return (
       <tr key="">
-        <td>Information disclosure </td>
-        <td>
-          Critical
-
-        </td>
+        <td>Information disclosure</td>
+        <td>Critical</td>
         <td>Almost certain</td>
         <td>Extreme</td>
       </tr>

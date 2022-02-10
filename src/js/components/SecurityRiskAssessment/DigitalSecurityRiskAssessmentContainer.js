@@ -148,9 +148,16 @@ class DigitalSecurityRiskAssessmentContainer extends Component<Props> {
                 <Board />
               </div>
               <div className="bottom-container">
-                <div className="button-container">
-                  <LightButton title="Exit" />
-                  <DarkButton title="Submit" />
+                <div className="container-right">
+                  <div className="message-container">
+                    <span>Note: Changes are automatically saved</span>
+                  </div>
+                  <div className="button-container">
+                    <LightButton classes={["button"]} title="Exit" onClick={() => {
+                      URLUtil.redirectToQuestionnaireSummary(questionnaireSubmissionUUID, secureToken);
+                    }} />
+                    <DarkButton classes={["button button-submit"]} title="Submit" />
+                  </div>
                 </div>
               </div>
             </div>
