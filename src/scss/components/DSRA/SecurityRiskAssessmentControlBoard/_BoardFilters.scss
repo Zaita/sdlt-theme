@@ -1,0 +1,48 @@
+.board-filters {
+  display: flex;
+  margin-bottom: 40px;
+}
+
+.board-search {
+  display: flex;
+  flex-direction: column;
+  margin-right: 24px;
+}
+
+.board-search-input {
+  width: 270px;
+  background-color: white;
+  border-radius: 4px;
+}
+
+.board-select {
+  display: flex;
+  flex-direction: column;
+}
+
+.board-select-input {
+  width: 250px;
+  background-color: white;
+  margin-right: 24px;
+}
+
+.board-filter-label {
+  color: black;
+  font-size: 13px;
+  font-weight: 400;
+  margin-left: 1px;
+}
+
+.filter-checkbox {
+  margin: 0;
+  padding-top: 20px;
+
+  span {
+    font-size: 13px;
+    font-weight: 400;
+  }
+}
+
+.board-select-input.sort-by {
+  width: 200px;
+}

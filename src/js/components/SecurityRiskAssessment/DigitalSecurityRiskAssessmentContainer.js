@@ -1,17 +1,17 @@
 // @flow
 
-import React, {Component} from "react";
-import {connect} from "react-redux";
-import type {RootState} from "../../store/RootState";
-import {Dispatch} from "redux";
+import React, { Component } from "react";
+import { connect } from "react-redux";
+import type { RootState } from "../../store/RootState";
+import { Dispatch } from "redux";
 import Header from "../Header/Header";
 import Footer from "../Footer/Footer";
-import {loadCurrentUser} from "../../actions/user";
+import { loadCurrentUser } from "../../actions/user";
 import LikelihoodLegendContainer from "./LikelihoodLegendContainer";
 import ImpactThresholdContainer from "./ImpactThresholdContainer";
 import RiskAssessmentTableContainer from "./RiskAssessmentTableContainer";
 import RiskRatingThresholdContainer from "./RiskRatingThresholdContainer";
-import type {User} from "../../types/User";
+import type { User } from "../../types/User";
 import {
   loadSecurityRiskAssessment,
   loadImpactThreshold
@@ -19,17 +19,17 @@ import {
 import {
   completeTaskSubmission
 } from "../../actions/task";
-import type {SecurityRiskAssessment} from "../../types/Task";
+import type { SecurityRiskAssessment } from "../../types/Task";
 import URLUtil from "../../utils/URLUtil";
 import LightButton from "../Button/LightButton";
 import DarkButton from "../Button/DarkButton";
-import {loadSiteConfig} from "../../actions/siteConfig";
-import type {SiteConfig} from "../../types/SiteConfig";
-import type {ImpactThreshold} from "../../types/ImpactThreshold";
+import { loadSiteConfig } from "../../actions/siteConfig";
+import type { SiteConfig } from "../../types/SiteConfig";
+import type { ImpactThreshold } from "../../types/ImpactThreshold";
 import SecurityRiskAssessmentUtil from "../../utils/SecurityRiskAssessmentUtil";
-import {SubmissionExpired} from "../Common/SubmissionExpired";
+import { SubmissionExpired } from "../Common/SubmissionExpired";
 import BackArrow from "../../../img/icons/back-arrow.svg";
-import Board from "../KanbanBoard/Board";
+import ControlBoard from "../SecurityRiskAssessment/ControlBoard/ControlBoard";
 
 const mapStateToProps = (state: RootState) => {
   return {
@@ -45,11 +45,11 @@ const mapDispatchToProps = (dispatch: Dispatch, props: *) => {
     dispatchLoadDataAction(uuid: string, secureToken: string) {
       dispatch(loadCurrentUser());
       dispatch(loadSiteConfig());
-      dispatch(loadSecurityRiskAssessment({uuid, secureToken}));
+      dispatch(loadSecurityRiskAssessment({ uuid, secureToken }));
       dispatch(loadImpactThreshold());
     },
     dispatchFinaliseAction(uuid: string, secureToken?: string | null, questionnaireUUID) {
-      dispatch(completeTaskSubmission({'taskSubmissionUUID': uuid, 'secureToken': secureToken, 'questionnaireUUID': questionnaireUUID}));
+      dispatch(completeTaskSubmission({ 'taskSubmissionUUID': uuid, 'secureToken': secureToken, 'questionnaireUUID': questionnaireUUID }));
     }
   };
 };
@@ -67,7 +67,7 @@ type Props = {
 
 class DigitalSecurityRiskAssessmentContainer extends Component<Props> {
   componentDidMount() {
-    const {uuid, dispatchLoadDataAction, secureToken} = {...this.props};
+    const { uuid, dispatchLoadDataAction, secureToken } = { ...this.props };
     dispatchLoadDataAction(uuid, secureToken);
   }
 
@@ -78,7 +78,7 @@ class DigitalSecurityRiskAssessmentContainer extends Component<Props> {
       securityRiskAssessmentData,
       secureToken,
       impactThresholdData
-    } = {...this.props};
+    } = { ...this.props };
 
     console.log(this.props);
 
@@ -96,7 +96,7 @@ class DigitalSecurityRiskAssessmentContainer extends Component<Props> {
       status,
       sraTaskHelpText,
       sraTaskRecommendedControlHelpText,
-    } = {...securityRiskAssessmentData};
+    } = { ...securityRiskAssessmentData };
 
     const isSRATaskFinalised = SecurityRiskAssessmentUtil.isSRATaskFinalised(taskSubmissions);
     const isSiblingTaskPending = SecurityRiskAssessmentUtil.isSiblingTaskPending(taskSubmissions);
@@ -111,13 +111,13 @@ class DigitalSecurityRiskAssessmentContainer extends Component<Props> {
             this.props.dispatchFinaliseAction(uuid, secureToken, questionnaireSubmissionUUID);
           }}
         />
-      ): null;
+      ) : null;
 
     const backLink = (
       <div className="back-link" onClick={() => {
         URLUtil.redirectToQuestionnaireSummary(questionnaireSubmissionUUID, secureToken);
       }}>
-        <img src={BackArrow}/>
+        <img src={BackArrow} />
         Back
       </div>
     );
@@ -127,18 +127,13 @@ class DigitalSecurityRiskAssessmentContainer extends Component<Props> {
 
         <Header title={securityRiskAssessmentData.taskName} subtitle={siteConfig.siteTitle} username={currentUser.name} logopath={siteConfig.logoPath} />
 
-        {securityRiskAssessmentData.status === 'expired' && <SubmissionExpired/>}
+        {securityRiskAssessmentData.status === 'expired' && <SubmissionExpired />}
 
         {
           securityRiskAssessmentData.status !== 'expired' && (
             <div className="SecurityRiskAssessment">
               {backLink}
               <h4>Your risk assessment results</h4>
-<<<<<<< HEAD
-              <div className="help-text">{sraTaskHelpText}</div>
-              <h4>Recommended Controls</h4>
-              <div className="help-text">{sraTaskRecommendedControlHelpText}</div>
-=======
               <div className="help-text">
                 {sraTaskHelpText}
               </div>
@@ -149,16 +144,10 @@ class DigitalSecurityRiskAssessmentContainer extends Component<Props> {
               <div className="help-text">
                 {sraTaskRecommendedControlHelpText}
               </div>
->>>>>>> 26210d80f0e56374b51aecd0d4cbccd7fcfcfce3
-              <div className="control-board">
-                <Board />
+              <div className="security-risk-assessment-control-board">
+                <ControlBoard />
               </div>
               <div className="bottom-container">
-<<<<<<< HEAD
-                <div className="button-container">
-                  <LightButton title="Exit" />
-                  <DarkButton title="Submit" />
-=======
                 <div className="container-right">
                   <div className="message-container">
                     <span>Note: Changes are automatically saved</span>
@@ -169,14 +158,13 @@ class DigitalSecurityRiskAssessmentContainer extends Component<Props> {
                     }} />
                     <DarkButton classes={["button button-submit"]} title="Submit" />
                   </div>
->>>>>>> 26210d80f0e56374b51aecd0d4cbccd7fcfcfce3
                 </div>
               </div>
             </div>
           )
         }
 
-        <Footer footerCopyrightText={siteConfig.footerCopyrightText}/>
+        <Footer footerCopyrightText={siteConfig.footerCopyrightText} />
       </div>
     )
   }

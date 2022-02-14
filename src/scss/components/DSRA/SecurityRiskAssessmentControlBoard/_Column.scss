@@ -1,0 +1,114 @@
+.column-header {
+  position: sticky;
+  top: 0;
+  background: #efefef;
+  z-index: 1;
+  border-bottom: 2px solid lightgrey;
+  display: flex;
+  padding-bottom: 5px;
+  margin-bottom: 15px;
+  flex: 1;
+}
+
+.column-title {
+  padding: 0px 0px;
+  margin-bottom: 0px;
+}
+
+.column-container {
+  padding-right: 14px;
+}
+
+.card-list {
+  padding: 8px;
+  flex-grow: 1;
+  min-height: 100px;
+
+}
+
+.column-card-list {
+  display: flex;
+  width: 270px;
+  display: flex;
+  flex-direction: column;
+  overflow: scroll;
+  max-height: 50vh;
+  scrollbar-color: #2471a7 #efefef;
+
+}
+
+.column-info {
+  color: #2471a7;
+  cursor: pointer;
+  transform: scale(75%) translateY(-5px);
+  margin-right: 20px;
+}
+
+.dotted-border {
+  width: 270px;
+  display: flex;
+  flex-direction: column;
+  min-height: 50vh;
+  scrollbar-color: #2471a7 #efefef;
+  border: 2px dashed;
+  border-color: lightgrey;
+}
+
+.empty-column-text {
+  margin: 50px 30px 0px;
+  text-align: center;
+  font-weight: 400;
+  color: grey;
+}
+
+.directional-drag-arrow {
+  color: grey;
+  transform: scale(65%);
+}
+
+/* WEBKIT SCROLL BAR */
+
+::-webkit-scrollbar {
+  background-color: #efefef;
+  width: 6px;
+}
+/* arrow buttons */
+::-webkit-scrollbar-button:active {
+  background-color: #868686;
+}
+::-webkit-scrollbar-button:hover:not(:active) {
+  background-color: transparent;
+}
+::-webkit-scrollbar-button:horizontal:increment,
+::-webkit-scrollbar-button:horizontal:increment,
+::-webkit-scrollbar-button:horizontal:increment:active,
+::-webkit-scrollbar-button:horizontal:increment:disabled,
+::-webkit-scrollbar-button:horizontal:decrement,
+::-webkit-scrollbar-button:horizontal:decrement:active,
+::-webkit-scrollbar-button:horizontal:decrement:disabled,
+::-webkit-scrollbar-button:vertical:increment,
+::-webkit-scrollbar-button:vertical:increment:active,
+::-webkit-scrollbar-button:vertical:increment:disabled,
+::-webkit-scrollbar-button:vertical:decrement,
+::-webkit-scrollbar-button:vertical:decrement:active,
+::-webkit-scrollbar-button:vertical:decrement:disabled {
+  background-color: transparent;
+  width: 0px;
+  height: 0px;
+}
+
+/* foreground bar */
+::-webkit-scrollbar-thumb {
+  background-color: #2471a7;
+}
+::-webkit-scrollbar-thumb:horizontal, ::-webkit-scrollbar-thumb:vertical {
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: #4182d6;
+}
+/* background bar */
+::-webkit-scrollbar-track, ::-webkit-scrollbar-corner  {
+  background-color: #efefef;
+}
