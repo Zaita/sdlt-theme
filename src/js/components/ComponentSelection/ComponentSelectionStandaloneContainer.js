@@ -136,12 +136,7 @@ class ComponentSelectionStandaloneContainer extends Component<Props> {
 
     return (
       <div className="ComponentSelectionContainer">
-        <Header
-          title="Component Selection"
-          subtitle={siteConfig.siteTitle}
-          logopath={siteConfig.logoPath}
-          username={currentUser.name}
-        />
+        <Header pageTitle="Component Selection" logopath={siteConfig.logoPath}/>
         {body}
         <Footer footerCopyrightText={siteConfig.footerCopyrightText}/>
       </div>

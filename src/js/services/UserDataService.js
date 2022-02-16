@@ -17,6 +17,8 @@ query {
     Surname
     IsSA
     IsCISO
+    IsAccreditationAuthority
+    IsCertificationAuthority
   }
 }`;
     const responseJSONObject = await GraphQLRequestHelper.request({query});

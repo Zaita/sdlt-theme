@@ -35,6 +35,7 @@ export type TaskSubmission = {
   questionnaireSubmissionUUID: string,
   questionnaireSubmissionID: string,
   questionnaireSubmissionStatus: string,
+  questionnaireSubmissionProductName: string,
   submitter: User,
   approver: User,
   lockWhenComplete: boolean,

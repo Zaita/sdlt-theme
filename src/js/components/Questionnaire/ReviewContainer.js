@@ -89,7 +89,7 @@ class ReviewContainer extends Component<Props> {
 
     return (
       <div className="ReviewContainer">
-        <Header title={title} subtitle="Review Responses" username={user.name} logopath={siteConfig.logoPath}/>
+        <Header pageTitle="Review responses" logopath={siteConfig.logoPath}/>
         <Review siteTitle={siteConfig.siteTitle}
           viewAs={viewAs}
           submission={submission}

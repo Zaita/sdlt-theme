@@ -16,6 +16,8 @@ query {
     UUID
     QuestionnaireSubmission {
       UUID
+      ProductName
+      IsBusinessOwner
       TaskSubmissions {
         UUID
         TaskType
@@ -54,6 +56,8 @@ query {
       status: toString(get(submissionJSONObject, "Status", "")),
       uuid: toString(get(submissionJSONObject, "UUID", "")),
       questionnaireSubmissionUUID: toString(get(submissionJSONObject, "QuestionnaireSubmission.UUID", "")),
+      questionnaireSubmissionProductName: toString(get(submissionJSONObject, "QuestionnaireSubmission.ProductName", "")),
+      isBusinessOwner: get(submissionJSONObject, "QuestionnaireSubmission.IsBusinessOwner", "false") === "true",
       taskName: toString(get(submissionJSONObject, "TaskName", "")),
       selectedComponents: components,
       submitterID: toString(get(submissionJSONObject, "Submitter.ID", "")),

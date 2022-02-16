@@ -411,13 +411,34 @@ class ControlValidationAuditContainer extends Component<Props, State> {
       />
     ) : null;
 
+    // used to display breadcrumbs
+    let showSubmissionBreadcrumb = false;
+    let showApprovalBreadcrumb = false;
+    let isSubmitter = (controlValidationAuditData.submitterID === currentUser.id);
+
+    if (isSubmitter || controlValidationAuditData.isTaskCollborator) {
+      showSubmissionBreadcrumb = true;
+    }
+
+    if (!showSubmissionBreadcrumb) {
+      if (currentUser.isSA ||
+        currentUser.isCISO ||
+        controlValidationAuditData.isBusinessOwner ||
+        currentUser.isAccreditationAuthority ||
+        currentUser.isCertificationAuthority) {
+        showApprovalBreadcrumb = true;
+      }
+    }
+
     return (
       <div className="ControlValidationAuditContainer">
         <Header
-          title={controlValidationAuditData.taskName}
-          subtitle={siteConfig.siteTitle}
-          username={currentUser.name}
+          pageTitle={controlValidationAuditData.taskName}
           logopath={siteConfig.logoPath}
+          productName={controlValidationAuditData.questionnaireSubmissionProductName}
+          questionnaireSubmissionUUID={controlValidationAuditData.questionnaireSubmissionUUID}
+          showSubmissionBreadcrumb={showSubmissionBreadcrumb}
+          showApprovalBreadcrumb={showApprovalBreadcrumb}
         />
 
         {

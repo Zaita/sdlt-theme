@@ -85,7 +85,12 @@ class TaskSubmissionForVendorContainer extends Component<Props> {
 
     return (
       <div className="TaskSubmissionContainer">
-        <Header title={taskSubmission.taskName} subtitle={siteConfig.siteTitle} showLogoutButton={false} logopath={siteConfig.logoPath}/>
+        <Header
+          pageTitle={taskSubmission.taskName}
+          showLogoutButton={false}
+          logopath={siteConfig.logoPath}
+          productName={taskSubmission.questionnaireSubmissionProductName}
+        />
         <TaskSubmission
           taskSubmission={taskSubmission}
           saveAnsweredQuestion={dispatchSaveAnsweredQuestionAction}

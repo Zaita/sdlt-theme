@@ -41,6 +41,8 @@ query {
       ID
       UUID
       QuestionnaireStatus
+      ProductName
+      IsBusinessOwner
       TaskSubmissions {
         UUID
         Status
@@ -117,6 +119,8 @@ query {
       questionnaireSubmissionUUID: toString(get(submissionJSONObject, "QuestionnaireSubmission.UUID", "")),
       questionnaireSubmissionID: toString(get(submissionJSONObject, "QuestionnaireSubmission.ID", "")),
       questionnaireSubmissionStatus: toString(get(submissionJSONObject, "QuestionnaireSubmission.QuestionnaireStatus", "")),
+      questionnaireSubmissionProductName: toString(get(submissionJSONObject, "QuestionnaireSubmission.ProductName", "")),
+      isBusinessOwner: get(submissionJSONObject, "QuestionnaireSubmission.IsBusinessOwner", "false") === "true",
       questions: QuestionParser.parseQuestionsFromJSON({
         schemaJSON: toString(get(submissionJSONObject, "QuestionnaireData", "")),
         answersJSON: toString(get(submissionJSONObject, "AnswerData", "")),

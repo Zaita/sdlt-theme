@@ -73,9 +73,7 @@ class QuestionnaireContainer extends Component<Props> {
       return (
         <div className="QuestionnaireContainer">
           <Header
-            title={title}
-            subtitle={siteConfig.siteTitle}
-            username={user.name}
+            pageTitle={title}
             logopath={siteConfig.logoPath}
           />
           <div className="questionnaire-message">
@@ -94,10 +92,9 @@ class QuestionnaireContainer extends Component<Props> {
       return (
         <div className="QuestionnaireContainer">
           <Header
-            title={title}
-            subtitle={siteConfig.siteTitle}
+            pageTitle="New submission"
             logopath={siteConfig.logoPath}
-            username={user.name}
+            showSubmissionBreadcrumb={true}
           />
           <Questionnaire
             questions={submission.questions}
@@ -118,9 +115,7 @@ class QuestionnaireContainer extends Component<Props> {
     return (
       <div className="QuestionnaireContainer">
         <Header
-          title={title}
-          subtitle={siteConfig.siteTitle}
-          username={user.name}
+          pageTitle="New submission"
           logopath={siteConfig.logoPath}
         />
         <div className="questionnaire-message">

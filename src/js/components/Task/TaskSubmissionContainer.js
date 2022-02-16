@@ -150,9 +150,36 @@ class TaskSubmissionContainer extends Component<Props> {
       && (currentUser.isSA || ((isCurrentUserSubmitter || taskSubmission.isTaskCollborator)
       && !taskSubmission.lockWhenComplete));
 
+    // used to display breadcrumbs
+    let showSubmissionBreadcrumb = false;
+    let showApprovalBreadcrumb = false;
+
+    if (isCurrentUserSubmitter || taskSubmission.isTaskCollborator) {
+      showSubmissionBreadcrumb = true;
+    }
+
+    if (!showSubmissionBreadcrumb) {
+      if (taskSubmission.isCurrentUserAnApprover ||
+        currentUser.isSA ||
+        currentUser.isCISO ||
+        taskSubmission.isBusinessOwner ||
+        currentUser.isAccreditationAuthority ||
+        currentUser.isCertificationAuthority) {
+        showApprovalBreadcrumb = true;
+      }
+    }
+
     return (
       <div className="TaskSubmissionContainer">
-        <Header title={taskSubmission.taskName} subtitle={siteConfig.siteTitle} username={currentUser.name} logopath={siteConfig.logoPath}/>
+        <Header
+          pageTitle={taskSubmission.taskName}
+          logopath={siteConfig.logoPath}
+          productName={taskSubmission.questionnaireSubmissionProductName}
+          isTaskApprover={taskSubmission.isCurrentUserAnApprover}
+          questionnaireSubmissionUUID={taskSubmission.questionnaireSubmissionUUID}
+          showApprovalBreadcrumb={showApprovalBreadcrumb}
+          showSubmissionBreadcrumb={showSubmissionBreadcrumb}
+        />
         <TaskSubmission
           taskSubmission={taskSubmission}
           saveAnsweredQuestion={dispatchSaveAnsweredQuestionAction}

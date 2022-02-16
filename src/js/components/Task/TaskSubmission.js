@@ -72,6 +72,13 @@ class TaskSubmission extends Component<Props> {
       </div>
     ) : null;
 
+    const backLinkTaskApprover = showBackLink ? (
+      <div className="back-link" onClick={() => URLUtil.redirectToApprovals()}>
+        <img src={BackArrow}/>
+        Back
+      </div>
+    ) : null;
+
     const isSRATaskFinalised = taskSubmission.taskType === 'risk questionnaire' && SecurityRiskAssessmentUtil.isSRATaskFinalised(taskSubmission.siblingSubmissions);
 
     const editButton = showEditButton && !isSRATaskFinalised && taskSubmission.taskType !== "certification and accreditation"? (
@@ -174,7 +181,7 @@ class TaskSubmission extends Component<Props> {
                 taskSubmission.taskType === 'risk questionnaire' &&
                 isSRATaskFinalised ? SecurityRiskAssessmentUtil.getSraIsFinalisedAlert() : false
               }
-              {backLink}
+              {taskSubmission.isCurrentUserAnApprover ? backLinkTaskApprover : backLink}
               {body}
               <div className={`buttons ${viewAs != "approver" ? 'buttons-hideborder': ''}`}>
                 <div className="buttons-left">
