@@ -20,6 +20,7 @@ query {
     HomePageBackgroundImagePath
     PdfHeaderImageLink
     PdfFooterImageLink
+    HomePageSubHeaderImagePath
   }
 }`;
     const responseJSONObject = await GraphQLRequestHelper.request({query});

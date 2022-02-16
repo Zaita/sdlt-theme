@@ -14,7 +14,8 @@ type Props = {
   productName?: string,
   isTaskApprover?: boolean,
   showApprovalBreadcrumb?: boolean,
-  showSubmissionBreadcrumb?: boolean
+  showSubmissionBreadcrumb?: boolean,
+  subHeaderImagePath?: string,
 };
 
 class Header extends Component<Props> {
@@ -25,7 +26,8 @@ class Header extends Component<Props> {
     productName: "",
     isTaskApprover: false,
     showApprovalBreadcrumb: false,
-    showSubmissionBreadcrumb: false
+    showSubmissionBreadcrumb: false,
+    subHeaderImagePath: ""
   };
 
   render() {
@@ -38,6 +40,7 @@ class Header extends Component<Props> {
       questionnaireSubmissionUUID,
       showApprovalBreadcrumb,
       showSubmissionBreadcrumb,
+      subHeaderImagePath
     } = { ...this.props };
 
     let isHomePage = false;
@@ -61,22 +64,22 @@ class Header extends Component<Props> {
           </div>
         </div>
 
-        <div className={isHomePage ? "" : "breadcrumbs-subheader"}>
-          {!isHomePage ? (
-            <React.Fragment>
-              <Breadcrumbs
-                productName={productName}
-                questionnaireSubmissionUUID={questionnaireSubmissionUUID}
-                showApprovalBreadcrumb={showApprovalBreadcrumb}
-                isTaskApprover={isTaskApprover}
-              />
-              <div className="page-title">
-                <h1>{pageTitle}</h1>
-              </div>
-            </React.Fragment>
-          ) : null
-          }
-        </div>
+        {isHomePage ? (
+          <div
+            className="homepage-subheader"
+            style={{ backgroundImage: `url("${subHeaderImagePath}")` }}
+          />
+        ) : (
+          <div className="breadcrumbs-subheader">
+            <Breadcrumbs
+              productName={productName}
+              questionnaireSubmissionUUID={questionnaireSubmissionUUID}
+              showApprovalBreadcrumb={showApprovalBreadcrumb}
+              isTaskApprover={isTaskApprover}
+            />
+            <h1>{pageTitle}</h1>
+          </div>
+        )}
       </header>
     );
   }
