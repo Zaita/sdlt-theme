@@ -17,11 +17,11 @@ class Home extends Component<Props> {
 
   render() {
     const {title, subtitle, pillars, tasks} = {...this.props.homeState};
-    const {logoPath} = {...this.props.siteConfig};
+    const {logoPath, homePageSubHeaderImagePath} = {...this.props.siteConfig};
 
     return (
       <div className="Home">
-        <Header logopath={logoPath}/>
+        <Header logopath={logoPath} subHeaderImagePath={homePageSubHeaderImagePath}/>
         <div className="layout">
           <a href="/"><img src={logoPath} className="homepage-layout-logo"/></a>
           <h1>

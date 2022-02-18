@@ -38,11 +38,16 @@ header.Header {
       margin-top: -2px;
     }
 
+    .homepage-subheader {
+      height: 155px;
+      background-size: cover;
+    }
+
     .breadcrumbs-subheader {
       background-color: #004771;
       height: 104px;
 
-      nav, .page-title {
+      nav, h1 {
         max-width: 1140px;
         margin-left: auto;
         margin-right: auto;
