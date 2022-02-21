@@ -57,6 +57,8 @@ class TaskSubmission extends Component<Props> {
       component
     } = {...this.props};
 
+    console.log(component);
+
     const taskRecommendationContainer = (
       <TaskRecommendationContainer
         taskRecommendations={taskSubmission.taskRecommendations}

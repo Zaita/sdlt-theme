@@ -32,8 +32,14 @@ import AddIcon from "../../../img/icons/add-circle.svg";
 import CloseIcon from '@material-ui/icons/Close';
 import ReactModal from "react-modal";
 import IconButton from '@material-ui/core/IconButton';
-import Select from 'react-select'
+import Select from 'react-select';
 import moment from "moment";
+import Accordion from '@material-ui/core/Accordion';
+import AccordionSummary from '@material-ui/core/AccordionSummary';
+import AccordionDetails from '@material-ui/core/AccordionDetails';
+import Typography from '@material-ui/core/Typography';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import TableAccordion from "./TableAccordion";
 
 type Props = {
   submission: Submission | null,
@@ -450,7 +456,7 @@ class Summary extends Component<Props> {
         {this.props.viewAs === "submitter" && (
           <div>
             <button className="btn add-collaborators-btn" onClick={this.handleOpenModalForCollaborators.bind(this)}>
-             <img src={AddIcon}/> Add collaborators
+              <img src={AddIcon}/> Add collaborators
             </button>
           </div>
         )}
@@ -487,11 +493,134 @@ class Summary extends Component<Props> {
     );
   }
 
+  addProductAspectsToTaskSubmissions(pa: array, arr: array) {
+    let newData = arr.map(item => {
+      if (!item.createOnceInstancePerComponent) {
+        return
+      }
+      let taskSubmissionsCopy = Object.assign({}, item);
+      taskSubmissionsCopy.productAspect = pa;
+      return taskSubmissionsCopy;
+    }).filter(item => item !== undefined)
+    return newData;
+  }
+
+  renderAccordionTasks(submission: Submission) {
+    const taskSubmissions = submission.taskSubmissions;
+    const productAspects = submission.productAspects;
+
+    if (taskSubmissions.length === 0) {
+      return null;
+    }
+
+    const unfinshedRQTaskMessage = this.unfinishedTaskSubmissionMessage() ? (
+      <div className="alert alert-warning">{this.unfinishedTaskSubmissionMessage()}</div>
+    ) : null;
+
+    const arrayForAccordion = this.addProductAspectsToTaskSubmissions(productAspects, taskSubmissions)
+
+    return (
+      <React.Fragment>
+        {arrayForAccordion.map(({
+          uuid,
+          taskName,
+          taskType,
+          status,
+          approver,
+          isTaskApprovalRequired,
+          timeToComplete,
+          timeToReview,
+          canTaskCreateNewTasks,
+          productAspect
+        }) => {
+          let statusIcon = startIcon;
+
+          if (status == "start") {
+            status = "To do";
+          }
+
+          if (status == "in_progress") {
+            statusIcon = inProgressIcon;
+          }
+
+          if (status == "waiting_for_approval") {
+            statusIcon = awaitingApprovalIcon;
+          }
+
+          if (status == "approved" || status == "complete") {
+            statusIcon = approveIcon;
+          }
+
+          if (status == "denied") {
+            statusIcon = notApprovedIcon;
+          }
+
+          const { token } = { ...this.props };
+
+          let taskRedirectURL = URLUtil.redirectToTaskSubmission(uuid, token, "urlString");
+
+          if (taskType === "risk questionnaire") {
+            taskRedirectURL = URLUtil.redirectToTaskSubmission(uuid, token, "urlString", "website");
+          }
+
+          if (taskType === "selection") {
+            taskRedirectURL = URLUtil.redirectToComponentSelectionSubmission(uuid, token, "urlString");
+          }
+
+          if (taskType === "security risk assessment") {
+            taskRedirectURL = URLUtil.redirectToSecurityRiskAssessment(uuid, token, "urlString");
+          }
+
+          if (taskType === "control validation audit") {
+            taskRedirectURL = URLUtil.redirectToControlValidationAudit(uuid, token, "urlString");
+          }
+
+          const links = (
+            <Link to={taskRedirectURL}>
+              <img src={chevronRightIcon} />
+            </Link>
+          );
+
+          let approvedBy = "";
+
+          if (isTaskApprovalRequired) {
+            approvedBy = approver.name;
+          } else {
+            approvedBy = "No approval needed";
+          }
+
+          return (
+            <React.Fragment>
+              {productAspect.map((pa, i) => {
+                const taskSubmissionAndProductAspects = {
+                  uuid,
+                  approvedBy,
+                  links,
+                  statusIcon,
+                  status,
+                  pa,
+                  taskName,
+                  taskType,
+                  timeToComplete,
+                  timeToReview,
+                  canTaskCreateNewTasks,
+                  prettifyStatus,
+                  unfinshedRQTaskMessage
+                }
+
+                return <TableAccordion key={uuid} {...taskSubmissionAndProductAspects} />
+              })}
+            </React.Fragment>
+          )
+        })}
+      </React.Fragment>
+    )
+  }
+
   renderTasks(submission: Submission) {
     const taskSubmissions = submission.taskSubmissions;
     const productAspects = submission.productAspects;
     const hasProductAspects = productAspects.length > 0 ? true : false;
-
 
     const isSRATaskFinalised = SecurityRiskAssessmentUtil.isSRATaskFinalised(submission.taskSubmissions);
 
@@ -515,7 +644,7 @@ class Summary extends Component<Props> {
         <div className="table-responsive table-continer">
           <table className="table">
             <thead className="task-thead">
-              <tr key="task-table-header">
+              <tr className="task-table-header">
                 <th>Task</th>
                 <th className="completion-time-col">Time to complete</th>
                 <th>Approved by</th>
@@ -537,6 +666,7 @@ class Summary extends Component<Props> {
                 canTaskCreateNewTasks,
                 createOnceInstancePerComponent
               }) => {
+
               let statusIcon = startIcon;
 
               if (status == "start") {
@@ -564,7 +694,7 @@ class Summary extends Component<Props> {
               let taskRedirectURL = URLUtil.redirectToTaskSubmission(uuid, token, "urlString");
 
               if (taskType === "risk questionnaire") {
-                taskRedirectURL = URLUtil.redirectToTaskSubmission(uuid, token, "urlString", "database");
+                taskRedirectURL = URLUtil.redirectToTaskSubmission(uuid, token, "urlString", "website");
               }
 
               if (taskType === "selection") {
@@ -593,34 +723,54 @@ class Summary extends Component<Props> {
                 approvedBy = "No approval needed";
               }
 
-              return (
-                <tr key={uuid}>
-                  <td className="task-table-title-data">
-                    {taskName}
-                    {canTaskCreateNewTasks ? (<span className='multiple-tasks-created'> *</span>) : null}
-                  </td>
-                  <td>{timeToComplete}</td>
-                  <td>{approvedBy}</td>
-                  <td>{timeToReview}</td>
-                  <td>
-                    <img src={statusIcon} />
-                    <span className="task-status">{prettifyStatus(status)}</span>
-                  </td>
-                  <td>
-                  {unfinshedRQTaskMessage && taskType === 'security risk assessment' ? null : links}
-                  </td>
-                </tr>
-              );
+              const taskTableData = () => {
+                return (
+                  <React.Fragment>
+                    <td className="task-table-title-data">
+                      {taskName}
+                      {canTaskCreateNewTasks ? (<span className='multiple-tasks-created'> *</span>) : null}
+                    </td>
+                    <td>{timeToComplete}</td>
+                    <td>{approvedBy}</td>
+                    <td>{timeToReview}</td>
+                    <td>
+                      <img src={statusIcon} />
+                      <span className="task-status">{prettifyStatus(status)}</span>
+                    </td>
+                    <td>
+                      {unfinshedRQTaskMessage && taskType === 'security risk assessment' ? null : links}
+                    </td>
+                  </React.Fragment>
+                )
+              }
+
+              if (!createOnceInstancePerComponent) {
+                return (
+                  <tr key={uuid}>
+                    {taskTableData()}
+                  </tr>
+                )
+              } else if (hasProductAspects) {
+                return (
+                  this.renderAccordionTasks(submission)
+                )
+              } else {
+                return (
+                  <tr key={uuid}>
+                    {taskTableData()}
+                  </tr>
+                )
+              }
             })}
           </tbody>
-         </table>
-        </div>
-        {/**TODO: Add FAQ link */}
-        {/* <div className = "task-faq">
-        <a href="#"> Learn more about the task descriptions and statuses</a>
-          <img src={chevronRightIcon}/>
-        </div> */}
-        </div>
+        </table>
+      </div>
+      {/**TODO: Add FAQ link */}
+      {/* <div className = "task-faq">
+      <a href="#"> Learn more about the task descriptions and statuses</a>
+        <img src={chevronRightIcon}/>
+      </div> */}
+      </div>
     );
   }
 

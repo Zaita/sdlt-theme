@@ -172,6 +172,32 @@
         cursor: pointer;
       }
     }
+
+    .tr-accordion {
+      cursor: pointer;
+    }
+
+    .tr-taskName {
+      padding-left: 2.2rem;
+    }
+
+    .tr-expanded {
+      visibility: visible;
+    }
+
+    .tr-hidden {
+      visibility: collapse;
+      display: none;
+    }
+
+    .td-chevron {
+      padding-right: 15px;
+    }
+
+    .rotate {
+      transform: rotate(-90deg) translate(50%, -50%);
+    }
+
   }
 
   h3 {
