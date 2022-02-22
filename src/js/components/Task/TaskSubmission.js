@@ -32,7 +32,8 @@ type Props = {
   showBackButton: boolean,
   showEditButton: boolean,
   canUpdateAnswers: boolean,
-  secureToken: string
+  secureToken: string,
+  component: string
 };
 
 class TaskSubmission extends Component<Props> {
@@ -52,7 +53,8 @@ class TaskSubmission extends Component<Props> {
       showEditButton,
       canUpdateAnswers,
       viewAs,
-      secureToken
+      secureToken,
+      component
     } = {...this.props};
 
     const taskRecommendationContainer = (
@@ -126,7 +128,7 @@ class TaskSubmission extends Component<Props> {
         <h4>Summary</h4>
         {
           taskSubmission.taskType !== "certification and accreditation" &&
-          <AnswersPreview questions={taskSubmission.questions}/>
+          <AnswersPreview questions={taskSubmission.questions} component={component}/>
         }
         {
           !taskSubmission.isDisplayPreventMessage &&
@@ -220,7 +222,7 @@ class TaskSubmission extends Component<Props> {
     if (taskSubmission.taskType === "certification and accreditation") {
       PDFUtil.downloadCertificate({
         siteConfig: siteConfig,
-        resultForCertificationAndAccreditation:taskSubmission.resultForCertificationAndAccreditation
+        resultForCertificationAndAccreditation: taskSubmission.resultForCertificationAndAccreditation
       });
     } else {
       PDFUtil.generatePDF({

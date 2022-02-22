@@ -489,6 +489,10 @@ class Summary extends Component<Props> {
 
   renderTasks(submission: Submission) {
     const taskSubmissions = submission.taskSubmissions;
+    const productAspects = submission.productAspects;
+    const hasProductAspects = productAspects.length > 0 ? true : false;
+
+
     const isSRATaskFinalised = SecurityRiskAssessmentUtil.isSRATaskFinalised(submission.taskSubmissions);
 
     if (taskSubmissions.length === 0) {
@@ -521,7 +525,18 @@ class Summary extends Component<Props> {
               </tr>
             </thead>
             <tbody>
-              {taskSubmissions.map(({uuid, taskName, taskType, status, approver, isTaskApprovalRequired, timeToComplete, timeToReview, canTaskCreateNewTasks}) => {
+              {taskSubmissions.map(({
+                uuid,
+                taskName,
+                taskType,
+                status,
+                approver,
+                isTaskApprovalRequired,
+                timeToComplete,
+                timeToReview,
+                canTaskCreateNewTasks,
+                createOnceInstancePerComponent
+              }) => {
               let statusIcon = startIcon;
 
               if (status == "start") {
@@ -547,6 +562,10 @@ class Summary extends Component<Props> {
               const {token} = {...this.props};
 
               let taskRedirectURL = URLUtil.redirectToTaskSubmission(uuid, token, "urlString");
+
+              if (taskType === "risk questionnaire") {
+                taskRedirectURL = URLUtil.redirectToTaskSubmission(uuid, token, "urlString", "database");
+              }
 
               if (taskType === "selection") {
                 taskRedirectURL = URLUtil.redirectToComponentSelectionSubmission(uuid, token, "urlString");
@@ -612,7 +631,6 @@ class Summary extends Component<Props> {
     ) {
       return null;
     }
-
 
     const approvalStatus = submission.approvalStatus;
     const securityArchitectApprover = submission.securityArchitectApprover;

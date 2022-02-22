@@ -130,6 +130,7 @@ query {
       TimeToComplete
       TimeToReview
       CanTaskCreateNewTasks
+      CreateOnceInstancePerComponent
       ResultForCertificationAndAccreditation
       TaskApprover {
         ID
@@ -248,6 +249,7 @@ query {
               timeToComplete: _.toString(_.get(item, "TimeToComplete", "")),
               timeToReview: _.toString(_.get(item, "TimeToReview", "")),
               canTaskCreateNewTasks: _.get(item, "CanTaskCreateNewTasks", "false") === "true",
+              createOnceInstancePerComponent: _.get(item, "CreateOnceInstancePerComponent", "false") === "true",
               resultForCertificationAndAccreditation: _.get(item, "ResultForCertificationAndAccreditation", "[]"),
             };
             return taskSubmission;

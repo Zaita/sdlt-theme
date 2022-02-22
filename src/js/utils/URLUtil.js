@@ -23,11 +23,11 @@ export default class URLUtil {
     window.location.href = `/#/questionnaire/summary/${uuid}`;
   }
 
-  static redirectToTaskSubmission(uuid: string, token: string = "", returnType: string = "redirect") {
-      let url= `/task/submission/${uuid}`;
+  static redirectToTaskSubmission(uuid: string, token: string = "", returnType: string = "redirect", component: string = '') {
+      let url= `/task/submission/${uuid}?component=${component}`;
 
       if (token) {
-        url = `/task/submission/${uuid}?token=${token}`;
+        url = `/task/submission/${uuid}?token=${token}&component=${component}`;
       }
 
       if (returnType == "urlString") {
@@ -35,7 +35,7 @@ export default class URLUtil {
       }
 
       window.location.href = `/#/${url}`;
-    }
+  }
 
   static redirectToComponentSelectionSubmission(uuid: string, token: string = "", returnType: string = "redirect") {
     let url = `/component-selection/submission/${uuid}`;

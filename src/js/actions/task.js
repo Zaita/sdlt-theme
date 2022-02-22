@@ -20,14 +20,15 @@ import type {User} from "../types/User";
 import type {RootState} from "../store/RootState";
 import URLUtil from "../utils/URLUtil";
 
-export function loadTaskSubmission(args: {uuid: string, secureToken?: string, type?: string}): ThunkAction {
-  const {uuid, secureToken, type} = {...args};
+export function loadTaskSubmission(args: {uuid: string, secureToken?: string, type?: string, loadTaskSubmission?: string}): ThunkAction {
+  const {uuid, secureToken, type, component} = {...args};
 
   return async (dispatch) => {
     try {
       const payload = await TaskDataService.fetchTaskSubmission({
         uuid,
-        secureToken
+        secureToken,
+        component
       });
       const action: LoadTaskSubmissionAction = {
         type: ActionType.TASK.LOAD_TASK_SUBMISSION,

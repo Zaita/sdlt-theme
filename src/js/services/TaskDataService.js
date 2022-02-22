@@ -24,8 +24,9 @@ type BatchUpdateTaskSubmissionDataArgument = {
 
 export default class TaskDataService {
 
-  static async fetchTaskSubmission(args: { uuid: string, secureToken?: string }): Promise<TaskSubmission> {
-    const {uuid, secureToken} = {...args};
+  static async fetchTaskSubmission(args: { uuid: string, secureToken?: string, component?: string }): Promise<TaskSubmission> {
+    const {uuid, secureToken, component} = {...args};
+
     const query = `
 query {
   readTaskSubmission(UUID: "${uuid}", SecureToken: "${secureToken || ""}") {
@@ -83,6 +84,7 @@ query {
     }
     IsTaskApprovalRequired
     IsCurrentUserAnApprover
+    CreateOnceInstancePerComponent
     RiskResultData
     IsDisplayPreventMessage
     PreventMessage
@@ -106,6 +108,16 @@ query {
       throw DEFAULT_NETWORK_ERROR;
     }
 
+    let answerData = toString(get(submissionJSONObject, "AnswerData", ""));
+
+    // add task type condition as well
+    if (component && answerData) {
+      const answerDataArray = JSON.parse(answerData);
+      if (answerDataArray.length > 0) {
+        answerData = JSON.stringify(answerDataArray.find(answer => answer.productAspect === component).result[0]);
+      }
+    }
+
     const data: TaskSubmission = {
       id: toString(get(submissionJSONObject, "ID", "")),
       uuid: toString(get(submissionJSONObject, "UUID", "")),
@@ -123,7 +135,7 @@ query {
       isBusinessOwner: get(submissionJSONObject, "QuestionnaireSubmission.IsBusinessOwner", "false") === "true",
       questions: QuestionParser.parseQuestionsFromJSON({
         schemaJSON: toString(get(submissionJSONObject, "QuestionnaireData", "")),
-        answersJSON: toString(get(submissionJSONObject, "AnswerData", "")),
+        answersJSON: answerData,
       }),
       selectedComponents: SecurityComponentParser.parseFromJSONOArray(get(submissionJSONObject, "SelectedComponents", [])),
       jiraTickets: JiraTicketParser.parseFromJSONArray(get(submissionJSONObject, "JiraTickets", [])),
@@ -136,6 +148,7 @@ query {
       hideWeightsAndScore: _.get(submissionJSONObject, "HideWeightsAndScore", "false") === "true",
       isTaskCollborator: _.get(submissionJSONObject, "IsTaskCollborator", "false") === "true",
       isDisplayPreventMessage: _.get(submissionJSONObject, "IsDisplayPreventMessage", "false") === "true",
+      createOnceInstancePerComponent: _.get(submissionJSONObject, "CreateOnceInstancePerComponent", "false") === "true",
       preventMessage: toString(get(submissionJSONObject, "PreventMessage", "")),
       siblingSubmissions: TaskParser.parseAlltaskSubmissionforQuestionnaire(submissionJSONObject),
       serviceRegister: TaskParser.parseServiceRegister(serviceRegister),

@@ -101,9 +101,16 @@ class MainApp extends Component<*> {
                   const queryString = parse(location.search);
                   secureToken = queryString.token;
                 }
+
+                let component = '';
+                if (location.search) {
+                  const queryString = parse(location.search);
+                  component = queryString.component;
+                }
+
                 return (
                   <div className="gray-bg">
-                    <TaskSubmissionContainer uuid={match.params.uuid} secureToken={secureToken}/>
+                    <TaskSubmissionContainer uuid={match.params.uuid} secureToken={secureToken} component={component}/>
                   </div>
                 );
               }}

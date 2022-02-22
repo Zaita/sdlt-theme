@@ -41,10 +41,10 @@ const mapStateToProps = (state: RootState) => {
 
 const mapDispatchToProps = (dispatch: Dispatch, props: *) => {
   return {
-    dispatchLoadDataAction(uuid: string, secureToken: string) {
+    dispatchLoadDataAction(uuid: string, secureToken: string, component: string) {
       dispatch(loadCurrentUser());
       dispatch(loadSiteConfig());
-      dispatch(loadTaskSubmission({uuid, secureToken}));
+      dispatch(loadTaskSubmission({uuid, secureToken, component}));
     },
     dispatchLoadResultForCertificationAndAccreditation(uuid: string, secureToken: string) {
       dispatch(loadResultForCertificationAndAccreditation({uuid, secureToken}));
@@ -79,10 +79,11 @@ const mapDispatchToProps = (dispatch: Dispatch, props: *) => {
 type Props = {
   uuid: string,
   secureToken:string,
+  component: string,
   taskSubmission?: TaskSubmissionType | null,
   siteConfig?: SiteConfig | null,
   currentUser?: User | null,
-  dispatchLoadDataAction?: (uuid: string, secureToken: string) => void,
+  dispatchLoadDataAction?: (uuid: string, secureToken: string, component: string) => void,
   dispatchApproveTaskSubmissionAction?: (uuid: string) => void,
   dispatchDenyTaskSubmissionAction?: (uuid: string) => void,
   dispatchSendBackForChangesTaskSubmissionAction?: (uuid: string) => void,
@@ -97,8 +98,8 @@ type Props = {
 class TaskSubmissionContainer extends Component<Props> {
 
   componentDidMount() {
-    const {uuid, dispatchLoadDataAction, secureToken} = {...this.props};
-    dispatchLoadDataAction(uuid, secureToken);
+    const {uuid, dispatchLoadDataAction, secureToken, component} = {...this.props};
+    dispatchLoadDataAction(uuid, secureToken, component);
   }
 
   render() {
@@ -114,7 +115,8 @@ class TaskSubmissionContainer extends Component<Props> {
       dispatchSendBackForChangesTaskSubmissionAction,
       dispatchAddTaskRecommendationAction,
       dispatchEditTaskRecommendationAction,
-      secureToken
+      secureToken,
+      component
     } = {...this.props};
 
     if (!currentUser || !taskSubmission || !siteConfig) {
@@ -197,6 +199,7 @@ class TaskSubmissionContainer extends Component<Props> {
           viewAs={viewAs}
           siteConfig={siteConfig}
           secureToken={secureToken}
+          component={component}
         />
         <Footer footerCopyrightText={siteConfig.footerCopyrightText}/>
       </div>
