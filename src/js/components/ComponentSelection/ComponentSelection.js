@@ -9,6 +9,8 @@ import DarkButton from "../Button/DarkButton";
 import LightButton from "../Button/LightButton";
 import ComponentInfo from "./ComponentInfo";
 import ComponentSelectionUtil from "../../utils/ComponentSelectionUtil";
+import BackArrow from "../../../img/icons/back-arrow.svg";
+import URLUtil from "../../utils/URLUtil";
 
 type Props = {
   availableComponents: Array<SecurityComponent>,
@@ -21,7 +23,8 @@ type Props = {
   saveControls: () => void,
   extraButtons?: *,
   isStandaloneTask: boolean,
-  productAspects: Array<*>
+  productAspects: Array<*>,
+  questionnaireSubmissionUUID: string
 };
 
 type State = {
@@ -35,6 +38,10 @@ export default class ComponentSelection extends Component<Props, State> {
     this.state = {
       jiraKey: ""
     };
+  }
+
+  sendBackToQestionnaire() {
+    URLUtil.redirectToQuestionnaireSummary(this.props.questionnaireSubmissionUUID, this.props.secureToken)
   }
 
   render() {
@@ -54,8 +61,15 @@ export default class ComponentSelection extends Component<Props, State> {
     const {jiraKey} = {...this.state};
     const isGroupbyProductAspect = productAspects && productAspects.length > 0 && selectedComponents.length > 0;
 
+    const backLink = <div className="back-link" onClick={() => this.sendBackToQestionnaire()}>
+      <img src={BackArrow}/>
+      Back
+    </div>;
+
     return (
       <div className="ComponentSelection">
+        {backLink}
+        <div className="title">Components</div>
         <div className="main-wrapper">
           <LeftBar
             selectedComponents={selectedComponents}
