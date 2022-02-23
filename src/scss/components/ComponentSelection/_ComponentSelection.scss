@@ -13,6 +13,14 @@
     margin-bottom: 1rem;
   }
 
+  .back-link {
+    @include backLink;
+  }
+
+  .title {
+    @include title;
+  }
+
   .LeftBar {
     padding-right: 23px;
     padding-bottom: 0;
