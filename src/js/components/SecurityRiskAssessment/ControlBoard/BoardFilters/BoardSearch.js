@@ -17,7 +17,7 @@ export default class BoardSearch extends Component {
     return (
       <div className='board-search'>
         <FormLabel className="board-filter-label">{this.props.label}</FormLabel>
-        <TextField size="small" InputProps={{ style: { fontSize: 'small' } }} className="board-search-input" variant="outlined" onChange={this.handleChange} />
+        <TextField size="small" InputProps={{ style: { fontSize: 'small' } }} className="board-search-input" variant="outlined" color="primary" focused onChange={this.handleChange} />
       </div>
     );
   }

@@ -4,7 +4,7 @@ import { Card, IconButton } from '@material-ui/core'
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import Paperclip from '@material-ui/icons/AttachFile';
 
-// NOT the final icons
+// not the final icons
 import EffectiveIcon from '@material-ui/icons/VerifiedUser';
 import PartiallyEffectiveIcon from '@material-ui/icons/Policy';
 import NotEffectiveIcon from '@material-ui/icons/Security';
@@ -30,7 +30,7 @@ export default function CardItem(props) {
       return (
         <>
           <p className="card-risk-category">{arr[0]}</p>
-          <h5 className="card-weight">+{arr.length}</h5>
+          <p className="card-weight">+{arr.length}</p>
         </>
       )
 
@@ -87,8 +87,10 @@ export default function CardItem(props) {
           >
             <div className="card-content">
               <div className="card-header">
-                <div className="card-key-control">{keyControl ? '⭐' : ''}</div>
-                <h4 className="card-title">{title}</h4>
+                {keyControl
+                  ? <p className="card-title card-key-control">{'⭐ ' + title}</p>
+                  : <p className="card-title">{title}</p>
+                }
                 <div className="card-chevron">
                   <IconButton aria-label="show more">
                     <ChevronRightIcon />

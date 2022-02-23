@@ -1,8 +1,5 @@
 .column-header {
-  position: sticky;
-  top: 0;
   background: #efefef;
-  z-index: 1;
   border-bottom: 2px solid lightgrey;
   display: flex;
   padding-bottom: 5px;
@@ -13,6 +10,7 @@
 .column-title {
   padding: 0px 0px;
   margin-bottom: 0px;
+  font-weight: 700;
 }
 
 .column-container {
@@ -23,7 +21,6 @@
   padding: 8px;
   flex-grow: 1;
   min-height: 100px;
-
 }
 
 .column-card-list {

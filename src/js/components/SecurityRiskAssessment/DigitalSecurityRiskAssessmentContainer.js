@@ -80,8 +80,6 @@ class DigitalSecurityRiskAssessmentContainer extends Component<Props> {
       impactThresholdData
     } = { ...this.props };
 
-    console.log(this.props);
-
     if (!currentUser || !siteConfig || !securityRiskAssessmentData) {
       return null;
     }

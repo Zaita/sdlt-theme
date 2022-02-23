@@ -9,7 +9,12 @@ export const riskCategories = [
 ]
 
 export const sortBy = [
-    { id: 1, title: 'Alphabetical (A-Z)' },
-    { id: 2, title: 'etc1' },
-    { id: 3, title: 'etc2' }
+    { id: 1, title: 'None' },
+    { id: 2, title: 'Alphabetical (A-Z)' },
+    { id: 3, title: 'Alphabetical (Z-A)' },
+    { id: 4, title: 'Key controls first' },
+    { id: 5, title: 'Effectiveness' },
+    { id: 6, title: 'Evidence added' },
+    { id: 7, title: 'Number of risk categories' },
+
 ]

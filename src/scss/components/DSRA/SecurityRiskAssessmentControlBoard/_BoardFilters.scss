@@ -13,11 +13,49 @@
   width: 270px;
   background-color: white;
   border-radius: 4px;
+
+  .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
+    border-width: 1.5px;
+    border-color: $light-blue;
+  }
 }
 
 .board-select {
   display: flex;
   flex-direction: column;
+
+  .MuiPaper-root {
+    border-top-left-radius: 0px;
+    border-top-right-radius: 0px;
+    margin-top: -2.5px;
+  }
+
+  .MuiOutlinedInput-notchedOutline {
+    border-color: $light-blue;
+    border-width: 1.5px;
+  }
+
+  .MuiPopover-paper {
+    border: 1px solid $light-blue;
+  }
+
+  .MuiListItem-root {
+    line-height: 25px;
+  }
+
+  .MuiListItem-button:hover {
+    color: white;
+    background-color: $light-blue;
+
+    &:focus {
+      background-color: $light-blue;
+    }
+  }
+
+  .MuiList-padding {
+    padding-top: 0px;
+    padding-bottom: 0px;
+  }
 }
 
 .board-select-input {
@@ -29,7 +67,7 @@
 .board-filter-label {
   color: black;
   font-size: 13px;
-  font-weight: 400;
+  font-weight: 500;
   margin-left: 1px;
 }
 
@@ -37,12 +75,22 @@
   margin: 0;
   padding-top: 20px;
 
+  .MuiCheckbox-root {
+    padding-right: 3px;
+  }
+
   span {
     font-size: 13px;
     font-weight: 400;
+  }
+
+  svg {
+    fill: $light-blue;
+    transform: scale(0.75);
   }
 }
 
 .board-select-input.sort-by {
   width: 200px;
 }
+
