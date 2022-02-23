@@ -232,7 +232,7 @@ class SummaryContainer extends Component<Props, State> {
     return (
       <div className="SummaryContainer">
         <Header
-          pageTitle={submission.productName}
+          pageTitle={submission.productName ? submission.productName : "Product"}
           logopath={siteConfig.logoPath}
           productName={submission.productName}
           showSubmissionBreadcrumb={showSubmissionBreadcrumb}
