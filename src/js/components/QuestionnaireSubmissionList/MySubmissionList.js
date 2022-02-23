@@ -48,7 +48,7 @@ const list = (mySubmissionList: QuestionnaireSubmissionListItem, currentUser: Us
   if (_.isEmpty(questionnaireSubmissionList))
   {
     return (
-      <div className="container">
+      <div className="container px-0">
         <div className="alert alert-danger">
           Sorry, No data to display.
         </div>
@@ -56,7 +56,7 @@ const list = (mySubmissionList: QuestionnaireSubmissionListItem, currentUser: Us
     );
   }
   return (
-    <div className="container">
+    <div className="container px-0">
       <div className="table-responsive">
         <table className="table table-bordered table-hover">
           <thead>
