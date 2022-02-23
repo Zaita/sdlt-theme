@@ -28,7 +28,7 @@ class Breadcrumbs extends Component {
     if (!isTaskApprover) {
       return (
         <Link onClick={() => this.sendBackToQuestionnaireSummaryPage()}>
-          {productName}
+          {productName ? productName : "Product"}
         </Link>
       )
     }
