@@ -7,16 +7,18 @@
 
 // Base
 body {
-    height: 100%;
-    background-color: $blue;
+  height: 100%;
+  background-color: $blue;
 }
 
 // Include all styles for the main app (based on React.js)
-#main-app, #business-owner-app, #vendor-app {
+#main-app,
+#business-owner-app,
+#vendor-app {
   @import "components/Common/Loading";
   main {
     .gray-bg {
-        background-color: $gray-200;
+      background-color: $gray-200;
     }
 
     @import "components/Header/Header";
@@ -35,16 +37,21 @@ body {
     @import "components/Button/DarkButton";
     @import "components/Button/HeaderButton";
     @import "components/Button/tab";
+    @import "components/Button/BackLink";
     @import "components/ComponentSelection/ComponentSelection";
     @import "components/ComponentSelection/ComponentSelectionReview";
     @import "components/ComponentSelection/ComponentInfo";
     @import "components/ComponentSelection/ControlInfo";
     @import "components/Common/Table";
     @import "components/Common/Loading";
-    @import "components/DSRA/SecurityRiskAssessment";
+    @import "components/DSRA/DigitalSecurityRiskAssessment";
     @import "components/DSRA/ControlValidationAudit";
     @import "components/DSRA/CertificateAndAccreditationReport";
     @import "components/Pagination/Pagination";
+    @import "components/DSRA/SecurityRiskAssessmentControlBoard/ControlBoard";
+    @import "components/DSRA/SecurityRiskAssessmentControlBoard/ControlCard";
+    @import "components/DSRA/SecurityRiskAssessmentControlBoard/Column";
+    @import "components/DSRA/SecurityRiskAssessmentControlBoard/BoardFilters";
   }
 }
 
