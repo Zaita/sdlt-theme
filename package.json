@@ -25,6 +25,7 @@
     "pdfmake": "^0.1.53",
     "query-string": "5",
     "react": "^16.10.2",
+    "react-beautiful-dnd": "^13.1.0",
     "react-datepicker": "^2.2.0",
     "react-device-detect": "^1.6.2",
     "react-dom": "^16.8.2",

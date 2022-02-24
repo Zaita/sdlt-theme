@@ -13,7 +13,6 @@ export function loadSecurityRiskAssessment(args: {uuid: string, secureToken?: st
         uuid,
         secureToken
       });
-
       const action = {
         type: ActionType.SRA.LOAD_SECURITY_RISK_ASSESSMENT_SUCCESS,
         payload,

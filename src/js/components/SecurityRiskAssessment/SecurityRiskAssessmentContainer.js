@@ -123,8 +123,7 @@ class SecurityRiskAssessmentContainer extends Component<Props> {
     let showSubmissionBreadcrumb = false
     let showApprovalBreadcrumb = false;
 
-    if (securityRiskAssessmentData.isSubmitter ||
-      securityRiskAssessmentData.isTaskCollborator) {
+    if (isSubmitter || securityRiskAssessmentData.isTaskCollborator) {
       showSubmissionBreadcrumb = true;
     }
 
@@ -137,7 +136,7 @@ class SecurityRiskAssessmentContainer extends Component<Props> {
         showApprovalBreadcrumb = true;
       }
     }
-  
+
     return (
       <div className="SecurityRiskAssessmentContainer">
 

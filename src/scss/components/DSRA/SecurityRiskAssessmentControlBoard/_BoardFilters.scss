@@ -1,0 +1,106 @@
+.board-filters {
+  display: flex;
+  margin-bottom: 40px;
+}
+
+.board-search {
+  display: flex;
+  flex-direction: column;
+  margin-right: 24px;
+}
+
+.board-search-input {
+  width: 270px;
+  background-color: white;
+  border-radius: 4px;
+
+  .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
+    border-width: 1.5px;
+    border-color: $light-blue;
+  }
+}
+
+.board-select {
+  display: flex;
+  flex-direction: column;
+
+  .MuiSvgIcon-root {
+    fill: $light-blue;
+    transform: rotate(90deg);
+  }
+
+  .MuiPaper-root {
+    border-top-left-radius: 0px;
+    border-top-right-radius: 0px;
+    margin-top: -2.5px;
+  }
+
+  .MuiOutlinedInput-notchedOutline {
+    border-color: $light-blue;
+    border-width: 1.5px;
+  }
+
+  .MuiPopover-paper {
+    border: 1px solid $light-blue;
+  }
+
+  .MuiListItem-root {
+    line-height: 25px;
+  }
+
+  .MuiListItem-button:hover {
+    color: white;
+    background-color: $light-blue;
+
+    &:focus {
+      background-color: $light-blue;
+    }
+  }
+
+  .MuiList-padding {
+    padding-top: 0px;
+    padding-bottom: 0px;
+  }
+}
+
+.board-select-input {
+  width: 250px;
+  background-color: white;
+  margin-right: 24px;
+}
+
+.board-filter-label {
+  color: black;
+  font-size: 11px;
+  font-weight: 500;
+  margin-left: 1px;
+}
+
+.filter-checkbox {
+  margin: 0;
+  padding-top: 20px;
+
+  .MuiCheckbox-root {
+    padding-left: 2px;
+    padding-right: 3px;
+  }
+
+  .MuiTypography-body1 {
+    padding-top: 2px;
+  }
+
+  span {
+    font-size: 11px;
+    font-weight: 400;
+  }
+
+  svg {
+    fill: $light-blue;
+    transform: scale(0.7);
+  }
+}
+
+.board-select-input.sort-by {
+  width: 200px;
+}
+
