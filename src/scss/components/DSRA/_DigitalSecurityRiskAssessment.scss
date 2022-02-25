@@ -22,7 +22,7 @@
   table img {
     padding-bottom: 2px;
   }
-  
+
   .bottom-container {
     width: 100%;
     margin-top:5px;
@@ -50,6 +50,101 @@
         .button-submit {
           margin-left: 15px;
         }
+      }
+    }
+  }
+
+  .HelpModalContainer {
+    display: inline-block;
+    img {
+      cursor: pointer;
+    }
+  }
+
+  .ReactModalPortal {
+    .ReactModal__Overlay {
+      z-index: 1000;
+    }
+
+    .ReactModal__Content {
+      width: 659px;
+      border-radius: 5px;
+      .modal-header {
+        margin: -20px -20px 14px -20px;
+        padding: 18px 19px 9px 19px;
+
+        h1 {
+          font-size: 18px;
+          font-weight: 900;
+          color: $dark-blue;
+        }
+
+        .close-icon-container {
+          cursor: pointer;
+          filter: invert(54%) sepia(0%) saturate(23%) hue-rotate(201deg)
+            brightness(91%) contrast(81%);
+        }
+      }
+
+      .content {
+        font-size: 11px;
+        line-height: 16px;
+        color: $black;
+        p {
+          margin-bottom: 0;
+        }
+      }
+
+      .RiskRatingLegend {
+        margin-top: 32px;
+        .impact-heading {
+          font-weight: bold;
+          color: #0E0E0E;
+          justify-content: center;
+          border-radius: 4px 4px 0px 0px;
+          border: 1px solid #ECECEC;
+          margin-left: 16.7%;
+          display: flex;
+        }
+
+        .impact-heading, th {
+          padding: 8px;
+          line-height: 14px;
+          font-size: 12px;
+        }
+
+        .table {
+          margin: 0;
+        }
+
+        th {
+          color: #0E0E0E;
+          font-weight: normal;
+          width: 16%;
+          border-bottom: none;
+          border-right: 1px solid #D9D9D9;
+          border-top: none;
+        }
+
+        th:first-child {
+          font-weight: bold;
+        }
+
+        td:first-child {
+          font-size: 12px;
+        }
+
+        td {
+          border-right: 1px solid #D9D9D9;
+          color: $black;
+          padding: 9px 8px 4px;
+        }
+      }
+
+      .help-modal-table-container {
+        border: 1px solid #ECECEC;
+        border-radius: 4px 0px 4px 4px;
+        border-right: none;
       }
     }
   }
