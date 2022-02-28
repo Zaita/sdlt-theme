@@ -16,13 +16,12 @@ class RiskRatingThresholdContainer extends Component<Props> {
 
     return (
       <div className="RiskRatingLegend">
-        <h3>Risk Rating Matix</h3>
+        <span className="impact-heading">Impact</span>
 
-        <div className="table-responsive">
-          <p className="impact-heading">Impact</p>
+        <div className="table-responsive help-modal-table-container">
 
-          <table className="table table-sm table-bordered">
-            <thead className="thead-light">
+          <table className="table table-sm">
+            <thead>
               <tr key="risk_rating_legend_header">
               {
                 riskRatingThresholds.tableHeader.map((headerText, index) => {

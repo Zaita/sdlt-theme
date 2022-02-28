@@ -94,6 +94,7 @@ class DigitalSecurityRiskAssessmentContainer extends Component<Props> {
       status,
       sraTaskHelpText,
       sraTaskRecommendedControlHelpText,
+      sraTaskRiskRatingHelpText
     } = { ...securityRiskAssessmentData };
 
     const isSRATaskFinalised = SecurityRiskAssessmentUtil.isSRATaskFinalised(taskSubmissions);
@@ -160,7 +161,10 @@ class DigitalSecurityRiskAssessmentContainer extends Component<Props> {
                 {sraTaskHelpText}
               </div>
               <div className="help-text">
-                <RiskAssessmentTableContainer />
+                <RiskAssessmentTableContainer
+                  riskRatingHelpText={sraTaskRiskRatingHelpText}
+                  riskRatingThresholds={sraData.riskRatingThresholds}
+                />
               </div>
               <h4>Recommended Controls</h4>
               <div className="help-text">

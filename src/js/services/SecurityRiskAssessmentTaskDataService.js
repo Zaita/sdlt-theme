@@ -30,6 +30,7 @@ query {
     IsTaskCollborator
     SraTaskHelpText
     SraTaskRecommendedControlHelpText
+    SraTaskRiskRatingHelpText
     Submitter {
       ID
     }
@@ -51,6 +52,7 @@ query {
       status: toString(get(submissionJSONObject, "Status", "")),
       sraTaskHelpText: toString(get(submissionJSONObject, "SraTaskHelpText", "")),
       sraTaskRecommendedControlHelpText: toString(get(submissionJSONObject, "SraTaskRecommendedControlHelpText", "")),
+      sraTaskRiskRatingHelpText: toString(get(submissionJSONObject, "SraTaskRiskRatingHelpText", "")),
       submitterID: toString(get(submissionJSONObject, "Submitter.ID", "")),
       isTaskCollborator: get(submissionJSONObject, "IsTaskCollborator", "false") === "true",
       questionnaireSubmissionUUID: toString(get(submissionJSONObject, "QuestionnaireSubmission.UUID", "")),
