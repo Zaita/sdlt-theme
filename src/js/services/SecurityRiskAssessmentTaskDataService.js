@@ -31,6 +31,7 @@ query {
     SraTaskHelpText
     SraTaskRecommendedControlHelpText
     SraTaskRiskRatingHelpText
+    SraTaskLikelihoodScoreHelpText
     Submitter {
       ID
     }
@@ -53,6 +54,7 @@ query {
       sraTaskHelpText: toString(get(submissionJSONObject, "SraTaskHelpText", "")),
       sraTaskRecommendedControlHelpText: toString(get(submissionJSONObject, "SraTaskRecommendedControlHelpText", "")),
       sraTaskRiskRatingHelpText: toString(get(submissionJSONObject, "SraTaskRiskRatingHelpText", "")),
+      sraTaskLikelihoodScoreHelpText: toString(get(submissionJSONObject, "SraTaskLikelihoodScoreHelpText", "")),
       submitterID: toString(get(submissionJSONObject, "Submitter.ID", "")),
       isTaskCollborator: get(submissionJSONObject, "IsTaskCollborator", "false") === "true",
       questionnaireSubmissionUUID: toString(get(submissionJSONObject, "QuestionnaireSubmission.UUID", "")),
