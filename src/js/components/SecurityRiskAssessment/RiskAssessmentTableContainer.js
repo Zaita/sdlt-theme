@@ -35,7 +35,11 @@ class RiskAssessmentTableContainer extends Component<Props> {
         </th>
         <th>
           Impact score &nbsp;
-          <img src={helpIcon} />
+          <HelpModalContainer
+            title="Impact score"
+            helpText={this.props.impactScoreHelpText}
+            impactScoreThresholds={this.props.impactScoreThresholds}
+          />
         </th>
       </tr>
     );

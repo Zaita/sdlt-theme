@@ -16,11 +16,11 @@ class ImpactThresholdContainer extends Component<Props> {
 
     return (
       <div className="ImapctLegend">
-        <h3>Impact Legend</h3>
+        <h3 className="impact-score-legend">Legend</h3>
 
-        <div className="table-responsive">
-          <table className="table table-sm">
-            <thead className="thead-light">
+        <div className="table-responsive score-modal-table-container">
+          <table className="table">
+            <thead>
               <tr key="impact_legend_header">
                 <th>Threshold</th>
                 <th>Rating</th>
@@ -31,7 +31,12 @@ class ImpactThresholdContainer extends Component<Props> {
                 return (
                   <tr key={index+1}>
                     <td>
-                      {impactThreshold.operator + impactThreshold.value}
+                      {impactThreshold.operator === ">="
+                        ? ">/=" + impactThreshold.value
+                        : impactThreshold.operator === "<="
+                        ? "</=" + impactThreshold.value
+                        : impactThreshold.operator + impactThreshold.value
+                      }
                     </td>
                     <td style={{backgroundColor:'#' + impactThreshold.color}}>
                       {impactThreshold.name}

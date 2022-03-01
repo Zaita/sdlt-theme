@@ -3,6 +3,7 @@ import CloseIcon from "../../../img/icons/close.svg";
 import helpIcon from "../../../img/icons/help-outline.svg";
 import RiskRatingThresholdContainer from "./RiskRatingThresholdContainer";
 import LikelihoodLegendContainer from "./LikelihoodLegendContainer";
+import ImpactThresholdContainer from "./ImpactThresholdContainer";
 import ReactModal from "react-modal";
 
 class RiskAssessmentHelpModalContainer extends Component {
@@ -50,6 +51,23 @@ class RiskAssessmentHelpModalContainer extends Component {
     );
   };
 
+  renderImpactScoreContent() {
+    return (
+      <div className="content">
+        <div
+          className="modal-help-text"
+          dangerouslySetInnerHTML={{
+            __html: this.props.helpText
+          }}
+        />
+        <ImpactThresholdContainer
+          impactThresholds={this.props.impactScoreThresholds}
+        />
+
+      </div>
+    );
+  };
+
   render() {
     return (
       <div className="HelpModalContainer">
@@ -71,6 +89,7 @@ class RiskAssessmentHelpModalContainer extends Component {
           </div>
           {this.props.title === "Current Risk Rating" && this.renderCurrentRiskRatingContent()}
           {this.props.title === "Likelihood score" && this.renderLikelihoodScoreContent()}
+          {this.props.title === "Impact score" && this.renderImpactScoreContent()}
         </ReactModal>
       </div>
     );
