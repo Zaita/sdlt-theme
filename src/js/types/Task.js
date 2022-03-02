@@ -51,6 +51,10 @@ export type SecurityRiskAssessment = {
   uuid: string,
   questionnaireSubmissionUUID: string,
   likelihoodThresholds: Array<LikelihoodThreshold>,
+  sraTaskNotApplicableInformationText: string,
+  sraTaskNotImplementedInformationText: string,
+  sraTaskPlannedInformationText: string,
+  sraTaskImplementedInformationText: string
 };
 
 export type LikelihoodThreshold = {
