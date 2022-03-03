@@ -91,6 +91,7 @@ query {
     ComponentTarget
     ProductAspects
     InformationClassificationTaskResult
+    ControlSetSelectionTaskHelpText
   }
   readServiceInventory {
     ID
@@ -172,7 +173,8 @@ query {
       siblingSubmissions: TaskParser.parseAlltaskSubmissionforQuestionnaire(submissionJSONObject),
       serviceRegister: TaskParser.parseServiceRegister(serviceRegister),
       riskProfileData:  _.has(submissionJSONObject, 'RiskProfileData') ? JSON.parse(get(submissionJSONObject, "RiskProfileData", [])) : [],
-      resultForCertificationAndAccreditation:  _.has(submissionJSONObject, 'ResultForCertificationAndAccreditation') ? JSON.parse(get(submissionJSONObject, "ResultForCertificationAndAccreditation", [])) : []
+      resultForCertificationAndAccreditation:  _.has(submissionJSONObject, 'ResultForCertificationAndAccreditation') ? JSON.parse(get(submissionJSONObject, "ResultForCertificationAndAccreditation", [])) : [],
+      controlSetSelectionTaskHelpText: toString(get(submissionJSONObject, "ControlSetSelectionTaskHelpText", "")),
     };
 
     return data;

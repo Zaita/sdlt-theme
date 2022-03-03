@@ -243,7 +243,6 @@ export function saveSelectedComponents(jiraKey: string): ThunkAction {
         uuid: taskSubmission.uuid,
         csrfToken: await CSRFTokenService.getCSRFToken()
       });
-      await dispatch(completeTaskSubmission());
       await dispatch({ type: ActionType.TASK.SAVE_SELECTED_COMPONENT_SUCCESS});
     } catch(error) {
       await dispatch({ type: ActionType.TASK.SAVE_SELECTED_COMPONENT_FAILURE});
