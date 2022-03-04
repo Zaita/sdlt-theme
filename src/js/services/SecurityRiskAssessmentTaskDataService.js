@@ -8,6 +8,7 @@ import type {Task, TaskSubmission} from "../types/Task";
 import UserParser from "../utils/UserParser";
 import TaskParser from "../utils/TaskParser";
 import type {ImpactThreshold} from "../types/ImpactThreshold";
+import SecurityComponentParser from "../utils/SecurityComponentParser";
 export default class SecurityRiskAssessmentTaskDataService {
 
   static async fetchSecurityRiskAssessmentTasK(args: { uuid: string, secureToken?: string, component?: string }): Promise<TaskSubmission> {
@@ -42,6 +43,7 @@ query {
     }
     Status
     SecurityRiskAssessmentData
+    CVATaskData
   }
 }`;
 
@@ -51,7 +53,14 @@ query {
     if (!submissionJSONObject) {
       throw DEFAULT_NETWORK_ERROR;
     }
+
+    let cvaTaskDataJSONArray = JSON.parse(get(submissionJSONObject, "CVATaskData", "[]"));
+    if (!Array.isArray(cvaTaskDataJSONArray)) {
+      cvaTaskDataJSONArray = [];
+    }
+
     const securityRiskAssessmentData = JSON.parse(get(submissionJSONObject, 'SecurityRiskAssessmentData', ''));
+    const controlValidationTaskData = cvaTaskDataJSONArray.length > 0 ? SecurityComponentParser.parseCVAFromJSONObject(cvaTaskDataJSONArray) : cvaTaskDataJSONArray;
     const data: TaskSubmission = {
       uuid: submissionJSONObject && submissionJSONObject.UUID ? submissionJSONObject.UUID : '',
       taskName: toString(get(submissionJSONObject, "TaskName", "")),
@@ -71,7 +80,8 @@ query {
       questionnaireSubmissionProductName: toString(get(submissionJSONObject, "QuestionnaireSubmission.ProductName", "")),
       isBusinessOwner: get(submissionJSONObject, "QuestionnaireSubmission.IsBusinessOwner", "false") === "true",
       taskSubmissions: TaskParser.parseAlltaskSubmissionforQuestionnaire(submissionJSONObject),
-      sraData: securityRiskAssessmentData
+      sraData: securityRiskAssessmentData,
+      cvaTaskData: controlValidationTaskData
     };
 
     return data;
