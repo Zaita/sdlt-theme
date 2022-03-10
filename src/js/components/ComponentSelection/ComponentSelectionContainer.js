@@ -242,7 +242,7 @@ class ComponentSelectionContainer extends Component<Props> {
     return (
       <div className="ComponentSelectionContainer">
         <Header
-          pageTitle="Component Selection"
+          pageTitle={taskSubmission.taskName}
           logopath={siteConfig.logoPath}
           productName={taskSubmission.questionnaireSubmissionProductName}
           questionnaireSubmissionUUID={taskSubmission.questionnaireSubmissionUUID}

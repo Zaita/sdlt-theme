@@ -34,7 +34,8 @@ class RiskResultContainer extends Component<Props> {
                     <th>Score</th>
                   )
                 }
-                <th>Rating</th>
+                <th>Initial Rating</th>
+                <th>Description</th>
               </tr>
             </thead>
             <tbody>
@@ -58,8 +59,11 @@ class RiskResultContainer extends Component<Props> {
                         </td>
                       )
                     }
-                    <td style={{color:'#' + riskResult.colour}}>
+                    <td style={{backgroundColor:'#' + riskResult.colour, minWidth:'125px'}}>
                       {riskResult.rating}
+                    </td>
+                    <td>
+                      {riskResult.description}
                     </td>
                   </tr>
                 );

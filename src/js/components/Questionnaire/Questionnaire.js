@@ -9,18 +9,19 @@ import _ from "lodash";
 
 type Props = {
   questions: Array<Question>,
-  saveAnsweredQuestion: (question: Question) => void,
-  onLeftBarItemClick: (question: Question) => void,
+  saveAnsweredQuestion: (question: Question, component: string) => void,
+  onLeftBarItemClick: (question: Question, component: string) => void,
   serviceRegister: Array<*>,
   informationClassificationTaskResult: string,
   riskProfileData: Array<*>,
-  resultForCertificationAndAccreditation: Array<*>
+  resultForCertificationAndAccreditation: Array<*>,
+  component: string
 };
 
 class Questionnaire extends Component<Props> {
 
   handleFormSubmit(formik: FormikBag, values: Object) {
-    const {questions, saveAnsweredQuestion} = {...this.props};
+    const {questions, saveAnsweredQuestion, component} = {...this.props};
 
     // Generate new question with data
     const currentQuestion = questions.find((question) => {
@@ -40,11 +41,11 @@ class Questionnaire extends Component<Props> {
     answeredQuestion.hasAnswer = true;
     answeredQuestion.isApplicable = true;
 
-    saveAnsweredQuestion(answeredQuestion)
+    saveAnsweredQuestion(answeredQuestion, component)
   }
 
   handleActionClick(action: AnswerAction) {
-    const {questions, saveAnsweredQuestion} = {...this.props};
+    const {questions, saveAnsweredQuestion, component} = {...this.props};
 
     // Generate new question with data
     const currentQuestion = questions.find((question) => {
@@ -62,7 +63,7 @@ class Questionnaire extends Component<Props> {
     answeredQuestion.hasAnswer = true;
     answeredQuestion.isApplicable = true;
 
-    saveAnsweredQuestion(answeredQuestion);
+    saveAnsweredQuestion(answeredQuestion, component);
   }
 
   handleNextButtonClickForDisplayField() {
@@ -93,7 +94,8 @@ class Questionnaire extends Component<Props> {
       resultForCertificationAndAccreditation,
       handleTaskSaveDraftButtonClick,
       handleTaskSubmitButtonClick,
-      loadResultForCertificationAndAccreditation
+      loadResultForCertificationAndAccreditation,
+      component
     } = {...this.props};
 
     const currentQuestion = questions.find((question) => {
@@ -107,7 +109,7 @@ class Questionnaire extends Component<Props> {
         <div className="major">
           <div className="title">Questions</div>
           <div className="form-container">
-            <LeftBar questions={questions} onItemClick={onLeftBarItemClick}/>
+            <LeftBar questions={questions} onItemClick={onLeftBarItemClick} component={component}/>
             {
               currentQuestion &&
               <QuestionForm

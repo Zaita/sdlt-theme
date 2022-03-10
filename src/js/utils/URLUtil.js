@@ -23,11 +23,15 @@ export default class URLUtil {
     window.location.href = `/#/questionnaire/summary/${uuid}`;
   }
 
-  static redirectToTaskSubmission(uuid: string, token: string = "", returnType: string = "redirect") {
+  static redirectToTaskSubmission(uuid: string, token: string = "", returnType: string = "redirect", component: string = '') {
       let url= `/task/submission/${uuid}`;
 
-      if (token) {
+      if (token && component) {
+        url = `/task/submission/${uuid}?token=${token}&component=${component}`;
+      } else if (token) {
         url = `/task/submission/${uuid}?token=${token}`;
+      } else if (component) {
+        url = `/task/submission/${uuid}?component=${component}`;
       }
 
       if (returnType == "urlString") {
@@ -35,7 +39,7 @@ export default class URLUtil {
       }
 
       window.location.href = `/#/${url}`;
-    }
+  }
 
   static redirectToComponentSelectionSubmission(uuid: string, token: string = "", returnType: string = "redirect") {
     let url = `/component-selection/submission/${uuid}`;
@@ -51,11 +55,15 @@ export default class URLUtil {
     window.location.href = `/#/${url}`;
   }
 
-  static redirectToSecurityRiskAssessment(uuid: string, token: string = "", returnType: string = "redirect") {
+  static redirectToSecurityRiskAssessment(uuid: string, token: string = "", returnType: string = "redirect", component: string = '') {
     let url = `/security-risk-assessment/submission/${uuid}`;
 
-    if (token) {
+    if (token && component) {
+      url = `/security-risk-assessment/submission/${uuid}?token=${token}&component=${component}`;
+    } else if (token) {
       url = `/security-risk-assessment/submission/${uuid}?token=${token}`;
+    } else if (component) {
+      url = `/security-risk-assessment/submission/${uuid}?component=${component}`;
     }
 
     if (returnType == "urlString") {
@@ -65,11 +73,15 @@ export default class URLUtil {
     window.location.href = `/#/${url}`;
   }
 
-  static redirectToControlValidationAudit(uuid: string, token: string = "", returnType: string = "redirect") {
+  static redirectToControlValidationAudit(uuid: string, token: string = "", returnType: string = "redirect", component: string = '') {
     let url = `/control-validation-audit/submission/${uuid}`;
 
-    if (token) {
+    if (token && component) {
+      url = `/control-validation-audit/submission/${uuid}?token=${token}&component=${component}`;
+    } else if (token) {
       url = `/control-validation-audit/submission/${uuid}?token=${token}`;
+    } else if (component) {
+      url = `/control-validation-audit/submission/${uuid}?component=${component}`;
     }
 
     if (returnType == "urlString") {

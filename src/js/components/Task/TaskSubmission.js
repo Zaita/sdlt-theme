@@ -21,8 +21,8 @@ import CertificationAndAccreditationResultContainer from "./CertificationAndAccr
 
 type Props = {
   taskSubmission: TaskSubmissionType,
-  saveAnsweredQuestion: (answeredQuestion: Question) => void,
-  moveToPreviousQuestion: (targetQuestion: Question) => void,
+  saveAnsweredQuestion: (answeredQuestion: Question, component: string) => void,
+  moveToPreviousQuestion: (targetQuestion: Question, component: string) => void,
   handleApproveButtonClick: () => void,
   handleSendBackForChangesButtonClick: () => void,
   handleDenyButtonClick: () => void,
@@ -32,7 +32,8 @@ type Props = {
   showBackButton: boolean,
   showEditButton: boolean,
   canUpdateAnswers: boolean,
-  secureToken: string
+  secureToken: string,
+  component: string
 };
 
 class TaskSubmission extends Component<Props> {
@@ -52,7 +53,8 @@ class TaskSubmission extends Component<Props> {
       showEditButton,
       canUpdateAnswers,
       viewAs,
-      secureToken
+      secureToken,
+      component
     } = {...this.props};
 
     const taskRecommendationContainer = (
@@ -84,13 +86,16 @@ class TaskSubmission extends Component<Props> {
     const editButton = showEditButton && !isSRATaskFinalised && taskSubmission.taskType !== "certification and accreditation"? (
       <LightButton
         title="Edit"
-        onClick={editAnswers}
+        onClick={() => {editAnswers(component)}}
         iconImage={editIcon}
       />
     ) : null;
 
     const resultStatus = ["complete", "waiting_for_approval", "approved", "denied"];
-    const pdfButton = (resultStatus.indexOf(taskSubmission.status) > -1) ? (
+    const pdfButton = (
+      resultStatus.includes(taskSubmission.status) ||
+      resultStatus.includes(taskSubmission.taskStatusForComponent)
+    ) ? (
       <LightButton title={"PDF"} iconImage={pdfIcon} onClick={() => this.downloadPdf()}/>
     ) : null;
 
@@ -126,7 +131,7 @@ class TaskSubmission extends Component<Props> {
         <h4>Summary</h4>
         {
           taskSubmission.taskType !== "certification and accreditation" &&
-          <AnswersPreview questions={taskSubmission.questions}/>
+          <AnswersPreview questions={taskSubmission.questions} component={component}/>
         }
         {
           !taskSubmission.isDisplayPreventMessage &&
@@ -167,6 +172,7 @@ class TaskSubmission extends Component<Props> {
           saveAnsweredQuestion={saveAnsweredQuestion}
           onLeftBarItemClick={moveToPreviousQuestion}
           handleTaskSaveDraftButtonClick={this.handleTaskSaveDraftButtonClick.bind(this)}
+          component={component}
         />
       );
     }
@@ -220,7 +226,7 @@ class TaskSubmission extends Component<Props> {
     if (taskSubmission.taskType === "certification and accreditation") {
       PDFUtil.downloadCertificate({
         siteConfig: siteConfig,
-        resultForCertificationAndAccreditation:taskSubmission.resultForCertificationAndAccreditation
+        resultForCertificationAndAccreditation: taskSubmission.resultForCertificationAndAccreditation
       });
     } else {
       PDFUtil.generatePDF({
