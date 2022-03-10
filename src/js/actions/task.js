@@ -20,14 +20,15 @@ import type {User} from "../types/User";
 import type {RootState} from "../store/RootState";
 import URLUtil from "../utils/URLUtil";
 
-export function loadTaskSubmission(args: {uuid: string, secureToken?: string, type?: string}): ThunkAction {
-  const {uuid, secureToken, type} = {...args};
+export function loadTaskSubmission(args: {uuid: string, secureToken?: string, type?: string, component?: string}): ThunkAction {
+  const {uuid, secureToken, type, component} = {...args};
 
   return async (dispatch) => {
     try {
       const payload = await TaskDataService.fetchTaskSubmission({
         uuid,
-        secureToken
+        secureToken,
+        component
       });
       const action: LoadTaskSubmissionAction = {
         type: ActionType.TASK.LOAD_TASK_SUBMISSION,
@@ -109,9 +110,10 @@ export function saveAnsweredQuestionInTaskSubmission(
   args: {
     answeredQuestion: Question,
     secureToken?: string,
-    bypassNetwork?: boolean
+    bypassNetwork?: boolean,
+    component?: boolean
   }): ThunkAction {
-  const {answeredQuestion, secureToken, bypassNetwork} = {...args};
+  const {answeredQuestion, secureToken, bypassNetwork, component} = {...args};
 
   return async (dispatch, getState) => {
 
@@ -139,6 +141,7 @@ export function saveAnsweredQuestionInTaskSubmission(
           answerDataList: [SubmissionDataUtil.transformFromFullQuestionToData(answeredQuestion)],
           csrfToken: await CSRFTokenService.getCSRFToken(),
           secureToken: secureToken,
+          component: component
         });
       } catch (error) {
         ErrorUtil.displayError(error);
@@ -182,7 +185,8 @@ export function saveAnsweredQuestionInTaskSubmission(
         await batchUpdateTaskSubmissionData(
           getTaskSubmission(),
           _.uniq([currentIndex, ...nonApplicableIndexes, targetIndex]),
-          secureToken
+          secureToken,
+          component
         );
       } catch(error) {
         ErrorUtil.displayError(error);
@@ -190,7 +194,7 @@ export function saveAnsweredQuestionInTaskSubmission(
     }
 
     if (complete) {
-      await dispatch(completeTaskSubmission({bypassNetwork, secureToken, result}));
+      await dispatch(completeTaskSubmission({bypassNetwork, secureToken, result, component}));
     }
   };
 }
@@ -207,7 +211,6 @@ export function saveCVASelectedControls(selectedControls: object): ThunkAction {
     if (!taskSubmission) {
       return;
     }
-
     //@TODO: Complete graphql submission endpoint
   }
 }
@@ -255,8 +258,9 @@ export function completeTaskSubmission(args: {
   result?: string,
   taskSubmissionUUID?: string | null,
   questionnaireUUID?: string | null,
+  component?: string
 } = {}): ThunkAction {
-  const {secureToken, bypassNetwork, result, taskSubmissionUUID, questionnaireUUID} = {...args};
+  const {secureToken, bypassNetwork, result, taskSubmissionUUID, questionnaireUUID, component} = {...args};
 
   return async (dispatch, getState) => {
     const getTaskSubmission = () => {
@@ -271,10 +275,11 @@ export function completeTaskSubmission(args: {
           uuid: (taskSubmissionUUID === undefined) ? getTaskSubmission().uuid : taskSubmissionUUID,
           result: result || "",
           secureToken: secureToken,
-          csrfToken
+          csrfToken,
+          component
         });
 
-        await dispatch(loadTaskSubmission({uuid, secureToken}));
+        await dispatch(loadTaskSubmission({uuid, secureToken, component}));
         if(questionnaireUUID !== undefined) {
           URLUtil.redirectToQuestionnaireSummary(questionnaireUUID, secureToken)
         }
@@ -294,9 +299,10 @@ export function moveToPreviousQuestionInTaskSubmission(
   args: {
     targetQuestion: Question,
     secureToken?: string,
-    bypassNetwork?: boolean
+    bypassNetwork?: boolean,
+    component?: string
   }): ThunkAction {
-  const {targetQuestion, secureToken, bypassNetwork} = {...args};
+  const {targetQuestion, secureToken, bypassNetwork, component} = {...args};
 
   return async (dispatch, getState) => {
     const taskSubmission: TaskSubmission = getState().taskSubmissionState.taskSubmission;
@@ -329,11 +335,12 @@ export function moveToPreviousQuestionInTaskSubmission(
     await dispatch(moveAction);
 
     // Network request - batch update
-    if (!bypassNetwork) {
+    if (!bypassNetwork){
       await batchUpdateTaskSubmissionData(
         taskSubmission,
         _.uniq([currentIndex, targetIndex]),
-        secureToken
+        secureToken,
+        component
       );
     }
   };
@@ -344,8 +351,9 @@ export function editCompletedTaskSubmission(
     secureToken?: string,
     bypassNetwork?: boolean,
     type?: string,
+    component?: string
   } = {}): ThunkAction {
-  const {secureToken, bypassNetwork, type} = {...args};
+  const {secureToken, bypassNetwork, type, component} = {...args};
 
   return async (dispatch, getState) => {
     const taskSubmission: TaskSubmission = getState().taskSubmissionState.taskSubmission;
@@ -359,8 +367,9 @@ export function editCompletedTaskSubmission(
           uuid: taskSubmission.uuid,
           csrfToken: await CSRFTokenService.getCSRFToken(),
           secureToken: secureToken,
+          component: component
         });
-        await dispatch(loadTaskSubmission({uuid, secureToken}));
+        await dispatch(loadTaskSubmission({uuid, secureToken, component}));
 
         if (type === "componentSelection") {
           await dispatch(loadSelectedComponents(taskSubmission));
@@ -377,7 +386,7 @@ export function editCompletedTaskSubmission(
   };
 }
 
-async function batchUpdateTaskSubmissionData(taskSubmission: TaskSubmission, indexesToUpdate: Array<number>, secureToken?: string) {
+async function batchUpdateTaskSubmissionData(taskSubmission: TaskSubmission, indexesToUpdate: Array<number>, secureToken?: string, component?: string) {
   try {
     await TaskDataService.batchUpdateTaskSubmissionData({
       uuid: taskSubmission.uuid,
@@ -385,6 +394,7 @@ async function batchUpdateTaskSubmissionData(taskSubmission: TaskSubmission, ind
       answerDataList: indexesToUpdate.map((index) => SubmissionDataUtil.transformFromFullQuestionToData(taskSubmission.questions[index])),
       csrfToken: await CSRFTokenService.getCSRFToken(),
       secureToken: secureToken,
+      component: component
     });
   } catch (error) {
     ErrorUtil.displayError(error.message);

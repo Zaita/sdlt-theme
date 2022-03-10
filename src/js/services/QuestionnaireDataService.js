@@ -78,7 +78,7 @@ query {
 
   }
 
-  static async fetchSubmissionData(submissionHash: string, secureToken:string): Promise<QuestionnaireSubmissionState> {
+  static async fetchSubmissionData(submissionHash: string, secureToken:string, component:string): Promise<QuestionnaireSubmissionState> {
     const query = `
 query {
   readMember(Type: "Current") {
@@ -130,6 +130,8 @@ query {
       TimeToComplete
       TimeToReview
       CanTaskCreateNewTasks
+      CreateOnceInstancePerComponent
+      AnswerData
       ResultForCertificationAndAccreditation
       TaskApprover {
         ID
@@ -238,6 +240,7 @@ query {
         taskSubmissions: _
           .toArray(_.get(submissionJSON, "TaskSubmissions", []))
           .map((item) => {
+
             const taskSubmission: TaskSubmissionDisplay = {
               uuid: _.toString(_.get(item, "UUID", "")),
               taskName: _.toString(_.get(item, "TaskName", "")),
@@ -247,7 +250,9 @@ query {
               isTaskApprovalRequired: _.get(item, "IsTaskApprovalRequired", "false") === "true",
               timeToComplete: _.toString(_.get(item, "TimeToComplete", "")),
               timeToReview: _.toString(_.get(item, "TimeToReview", "")),
+              answerData: _.toString(_.get(item, "AnswerData", "")),
               canTaskCreateNewTasks: _.get(item, "CanTaskCreateNewTasks", "false") === "true",
+              createOnceInstancePerComponent: Boolean(_.get(item, "CreateOnceInstancePerComponent", false)),
               resultForCertificationAndAccreditation: _.get(item, "ResultForCertificationAndAccreditation", "[]"),
             };
             return taskSubmission;

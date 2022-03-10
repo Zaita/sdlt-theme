@@ -41,22 +41,22 @@ const mapStateToProps = (state: RootState) => {
 
 const mapDispatchToProps = (dispatch: Dispatch, props: *) => {
   return {
-    dispatchLoadDataAction(uuid: string, secureToken: string) {
+    dispatchLoadDataAction(uuid: string, secureToken: string, component: string) {
       dispatch(loadCurrentUser());
       dispatch(loadSiteConfig());
-      dispatch(loadTaskSubmission({uuid, secureToken}));
+      dispatch(loadTaskSubmission({uuid, secureToken, component}));
     },
     dispatchLoadResultForCertificationAndAccreditation(uuid: string, secureToken: string) {
       dispatch(loadResultForCertificationAndAccreditation({uuid, secureToken}));
     },
-    dispatchSaveAnsweredQuestionAction(answeredQuestion: Question) {
-      dispatch(saveAnsweredQuestionInTaskSubmission({answeredQuestion}));
+    dispatchSaveAnsweredQuestionAction(answeredQuestion: Question, component: string) {
+      dispatch(saveAnsweredQuestionInTaskSubmission({answeredQuestion,  component}));
     },
-    dispatchMoveToPreviousQuestionAction(targetQuestion: Question) {
-      dispatch(moveToPreviousQuestionInTaskSubmission({targetQuestion}));
+    dispatchMoveToPreviousQuestionAction(targetQuestion: Question, component: string) {
+      dispatch(moveToPreviousQuestionInTaskSubmission({targetQuestion, component}));
     },
-    dispatchEditAnswersAction() {
-      dispatch(editCompletedTaskSubmission());
+    dispatchEditAnswersAction(component: string) {
+      dispatch(editCompletedTaskSubmission({component}));
     },
     dispatchApproveTaskSubmissionAction(uuid: string) {
       dispatch(approveTaskSubmission(uuid));
@@ -79,16 +79,17 @@ const mapDispatchToProps = (dispatch: Dispatch, props: *) => {
 type Props = {
   uuid: string,
   secureToken:string,
+  component: string,
   taskSubmission?: TaskSubmissionType | null,
   siteConfig?: SiteConfig | null,
   currentUser?: User | null,
-  dispatchLoadDataAction?: (uuid: string, secureToken: string) => void,
+  dispatchLoadDataAction?: (uuid: string, secureToken: string, component: string) => void,
   dispatchApproveTaskSubmissionAction?: (uuid: string) => void,
   dispatchDenyTaskSubmissionAction?: (uuid: string) => void,
   dispatchSendBackForChangesTaskSubmissionAction?: (uuid: string) => void,
-  dispatchSaveAnsweredQuestionAction?: (answeredQuestion: Question) => void,
-  dispatchMoveToPreviousQuestionAction?: (targetQuestion: Question) => void,
-  dispatchEditAnswersAction?: () => void,
+  dispatchSaveAnsweredQuestionAction?: (answeredQuestion: Question, component: string) => void,
+  dispatchMoveToPreviousQuestionAction?: (targetQuestion: Question, component: string) => void,
+  dispatchEditAnswersAction?: (component: string) => void,
   dispatchAddTaskRecommendationAction?: (uuid: string, newTaskRecommendation:TaskRecommendation, taskRecommendations: Array<TaskRecommendation>) => void,
   dispatchEditTaskRecommendationAction?: (uuid: string, updatedTaskRecommendation:TaskRecommendation, taskRecommendations: Array<TaskRecommendation>) => void,
 
@@ -97,8 +98,8 @@ type Props = {
 class TaskSubmissionContainer extends Component<Props> {
 
   componentDidMount() {
-    const {uuid, dispatchLoadDataAction, secureToken} = {...this.props};
-    dispatchLoadDataAction(uuid, secureToken);
+    const {uuid, dispatchLoadDataAction, secureToken, component} = {...this.props};
+    dispatchLoadDataAction(uuid, secureToken, component);
   }
 
   render() {
@@ -114,7 +115,8 @@ class TaskSubmissionContainer extends Component<Props> {
       dispatchSendBackForChangesTaskSubmissionAction,
       dispatchAddTaskRecommendationAction,
       dispatchEditTaskRecommendationAction,
-      secureToken
+      secureToken,
+      component
     } = {...this.props};
 
     if (!currentUser || !taskSubmission || !siteConfig) {
@@ -140,12 +142,18 @@ class TaskSubmissionContainer extends Component<Props> {
 
     // As logged-in user, only submitter and SA can edit answers
     const isCurrentUserSubmitter = parseInt(currentUser.id) === parseInt(taskSubmission.submitter.id);
+    const statusArrayForUpdate = ["in_progress", "start"];
 
-    const canUpdateAnswers = (taskSubmission.status === "in_progress" ||
-      taskSubmission.status === "start" ) && (currentUser.isSA || isCurrentUserSubmitter || taskSubmission.isTaskCollborator);
+    const canUpdateAnswers = statusArrayForUpdate.includes(taskSubmission.status) &&
+      statusArrayForUpdate.includes(taskSubmission.taskStatusForComponent)
+      && (currentUser.isSA || isCurrentUserSubmitter || taskSubmission.isTaskCollborator);
+
+    const statusArrayToShowEditButton = ["complete", "waiting_for_approval", "denied"];
     const showEditButton =
-      (taskSubmission.status === "complete" || taskSubmission.status === "waiting_for_approval"
-      || taskSubmission.status === "denied")
+      (
+        statusArrayToShowEditButton.includes(taskSubmission.status) ||
+        statusArrayToShowEditButton.includes(taskSubmission.taskStatusForComponent)
+      )
       && (taskSubmission.questionnaireSubmissionStatus === "submitted")
       && (currentUser.isSA || ((isCurrentUserSubmitter || taskSubmission.isTaskCollborator)
       && !taskSubmission.lockWhenComplete));
@@ -154,19 +162,16 @@ class TaskSubmissionContainer extends Component<Props> {
     let showSubmissionBreadcrumb = false;
     let showApprovalBreadcrumb = false;
 
+    // show your submission link in breadcrumbs if user is submitter or collborator
     if (isCurrentUserSubmitter || taskSubmission.isTaskCollborator) {
       showSubmissionBreadcrumb = true;
     }
 
-    if (!showSubmissionBreadcrumb) {
-      if (taskSubmission.isCurrentUserAnApprover ||
-        currentUser.isSA ||
-        currentUser.isCISO ||
-        taskSubmission.isBusinessOwner ||
-        currentUser.isAccreditationAuthority ||
-        currentUser.isCertificationAuthority) {
-        showApprovalBreadcrumb = true;
-      }
+    // show approval link in breadcrumbs for task and questionnaire approver
+    if (!showSubmissionBreadcrumb && (taskSubmission.isCurrentUserAnApprover ||
+      currentUser.isSA ||currentUser.isCISO || taskSubmission.isBusinessOwner ||
+      currentUser.isAccreditationAuthority || currentUser.isCertificationAuthority)) {
+      showApprovalBreadcrumb = true;
     }
 
     return (
@@ -179,6 +184,7 @@ class TaskSubmissionContainer extends Component<Props> {
           questionnaireSubmissionUUID={taskSubmission.questionnaireSubmissionUUID}
           showApprovalBreadcrumb={showApprovalBreadcrumb}
           showSubmissionBreadcrumb={showSubmissionBreadcrumb}
+          component={component}
         />
         <TaskSubmission
           taskSubmission={taskSubmission}
@@ -197,6 +203,7 @@ class TaskSubmissionContainer extends Component<Props> {
           viewAs={viewAs}
           siteConfig={siteConfig}
           secureToken={secureToken}
+          component={component}
         />
         <Footer footerCopyrightText={siteConfig.footerCopyrightText}/>
       </div>

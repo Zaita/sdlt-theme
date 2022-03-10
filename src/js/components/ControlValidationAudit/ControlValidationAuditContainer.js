@@ -86,6 +86,7 @@ const mapDispatchToProps = (dispatch: Dispatch, props: *) => {
 type Props = {
   uuid: string,
   secureToken: string,
+  component: string,
   currentUser?: User | null,
   controlValidationAuditData?: CVATaskSubmission | null,
   dispatchLoadDataAction?: (uuid: string, secureToken: string) => void,
@@ -377,7 +378,8 @@ class ControlValidationAuditContainer extends Component<Props, State> {
       secureToken,
       dispatchSaveControlValidationAuditDataAction,
       cvaSelectedComponents,
-      dispatchReSyncWithJira
+      dispatchReSyncWithJira,
+      component,
     } = {...this.props};
     if (!currentUser || !controlValidationAuditData || !siteConfig) {
       return null;
@@ -439,6 +441,7 @@ class ControlValidationAuditContainer extends Component<Props, State> {
           questionnaireSubmissionUUID={controlValidationAuditData.questionnaireSubmissionUUID}
           showSubmissionBreadcrumb={showSubmissionBreadcrumb}
           showApprovalBreadcrumb={showApprovalBreadcrumb}
+          component={component}
         />
 
         {

@@ -97,13 +97,17 @@ class MainApp extends Component<*> {
             <Route path='/task/submission/:uuid'>
               {({ match, location }) => {
                 let secureToken = '';
+                let component = '';
+
                 if (location.search) {
                   const queryString = parse(location.search);
                   secureToken = queryString.token;
+                  component = queryString.component;
                 }
+
                 return (
                   <div className="gray-bg">
-                    <TaskSubmissionContainer uuid={match.params.uuid} secureToken={secureToken} />
+                    <TaskSubmissionContainer uuid={match.params.uuid} secureToken={secureToken} component={component}/>
                   </div>
                 );
               }}
@@ -152,13 +156,16 @@ class MainApp extends Component<*> {
             <Route path='/control-validation-audit/submission/:uuid'>
               {({ match, location }) => {
                 let secureToken = '';
+                let component = '';
+
                 if (location.search) {
                   const queryString = parse(location.search);
                   secureToken = queryString.token;
+                  component = queryString.component;
                 }
                 return (
                   <div className="gray-bg">
-                    <ControlValidationAuditContainer uuid={match.params.uuid} secureToken={secureToken} />
+                    <ControlValidationAuditContainer uuid={match.params.uuid} secureToken={secureToken} component={component}/>
                   </div>
                 );
               }}
@@ -167,13 +174,19 @@ class MainApp extends Component<*> {
             <Route path='/security-risk-assessment/submission/:uuid'>
               {({ match, location }) => {
                 let secureToken = '';
+                let component = '';
+
                 if (location.search) {
                   const queryString = parse(location.search);
                   secureToken = queryString.token;
+                  component = queryString.component;
                 }
                 return (
                   <div className="gray-bg">
-                    <SecurityRiskAssessmentContainer uuid={match.params.uuid} secureToken={secureToken} />
+                    <SecurityRiskAssessmentContainer
+                      uuid={match.params.uuid}
+                      secureToken={secureToken}
+                      component={component}/>
                   </div>
                 );
               }}

@@ -27,7 +27,8 @@ class Header extends Component<Props> {
     isTaskApprover: false,
     showApprovalBreadcrumb: false,
     showSubmissionBreadcrumb: false,
-    subHeaderImagePath: ""
+    subHeaderImagePath: "",
+    component: ""
   };
 
   render() {
@@ -40,7 +41,8 @@ class Header extends Component<Props> {
       questionnaireSubmissionUUID,
       showApprovalBreadcrumb,
       showSubmissionBreadcrumb,
-      subHeaderImagePath
+      subHeaderImagePath,
+      component
     } = { ...this.props };
 
     let isHomePage = false;
@@ -77,7 +79,7 @@ class Header extends Component<Props> {
               showApprovalBreadcrumb={showApprovalBreadcrumb}
               isTaskApprover={isTaskApprover}
             />
-            <h1>{pageTitle}</h1>
+            <h1>{ component !== ""? `${pageTitle} (${component})`: pageTitle }</h1>
           </div>
         )}
       </header>

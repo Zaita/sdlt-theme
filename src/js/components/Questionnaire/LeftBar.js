@@ -12,13 +12,13 @@ type Props = {
 class LeftBar extends Component<Props> {
 
   render() {
-    const {questions, onItemClick} = {...this.props};
+    const {questions, onItemClick, component} = {...this.props};
 
     return (
       <div className="LeftBar">
           <div className="items">
           {questions.map((question, index) => {
-            return <LeftBarItem question={question} onItemClick={onItemClick} key={question.id} index={index}/>;
+            return <LeftBarItem question={question} onItemClick={onItemClick} key={question.id} index={index} component={component}/>;
           })}
         </div>
       </div>

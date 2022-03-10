@@ -57,6 +57,7 @@ const mapDispatchToProps = (dispatch: Dispatch, props: *) => {
 type Props = {
   uuid: string,
   secureToken: string,
+  component: string,
   siteConfig?: SiteConfig | null,
   currentUser?: User | null,
   impactThresholdData?: Array<ImpactThreshold> | null,
@@ -77,7 +78,8 @@ class DigitalSecurityRiskAssessmentContainer extends Component<Props> {
       currentUser,
       securityRiskAssessmentData,
       secureToken,
-      impactThresholdData
+      impactThresholdData,
+      component
     } = { ...this.props };
 
     if (!currentUser || !siteConfig || !securityRiskAssessmentData) {
@@ -150,6 +152,7 @@ class DigitalSecurityRiskAssessmentContainer extends Component<Props> {
           questionnaireSubmissionUUID={securityRiskAssessmentData.questionnaireSubmissionUUID}
           showSubmissionBreadcrumb={showSubmissionBreadcrumb}
           showApprovalBreadcrumb={showApprovalBreadcrumb}
+          component={component}
         />
 
         {securityRiskAssessmentData.status === 'expired' && <SubmissionExpired />}

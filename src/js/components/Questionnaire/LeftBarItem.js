@@ -16,7 +16,7 @@ type Props = {
 export default class LeftBarItem extends Component<Props> {
 
   render() {
-    const {question, onItemClick, index} = {...this.props};
+    const {question, onItemClick, index, component} = {...this.props};
 
     return (
       <div className="LeftBarItem">
@@ -24,7 +24,7 @@ export default class LeftBarItem extends Component<Props> {
         <button className="btn"
                 disabled={!question.isApplicable}
                 onClick={(event) => {
-                  onItemClick(question);
+                  onItemClick(question, component);
                 }}
         >
           {index+1}.  {question.title}
