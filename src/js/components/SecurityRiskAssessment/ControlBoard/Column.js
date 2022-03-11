@@ -1,9 +1,8 @@
 import React, { Component } from 'react'
 import { Droppable } from 'react-beautiful-dnd';
 import ControlCard from './ControlCard'
-import InformationModal from './InformationModal'
+import InformationTooltip from './InformationTooltip'
 import OpenWithIcon from '@material-ui/icons/OpenWith';
-
 
 // optimization
 class InnerList extends React.Component {
@@ -37,13 +36,11 @@ export default class Column extends Component {
       <>
         <div className='column-header'>
           <h5 className='column-title'>{this.props.column.title}</h5>
-          <InformationModal columnInformation={this.props.column.title} />
+          <InformationTooltip columnInformation={this.props.informationText} />
         </div>
         <div className={columnIsEmpty ? 'dotted-border column-card-list' : 'column-card-list'}>
-
           <Droppable droppableId={this.props.column.id}>
             {(provided, snapshot) => (
-
               <div
                 ref={provided.innerRef}
                 style={{ backgroundColor: snapshot.isDraggingOver ? 'grey' : '#efefef' }}
@@ -56,7 +53,6 @@ export default class Column extends Component {
             )}
           </Droppable>
         </div>
-
       </>
     )
   }

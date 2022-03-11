@@ -1,10 +1,18 @@
+// @flow
 import React, { Component } from 'react'
 import { DragDropContext } from 'react-beautiful-dnd'
 import data from './data/index'
 import Column from './Column'
 import BoardFilters from './BoardFilters/BoardFilters'
 
-export default class Board extends Component {
+type Props = {
+  notApplicableInformationText: string,
+  notImplementedInformationText: string,
+  plannedInformationText: string,
+  implementedInformationText: string
+}
+
+export default class Board extends Component<Props> {
   state = data
 
   onDragEnd = (result) => {
@@ -79,6 +87,14 @@ export default class Board extends Component {
   }
 
   render() {
+
+    const informationTextData = {
+      'Not applicable': this.props.notApplicableInformationText,
+      'Not implemented': this.props.notImplementedInformationText,
+      'Planned': this.props.plannedInformationText,
+      'Implemented': this.props.implementedInformationText
+    }
+
     return (
       <>
         <BoardFilters />
@@ -92,7 +108,12 @@ export default class Board extends Component {
 
               return (
                 <div className='column-container'>
-                  <Column key={column.id} column={column} tasks={tasks} />
+                  <Column
+                    key={column.id}
+                    column={column}
+                    tasks={tasks}
+                    informationText={informationTextData[column.title]}
+                  />
                 </div>
               )
             })}
