@@ -41,7 +41,6 @@ export type TaskSubmission = {
   lockWhenComplete: boolean,
   isTaskApprovalRequired: boolean,
   isCurrentUserAnApprover: boolean,
-  hideWeightsAndScore: boolean,
   productAspects: Array<*>,
   taskRecommendations: Array<TaskRecommendation>
 };

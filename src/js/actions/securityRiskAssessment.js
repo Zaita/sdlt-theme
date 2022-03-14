@@ -3,15 +3,16 @@ import ActionType from "./ActionType";
 import SecurityRiskAssessmentTaskDataService from "../services/SecurityRiskAssessmentTaskDataService";
 import ErrorUtil from "../utils/ErrorUtil";
 
-export function loadSecurityRiskAssessment(args: {uuid: string, secureToken?: string}): ThunkAction {
-  const {uuid, secureToken} = {...args};
+export function loadSecurityRiskAssessment(args: {uuid: string, secureToken?: string, component?: string}): ThunkAction {
+  const {uuid, secureToken, component} = {...args};
 
   return async (dispatch) => {
     await dispatch({ type: ActionType.SRA.LOAD_SECURITY_RISK_ASSESSMENT_REQUEST});
     try {
       const payload = await SecurityRiskAssessmentTaskDataService.fetchSecurityRiskAssessmentTasK({
         uuid,
-        secureToken
+        secureToken,
+        component
       });
       const action = {
         type: ActionType.SRA.LOAD_SECURITY_RISK_ASSESSMENT_SUCCESS,

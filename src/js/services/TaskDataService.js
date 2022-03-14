@@ -90,7 +90,6 @@ query {
     TaskRecommendationData
     ComponentTarget
     ProductAspects
-    HideWeightsAndScore
     InformationClassificationTaskResult
   }
   readServiceInventory {
@@ -111,7 +110,6 @@ query {
     const taskStatus = toString(get(submissionJSONObject, "Status", ""));
     let taskStatusForComponent = taskStatus;
 
-    // add task type condition as well
     if (component && answerData) {
       const answerDataArray = JSON.parse(answerData);
       if (answerDataArray.length > 0) {
@@ -120,6 +118,21 @@ query {
         if(answerDataObj) {
           answerData = JSON.stringify(answerDataObj.result);
           taskStatusForComponent = answerDataObj.status;
+        }
+      }
+    }
+
+    let riskResultData = _.has(submissionJSONObject, 'RiskResultData') ?
+      JSON.parse(get(submissionJSONObject, "RiskResultData", "[]")) : "[]";
+
+    if (component && riskResultData) {
+      if (riskResultData.length > 0) {
+        const riskResultForComponentObj = riskResultData.find(
+          riskResultForComponent => riskResultForComponent.productAspect === component
+        );
+
+        if(riskResultForComponentObj) {
+          riskResultData = riskResultForComponentObj.riskResult;
         }
       }
     }
@@ -148,11 +161,10 @@ query {
       jiraTickets: JiraTicketParser.parseFromJSONArray(get(submissionJSONObject, "JiraTickets", [])),
       isCurrentUserAnApprover:  get(submissionJSONObject, "IsCurrentUserAnApprover", "false") === "true",
       isTaskApprovalRequired: get(submissionJSONObject, "IsTaskApprovalRequired", false) === "true",
-      riskResults: _.has(submissionJSONObject, 'RiskResultData') ? JSON.parse(get(submissionJSONObject, "RiskResultData", "[]")) : "[]",
+      riskResults: riskResultData,
       taskRecommendations: _.has(submissionJSONObject, 'TaskRecommendationData') ? JSON.parse(_.defaultTo(get(submissionJSONObject, "TaskRecommendationData", "[]"), "[]")) : "[]",
       productAspects:  _.has(submissionJSONObject, 'ProductAspects') ? JSON.parse(get(submissionJSONObject, "ProductAspects", [])) : [],
       componentTarget: toString(get(submissionJSONObject, "ComponentTarget", "")),
-      hideWeightsAndScore: _.get(submissionJSONObject, "HideWeightsAndScore", "false") === "true",
       isTaskCollborator: _.get(submissionJSONObject, "IsTaskCollborator", "false") === "true",
       isDisplayPreventMessage: _.get(submissionJSONObject, "IsDisplayPreventMessage", "false") === "true",
       createOnceInstancePerComponent: Boolean(get(submissionJSONObject, "CreateOnceInstancePerComponent", false)),

@@ -42,10 +42,10 @@ const mapStateToProps = (state: RootState) => {
 
 const mapDispatchToProps = (dispatch: Dispatch, props: *) => {
   return {
-    dispatchLoadDataAction(uuid: string, secureToken: string) {
+    dispatchLoadDataAction(uuid: string, secureToken: string, component:string) {
       dispatch(loadCurrentUser());
       dispatch(loadSiteConfig());
-      dispatch(loadSecurityRiskAssessment({ uuid, secureToken }));
+      dispatch(loadSecurityRiskAssessment({ uuid, secureToken, component }));
       dispatch(loadImpactThreshold());
     },
     dispatchFinaliseAction(uuid: string, secureToken?: string | null, questionnaireUUID) {
@@ -62,14 +62,14 @@ type Props = {
   currentUser?: User | null,
   impactThresholdData?: Array<ImpactThreshold> | null,
   securityRiskAssessmentData?: SecurityRiskAssessment | null,
-  dispatchLoadDataAction?: (uuid: string, secureToken: string) => void,
+  dispatchLoadDataAction?: (uuid: string, secureToken: string, component: string) => void,
   dispatchFinaliseAction?: (uuid: string, secureToken: string) => void,
 };
 
 class DigitalSecurityRiskAssessmentContainer extends Component<Props> {
   componentDidMount() {
-    const { uuid, dispatchLoadDataAction, secureToken } = { ...this.props };
-    dispatchLoadDataAction(uuid, secureToken);
+    const { uuid, dispatchLoadDataAction, secureToken, component} = { ...this.props };
+    dispatchLoadDataAction(uuid, secureToken, component);
   }
 
   render() {
