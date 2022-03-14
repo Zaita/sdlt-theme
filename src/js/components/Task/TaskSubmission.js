@@ -106,10 +106,9 @@ class TaskSubmission extends Component<Props> {
       </div>
     ) : null;
 
-    const riskResult = taskSubmission.riskResults && (resultStatus.indexOf(taskSubmission.status) > -1) ? (
+    const riskResult = taskSubmission.riskResults && (resultStatus.indexOf(taskSubmission.taskStatusForComponent) > -1) ? (
       <RiskResultContainer
         riskResults={taskSubmission.riskResults}
-        hideWeightsAndScore={taskSubmission.hideWeightsAndScore}
       />
     ) : null;
 

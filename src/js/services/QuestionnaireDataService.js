@@ -120,7 +120,6 @@ query {
     IsCurrentUserAnApprover
     ProductName
     IsCurrentUserABusinessOwnerApprover
-    HideWeightsAndScore
     TaskSubmissions {
       UUID
       TaskName
@@ -190,7 +189,6 @@ query {
       isCurrentUserABusinessOwnerApprover: _.get(submissionJSON, "IsCurrentUserABusinessOwnerApprover", "false") === "true",
       submission: {
         isApprovalOverrideBySecurityArchitect: Boolean(_.get(submissionJSON, "ApprovalOverrideBySecurityArchitect", false)),
-        hideWeightsAndScore: _.get(submissionJSON, "HideWeightsAndScore", "false") === "true",
         questionnaireID: _.toString(_.get(submissionJSON, "Questionnaire.ID", "")),
         questionnaireTitle: _.toString(_.get(submissionJSON, "Questionnaire.Name", "")),
         submissionID: _.toString(_.get(submissionJSON, "ID", "")),

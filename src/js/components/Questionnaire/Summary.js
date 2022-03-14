@@ -408,7 +408,6 @@ class Summary extends Component<Props> {
         {this.renderApprovals(submission)}
         <RiskResultContainer
           riskResults={submission.riskResults}
-          hideWeightsAndScore={submission.hideWeightsAndScore}
         />
         {this.renderSkipCheckbox(submission, viewAs, user)}
         {this.renderAcknowledgements(submission, viewAs, user)}

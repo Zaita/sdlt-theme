@@ -10,11 +10,11 @@ import TaskParser from "../utils/TaskParser";
 import type {ImpactThreshold} from "../types/ImpactThreshold";
 export default class SecurityRiskAssessmentTaskDataService {
 
-  static async fetchSecurityRiskAssessmentTasK(args: { uuid: string, secureToken?: string }): Promise<TaskSubmission> {
-    const {uuid, secureToken} = {...args};
+  static async fetchSecurityRiskAssessmentTasK(args: { uuid: string, secureToken?: string, component?: string }): Promise<TaskSubmission> {
+    const {uuid, secureToken, component} = {...args};
     const query = `
 query {
-  readTaskSubmission(UUID: "${uuid}", SecureToken: "${secureToken || ""}") {
+  readTaskSubmission(UUID: "${uuid}", SecureToken: "${secureToken || ""}", Component: "${component || ""}") {
     UUID
     TaskName
     QuestionnaireSubmission {
