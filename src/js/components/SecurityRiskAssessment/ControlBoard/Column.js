@@ -1,20 +1,20 @@
-import React, { Component } from 'react'
+import React, { Component } from 'react';
 import { Droppable } from 'react-beautiful-dnd';
-import ControlCard from './ControlCard'
-import InformationTooltip from './InformationTooltip'
+import ControlCard from './ControlCard';
+import InformationTooltip from './InformationTooltip';
 import OpenWithIcon from '@material-ui/icons/OpenWith';
 
 // optimization
 class InnerList extends React.Component {
   shouldComponentUpdate(nextProps) {
-    if (nextProps.tasks === this.props.tasks) {
+    if (nextProps.controls === this.props.controls) {
       return false
     }
     return true
   }
   render() {
-    return this.props.tasks.map((task, index) => (
-      <ControlCard key={task.id} task={task} index={index} />
+    return this.props.controls.map((control, index) => (
+      <ControlCard key={control.id} control={control} index={index} />
     ))
   }
 }
@@ -23,7 +23,7 @@ export default class Column extends Component {
   render() {
 
     let columnIsEmpty
-    if (this.props.tasks.length === 0) {
+    if (this.props.controls.length === 0) {
       columnIsEmpty = (
         <div className='empty-column-text'>
           <OpenWithIcon className='directional-drag-arrow' />
@@ -47,7 +47,7 @@ export default class Column extends Component {
                 {...provided.droppableProps}
               >
                 {columnIsEmpty}
-                <InnerList tasks={this.props.tasks} columnTitle={this.props.column.title} />
+                <InnerList controls={this.props.controls} columnTitle={this.props.column.title} />
                 {provided.placeholder}
               </div>
             )}

@@ -25,6 +25,7 @@ export default function CardItem(props) {
     setExpanded(!expanded);
   };
 
+  // TODO: risk category data to be added as part of #90529
   const riskCategoryDisplay = (arr) => {
     if (!expanded)
       return (
@@ -68,10 +69,10 @@ export default function CardItem(props) {
     )
   }
 
-  const { title, riskCategories, id, keyControl, evidenceAdded, evidenceRating } = props.task
+  const { name, riskCategories, id, keyControl, evidenceAdded, evidenceRating } = props.control
 
   return (
-    <Draggable draggableId={props.task.id} index={props.index}>
+    <Draggable draggableId={props.control.id} index={props.index}>
       {(provided, snapshot) => {
         const draggingStyle = {
           backgroundColor: snapshot.isDragging ? 'lightgrey' : 'white',
@@ -88,8 +89,8 @@ export default function CardItem(props) {
             <div className="card-content">
               <div className="card-header">
                 {keyControl
-                  ? <p className="card-title card-key-control">{'⭐ ' + title}</p>
-                  : <p className="card-title">{title}</p>
+                  ? <p className="card-title card-key-control">{'⭐ ' + name}</p>
+                  : <p className="card-title">{name}</p>
                 }
                 <div className="card-chevron">
                   <IconButton aria-label="show more">
@@ -98,7 +99,7 @@ export default function CardItem(props) {
                 </div>
               </div>
               <div className={!expanded ? 'card-footer' : 'card-footer flex-column'} onClick={handleExpandClick}>
-                {riskCategoryDisplay(riskCategories)}
+                {/* {riskCategoryDisplay(riskCategories)} */}
                 {evidenceStatus(evidenceAdded)}
                 {/* {evidenceRatingStatus(evidenceRating, evidenceIconsMap)} */}
               </div>
