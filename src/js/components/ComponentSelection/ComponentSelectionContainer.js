@@ -187,12 +187,13 @@ class ComponentSelectionContainer extends Component<Props> {
          else {
           body = (
             <ComponentSelection
+              key={taskSubmission.productAspects}
               availableComponents={availableComponents}
               selectedComponents={selectedComponents}
               componentTarget={taskSubmission.componentTarget}
               productAspects={taskSubmission.productAspects}
               questionnaireSubmissionUUID={taskSubmission.questionnaireSubmissionUUID}
-              extraButtons={backButton}
+              controlSetSelectionTaskHelpText={taskSubmission.controlSetSelectionTaskHelpText}
               createJIRATickets={(jiraKey) => {
                 dispatchCreateJIRATicketsAction(jiraKey);
               }}
