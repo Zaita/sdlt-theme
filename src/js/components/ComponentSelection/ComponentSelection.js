@@ -11,7 +11,6 @@ import ComponentInfo from "./ComponentInfo";
 import ComponentSelectionUtil from "../../utils/ComponentSelectionUtil";
 import BackArrow from "../../../img/icons/back-arrow.svg";
 import ChevronIcon from "../../../img/icons/chevron-right.svg";
-import URLUtil from "../../utils/URLUtil";
 
 type Props = {
   availableComponents: Array<SecurityComponent>,
@@ -20,7 +19,6 @@ type Props = {
   createJIRATickets: (jiraKey: string) => void,
   removeComponent: (id: string) => void,
   addComponent: (id: string) => void,
-  finishWithSelection: () => void,
   saveControls: () => void,
   isStandaloneTask: boolean,
   productAspects: Array<*>,
@@ -43,10 +41,6 @@ export default class ComponentSelection extends Component<Props, State> {
     };
   }
 
-  sendBackToQestionnaire() {
-    URLUtil.redirectToQuestionnaireSummary(this.props.questionnaireSubmissionUUID, this.props.secureToken)
-  }
-
   updateSelectedProductAspect = selectedProductAspect => {
     this.setState({ selectedProductAspect: selectedProductAspect })
   }
@@ -58,20 +52,16 @@ export default class ComponentSelection extends Component<Props, State> {
       createJIRATickets,
       removeComponent,
       addComponent,
-      finishWithSelection,
       saveControls,
       componentTarget,
       productAspects,
       isStandaloneTask,
-      controlSetSelectionTaskHelpText
+      controlSetSelectionTaskHelpText,
+      updateIsLastComponentSelectionCompleted,
+      backLink
     } = {...this.props};
 
     const { jiraKey,selectedProductAspect } = {...this.state};
-
-    const backLink = <div className="back-link" onClick={() => this.sendBackToQestionnaire()}>
-      <img src={BackArrow}/>
-      Back
-    </div>;
 
     const updateSelectedComponents = event => {
       if (event.target.checked) {
@@ -188,6 +178,7 @@ export default class ComponentSelection extends Component<Props, State> {
                           productAspects[productAspects.indexOf(selectedProductAspect) + 1],
                       });
                       saveControls();
+                      updateIsLastComponentSelectionCompleted(false)
                     }}
                   />
                 )}
@@ -198,7 +189,7 @@ export default class ComponentSelection extends Component<Props, State> {
                     rightIconImage={ChevronIcon}
                     onClick={() => {
                       saveControls();
-                      finishWithSelection();
+                      updateIsLastComponentSelectionCompleted(true)
                     }}
                   />
                 )}
@@ -208,7 +199,7 @@ export default class ComponentSelection extends Component<Props, State> {
                     rightIconImage={ChevronIcon}
                     onClick={() => {
                       saveControls();
-                      finishWithSelection();
+                      updateIsLastComponentSelectionCompleted(true)
                     }}
                   />
                 )}

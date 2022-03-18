@@ -1,5 +1,5 @@
 .AnswersPreview {
-    .questions {
+    .questions, .components {
         white-space: pre-line;
 
         .row {
@@ -9,6 +9,7 @@
             padding: 20px;
             word-break: break-word;
             border-bottom: 2px solid $light-gray;
+            min-height: 68px;
 
             .col:first-child {
                 padding-left: 0;

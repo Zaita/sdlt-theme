@@ -2,12 +2,12 @@
 
 import React from "react";
 import type {JiraTicket, SecurityComponent} from "../../types/SecurityComponent";
+import SecurityRiskAssessmentUtil from "../../utils/SecurityRiskAssessmentUtil";
 import ComponentSelectionUtil from "../../utils/ComponentSelectionUtil";
 
 type Props = {
   selectedComponents: Array<SecurityComponent>,
   jiraTickets: Array<JiraTicket>,
-  buttons?: *,
   componentTarget: string,
   productAspects: Array<*>
 };
@@ -15,57 +15,100 @@ type Props = {
 export default class ComponentSelectionReview extends React.Component<Props> {
 
   render() {
-    const {selectedComponents, jiraTickets, buttons, componentTarget, productAspects} = {...this.props};
-    const isGroupbyProductAspect = productAspects && productAspects.length > 0 && selectedComponents.length > 0;
+    const {
+      selectedComponents,
+      jiraTickets,
+      componentTarget,
+      isSRATaskFinalised,
+      productAspects,
+      doneButton,
+      backLink
+    } = { ...this.props };
+
+    const hasProductAspects = productAspects && productAspects.length > 0;
+
     return (
       <div className="ComponentSelectionReview">
-        <div className="section">
-          <h4>Selected Components</h4>
-          {isGroupbyProductAspect > 0 && productAspects.map ((productAspect, index) => {
-            return (
-              <ul key={index}>
-                {ComponentSelectionUtil.doescomponentExistForProductAspect(productAspect, selectedComponents) &&
-                  <h5 key={index}>{productAspect}</h5>
-                }
-                {selectedComponents.map((component, index) => {
-                  if (component.productAspect === productAspect) {
-                    return (
-                      <li key={component.id + (productAspect ? `_${productAspect}`: "")}>
-                        {component.name}
-                      </li>
-                    );
-                  }
-                })}
-              </ul>
-            );
-          })}
-          <ul>
-            {(productAspects === undefined || productAspects === '' || productAspects.length === 0) && selectedComponents.map((component: SecurityComponent) => {
+        {isSRATaskFinalised ? SecurityRiskAssessmentUtil.getSraIsFinalisedAlert() : false}
+        {backLink}
+        <h4>Summary</h4>
+        <div className="AnswersPreview">
+          <div className="components">
+            {hasProductAspects && productAspects.map((productAspect, index) => {
+              let isComponentSelected =
+                ComponentSelectionUtil.doescomponentExistForProductAspect(productAspect,selectedComponents);
               return (
-                <li key={component.id}>
-                  {component.name}
-                </li>
+                <div className="row">
+                  <div className="col">
+                    <b>{index + 1}. Select control set for the {productAspect} component</b>
+                  </div>
+                  <div className="vertical-divider" />
+                  <div className="col">
+                    {!isComponentSelected && (
+                      <span className="default-answer">Current Solution</span>
+                    )}
+                    {selectedComponents.map((component, index) => {
+                      if (component.productAspect === productAspect) {
+                        return (
+                          <ul className="control-list">
+                            <li key={component.id}><b>{component.name}</b></li>
+                            <li key={component.id}>{component.description}</li>
+                          </ul>
+                        );
+                      }
+                    })}
+                  </div>
+                </div>
               );
             })}
-          </ul>
+          </div>
+
+          {(productAspects === undefined || productAspects === "" || productAspects.length === 0) &&
+            <div className="components">
+              <div className="row">
+                <div className="col">
+                  <b>1. Select control set for the Current Solution</b>
+                </div>
+                <div className="vertical-divider" />
+                <div className="col">
+                  {selectedComponents.length === 0 && (
+                    <span className="default-answer">Current Solution</span>
+                  )}
+                  {selectedComponents.map((component, index) => {
+                    return (
+                      <ul className="control-list">
+                        <li key={component.id}><b>{component.name}</b></li>
+                        <li key={component.id}>{component.description}</li>
+                      </ul>
+                    )
+                  })}
+                </div>
+              </div>
+            </div>
+          }
         </div>
 
         {componentTarget === "JIRA Cloud" && (
-          <div className="section">
-            <h4>Created Jira Tickets</h4>
-            <ul>
-              {jiraTickets.map((ticket: JiraTicket) => {
-                return (
-                  <li key={ticket.id}><a href={ticket.link} target="_blank">{ticket.link}</a></li>
-                );
-              })}
-            </ul>
+          <div className="components">
+            <div className="row">
+              <div className="col">
+                <b>Created Jira Tickets</b>
+              </div>
+              <div className="vertical-divider" />
+              <div className="col">
+                <ul>
+                  {jiraTickets.map((ticket: JiraTicket) => {
+                    return (
+                      <li key={ticket.id}><a href={ticket.link} target="_blank">{ticket.link}</a></li>
+                    );
+                  })}
+                </ul>
+              </div>
+            </div>
           </div>
         )}
 
-        <div className="buttons">
-          {buttons}
-        </div>
+        {doneButton && <div className="buttons">{doneButton}</div>}
       </div>
     );
   }
