@@ -39,7 +39,9 @@ export default class BoardSelect extends Component {
           }}
           IconComponent={ChevronIcon}
           className={addClass === 'sort-by' ? 'board-select-input sort-by' : 'board-select-input'}
-          variant="outlined" focused defaultValue={filterParameters[0].title} onChange={this.handleChange}>
+          variant="outlined"
+          defaultValue={filterParameters[0].title}
+          onChange={this.handleChange}>
           {filterParameters.map((parameter) => (
             <MenuItem
               style={{ fontSize: 'small' }}

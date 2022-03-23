@@ -14,15 +14,15 @@ type Props = {
 
 export default class Board extends Component<Props> {
   componentDidMount() {
-    const defaultControls = this.getControlSetData();
-    this.setState({ controls: defaultControls });
+    const controls = this.addControlsToState();
+    this.setState({ controls: controls });
   }
 
   // update state on page reload
   componentDidUpdate(prevProps) {
-    if (this.props.cvaTaskData !== prevProps.cvaTaskData) {
-      const defaultControls = this.getControlSetData();
-      this.setState({ controls: defaultControls });
+    if (this.props.selectedControls !== prevProps.selectedControls) {
+      const controls = this.addControlsToState();
+      this.setState({ controls: controls });
     }
   }
 
@@ -109,64 +109,43 @@ export default class Board extends Component<Props> {
     this.setState(newState);
   };
 
-  getControlSetData() {
-    let defaultControls = [];
 
-    if (!this.props.cvaTaskData) {
+  addControlsToState() {
+    if (!this.props.selectedControls) {
       return;
     }
 
-    if (this.props.component) {
-      defaultControls = this.getDefaultControlsWithComponents(defaultControls);
-    } else {
-      defaultControls = this.getDefaultControlsWithoutComponents(defaultControls);
-    }
+    const securityComponentName = this.props.selectedControls[0].name;
+    const selectedControls = this.props.selectedControls[0].controls;
+    let controls = [];
 
-    this.setDefaultControlsNotApplicableColumn(defaultControls);
-
-    return defaultControls;
-  }
-
-
-  getDefaultControlsWithComponents (defaultControls) {
-    this.props.cvaTaskData.map((component) => {
-      if (component.productAspect === this.props.component) {
-        component.controls.map((control) => {
-          defaultControls = {
-            ...defaultControls,
-            [control.id]: control,
-          };
-        });
+    selectedControls.map(({id, ...control}) => {
+      let key = securityComponentName + "_" + control.name + "_" + id;
+      controls = {
+        ...controls,
+        [key]: {
+          id: key,
+          ...control
+        }
       }
-    });
+    })
 
-    return defaultControls;
+    this.setControlsNotImplementedColumn(controls);
+
+    return controls;
   }
 
-  getDefaultControlsWithoutComponents (defaultControls) {
-    this.props.cvaTaskData.map((component) => {
-      component.controls.map((control) => {
-        defaultControls = {
-          ...defaultControls,
-          [control.id]: control,
-        };
-      });
-    });
-
-    return defaultControls;
-  }
-
-  setDefaultControlsNotApplicableColumn(defaultControls) {
+  setControlsNotImplementedColumn(controls) {
     const controlIds = [];
     const columns = { ...this.state.columns };
 
-    Object.entries(defaultControls).map((control) => {
+    Object.entries(controls).map((control) => {
       controlIds.push(control[0]);
     });
 
     this.state.columnOrder.map((columnId) => {
       const column = columns[columnId];
-      if (column.title === "Not applicable") {
+      if (column.title === "Not implemented") {
         column.controlIds = controlIds;
         this.setState({ columns });
       }
@@ -198,9 +177,11 @@ export default class Board extends Component<Props> {
               }
 
               return (
-                <div className={`column-container ${this.state.showNotApplicable ? 'narrow' : 'wide'}`}>
+                <div
+                  className={`column-container ${this.state.showNotApplicable ? "narrow" : "wide"}`}
+                  key={column.id}
+                >
                   <Column
-                    key={column.id}
                     column={column}
                     controls={controls}
                     informationText={informationTextData[column.title]}

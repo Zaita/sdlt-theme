@@ -103,7 +103,7 @@ class DigitalSecurityRiskAssessmentContainer extends Component<Props> {
       sraTaskNotImplementedInformationText,
       sraTaskPlannedInformationText,
       sraTaskImplementedInformationText,
-      cvaTaskData
+      selectedControls
     } = { ...securityRiskAssessmentData };
 
     const isSRATaskFinalised = SecurityRiskAssessmentUtil.isSRATaskFinalised(taskSubmissions);
@@ -190,8 +190,7 @@ class DigitalSecurityRiskAssessmentContainer extends Component<Props> {
                   notImplementedInformationText={sraTaskNotImplementedInformationText}
                   plannedInformationText={sraTaskPlannedInformationText}
                   implementedInformationText={sraTaskImplementedInformationText}
-                  cvaTaskData={cvaTaskData}
-                  component={component}
+                  selectedControls={selectedControls}
                 />
               </div>
               <div className="bottom-container">
