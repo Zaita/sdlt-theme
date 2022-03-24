@@ -133,7 +133,7 @@ class MySubmissionList extends Component<Props> {
 
     return (
       <div className="AnswersPreview">
-        <Header pageTitle="Your submissions" logopath={siteConfig.logoPath}/>
+        <Header pageTitle="My submissions" logopath={siteConfig.logoPath}/>
         {list(mySubmissionList, currentUser)}
         <Footer footerCopyrightText={siteConfig.footerCopyrightText}/>
       </div>

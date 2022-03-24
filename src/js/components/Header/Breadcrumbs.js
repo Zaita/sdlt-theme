@@ -12,13 +12,13 @@ class Breadcrumbs extends Component {
     if (showApprovalBreadcrumb) {
       return (
         <Link onClick={() => URLUtil.redirectToApprovals()}>
-          Your approvals
+          My approvals
         </Link>
       );
     } else {
       return (
         <Link onClick={() => URLUtil.redirectToSubmissions()}>
-          Your submissions
+          My submissions
         </Link>
       );
     }
