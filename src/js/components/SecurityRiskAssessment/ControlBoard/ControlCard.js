@@ -25,18 +25,20 @@ export default function CardItem(props) {
     setExpanded(!expanded);
   };
 
-  // TODO: risk category data to be added as part of #90529
   const riskCategoryDisplay = (arr) => {
-    if (!expanded)
+    if (!expanded && arr.length)
       return (
         <>
-          <p className="card-risk-category">{arr[0]}</p>
-          <p className="card-weight">+{arr.length}</p>
+          <p className="card-risk-category">{arr[0].name}</p>
+          {arr.length > 1
+            ? <p className="card-weight">+{arr.length-1}</p>
+            : ''
+          }
         </>
       )
 
     return arr.map((risk, i) => (
-      <p className="card-risk-category" key={i}>{risk}</p>
+      <p className="card-risk-category" key={i}>{risk.name}</p>
     ))
   }
 
@@ -99,7 +101,7 @@ export default function CardItem(props) {
                 </div>
               </div>
               <div className={!expanded ? 'card-footer' : 'card-footer flex-column'} onClick={handleExpandClick}>
-                {/* {riskCategoryDisplay(riskCategories)} */}
+                {riskCategoryDisplay(riskCategories)}
                 {evidenceStatus(evidenceAdded)}
                 {/* {evidenceRatingStatus(evidenceRating, evidenceIconsMap)} */}
               </div>
