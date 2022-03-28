@@ -173,9 +173,8 @@ class DigitalSecurityRiskAssessmentContainer extends Component<Props> {
               <div className="help-text">
                 <RiskAssessmentTableContainer
                   riskRatingHelpText={sraTaskRiskRatingHelpText}
-                  riskRatingThresholds={sraData.riskRatingThresholds}
                   likelihoodScoreHelpText={sraTaskLikelihoodScoreHelpText}
-                  likelihoodScoreThresholds={sraData.likelihoodThresholds}
+                  sraData={sraData}
                   impactScoreHelpText={sraTaskImpactScoreHelpText}
                   impactScoreThresholds={impactThresholdData}
                 />
