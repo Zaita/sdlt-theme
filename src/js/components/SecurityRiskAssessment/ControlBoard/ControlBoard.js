@@ -26,10 +26,15 @@ export default class Board extends Component<Props> {
     }
   }
 
+  toggleNotApplicable = clickEvent => {
+    this.setState({showNotApplicable: clickEvent.target.checked})
+  }
+
   state = {
     controls: [],
     columns: data.columns,
-    columnOrder: data.columnOrder
+    columnOrder: data.columnOrder,
+    showNotApplicable: true
   }
 
   onDragEnd = (result) => {
@@ -77,7 +82,7 @@ export default class Board extends Component<Props> {
 
     //moving from one list to another
     const startControlIds = Array.from(start.controlIds);
-    console.log(startControlIds);
+
     startControlIds.splice(source.index, 1);
 
     const newStart = {
@@ -178,7 +183,7 @@ export default class Board extends Component<Props> {
 
     return (
       <>
-        <BoardFilters />
+        <BoardFilters toggleNotApplicable={this.toggleNotApplicable}/>
         <DragDropContext onDragEnd={this.onDragEnd}>
           <div className="control-board-container">
             {this.state.columnOrder.map((columnId) => {
@@ -188,8 +193,12 @@ export default class Board extends Component<Props> {
                 return { ...this.state.controls[controlId] };
               });
 
+              if (!this.state.showNotApplicable && column.title == 'Not applicable') {
+                return '';
+              }
+
               return (
-                <div className='column-container'>
+                <div className={`column-container ${this.state.showNotApplicable ? 'narrow' : 'wide'}`}>
                   <Column
                     key={column.id}
                     column={column}

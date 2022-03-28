@@ -12,7 +12,7 @@ export default class BoardFilters extends Component {
         <BoardSearch label={'Key words'} />
         <BoardSelect label={'Risk category'} filterParameters={riskCategories} />
         <BoardSelect label={'Sort by'} filterParameters={sortBy} addClass={'sort-by'} />
-        <BoardCheckbox label={'Show not applicable'} />
+        <BoardCheckbox label={'Show not applicable'} handleChange={this.props.toggleNotApplicable} />
       </div>
     )
   }
