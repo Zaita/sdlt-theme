@@ -51,7 +51,8 @@ export default class SecurityComponentParser {
                 id: toString(get(riskCategory, "id", "")),
                 name: toString(get(riskCategory, "name", ""))
               }
-            })
+            }),
+            isKeyControl: Boolean(get(control, "isKeyControl", false))
           }
         }),
         jiraTicketLink: toString(get(jsonObject, "jiraTicketLink", "")),

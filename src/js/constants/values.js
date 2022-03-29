@@ -12,3 +12,4 @@ export const CTL_STATUS_3 = 'Not Applicable';
 export const DEFAULT_NO_CONTROLS_MESSAGE = 'There are no controls for the component.';
 export const DEFAULT_CVA_UNFINISHED_TASKS_MESSAGE = 'No components have been selected. Please complete the component selection task with at least one component selected.';
 export const SRA_IS_FINALISED_MESSAGE = 'The security risk assessment is finalised.  The tasks can no longer be edited and will be included in the Certification and Accreditation Report. If you need to change your task answers, you will need to submit a new questionnaire.';
+export const IS_KEY_CONTROL_MESSAGE = 'This is a key control. Penalties will be applied to your Security Risk Assessment if you do not implement this control.';
