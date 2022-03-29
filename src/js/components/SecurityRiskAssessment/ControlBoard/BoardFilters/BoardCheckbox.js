@@ -6,7 +6,7 @@ export default class BoardCheckbox extends Component {
     return (
       <FormControlLabel
         className="board-filter-label filter-checkbox"
-        control={<Checkbox defaultChecked color="primary" />} label={this.props.label}
+        control={<Checkbox defaultChecked color="primary" onClick={this.props.handleChange} />} label={this.props.label}
       />
     )
   }

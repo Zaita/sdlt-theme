@@ -32,14 +32,6 @@
   overflow: scroll;
   max-height: 50vh;
   scrollbar-color: #2471a7 #efefef;
-
-}
-
-.column-info {
-  color: #2471a7;
-  cursor: pointer;
-  transform: scale(70%) translateY(-7px);
-  margin-right: 20px;
 }
 
 .dotted-border {
@@ -50,6 +42,18 @@
   scrollbar-color: #2471a7 #efefef;
   border: 2px dashed;
   border-color: lightgrey;
+}
+
+.wide .column-card-list,
+.wide .dotted-border {
+  width: 365px;
+}
+
+.column-info {
+  color: #2471a7;
+  cursor: pointer;
+  transform: scale(70%) translateY(-7px);
+  margin-right: 20px;
 }
 
 .empty-column-text {
