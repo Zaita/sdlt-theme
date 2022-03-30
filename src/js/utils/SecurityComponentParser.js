@@ -33,7 +33,6 @@ export default class SecurityComponentParser {
 
   static parseCVAFromJSONObject(jsonArray: *): SecurityComponent {
     return jsonArray.map((jsonObject) => {
-
       return {
         id: toString(get(jsonObject, "id", "")),
         name: toString(get(jsonObject, "name", "")),
@@ -47,6 +46,12 @@ export default class SecurityComponentParser {
             implementationGuidance: toString(get(control, "implementationGuidance", "")),
             implementationEvidence: toString(get(control, "implementationEvidence", "")),
             implementationEvidenceUserInput: toString(get(control, "implementationEvidenceUserInput", "")),
+            riskCategories: (get(control, "riskCategories") || []).map((riskCategory) => {
+              return {
+                id: toString(get(riskCategory, "id", "")),
+                name: toString(get(riskCategory, "name", ""))
+              }
+            })
           }
         }),
         jiraTicketLink: toString(get(jsonObject, "jiraTicketLink", "")),
