@@ -111,7 +111,7 @@ export default class Board extends Component<Props> {
 
 
   addControlsToState() {
-    if (!this.props.selectedControls) {
+    if (this.props.selectedControls.length === 0) {
       return;
     }
 
@@ -166,6 +166,7 @@ export default class Board extends Component<Props> {
         <DragDropContext onDragEnd={this.onDragEnd}>
           <div className="control-board-container">
             {this.state.columnOrder.map((columnId) => {
+              let hideColumn;
               const column = this.state.columns[columnId];
 
               const controls = column.controlIds.map((controlId) => {
@@ -173,13 +174,16 @@ export default class Board extends Component<Props> {
               });
 
               if (!this.state.showNotApplicable && column.title == 'Not applicable') {
-                return '';
+                hideColumn = true;
+              } else {
+                hideColumn = false;
               }
 
               return (
                 <div
                   className={`column-container ${this.state.showNotApplicable ? "narrow" : "wide"}`}
                   key={column.id}
+                  style={{ display: hideColumn ? "none" : "" }}
                 >
                   <Column
                     column={column}
