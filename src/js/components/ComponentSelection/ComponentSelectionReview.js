@@ -38,7 +38,7 @@ export default class ComponentSelectionReview extends React.Component<Props> {
               let isComponentSelected =
                 ComponentSelectionUtil.doescomponentExistForProductAspect(productAspect,selectedComponents);
               return (
-                <div className="row">
+                <div className="row" key={index}>
                   <div className="col">
                     <b>{index + 1}. Select control set for the {productAspect} component</b>
                   </div>
@@ -50,9 +50,13 @@ export default class ComponentSelectionReview extends React.Component<Props> {
                     {selectedComponents.map((component, index) => {
                       if (component.productAspect === productAspect) {
                         return (
-                          <ul className="control-list">
-                            <li key={component.id}><b>{component.name}</b></li>
-                            <li key={component.id}>{component.description}</li>
+                          <ul className="control-list" key={index}>
+                            <li key={component.id + `_${productAspect}` + `_${component.name}`}>
+                              <b>{component.name}</b>
+                            </li>
+                            <li key={component.id + `_${productAspect}` + `_${component.description}`}>
+                              {component.description}
+                            </li>
                           </ul>
                         );
                       }
@@ -76,9 +80,13 @@ export default class ComponentSelectionReview extends React.Component<Props> {
                   )}
                   {selectedComponents.map((component, index) => {
                     return (
-                      <ul className="control-list">
-                        <li key={component.id}><b>{component.name}</b></li>
-                        <li key={component.id}>{component.description}</li>
+                      <ul className="control-list" key={index}>
+                        <li key={component.id + `_${component.name}`}>
+                          <b>{component.name}</b>
+                        </li>
+                        <li key={component.id + `${component.description}`}>
+                          {component.description}
+                        </li>
                       </ul>
                     )
                   })}

@@ -43,7 +43,7 @@ query {
     }
     Status
     SecurityRiskAssessmentData
-    CVATaskData
+    SelectedControls
   }
 }`;
 
@@ -54,13 +54,13 @@ query {
       throw DEFAULT_NETWORK_ERROR;
     }
 
-    let cvaTaskDataJSONArray = JSON.parse(get(submissionJSONObject, "CVATaskData", "[]"));
-    if (!Array.isArray(cvaTaskDataJSONArray)) {
-      cvaTaskDataJSONArray = [];
+    let selectedControlsJSONArray = JSON.parse(get(submissionJSONObject, "SelectedControls", "[]"));
+    if (!Array.isArray(selectedControlsJSONArray)) {
+      selectedControlsJSONArray = [];
     }
 
     const securityRiskAssessmentData = JSON.parse(get(submissionJSONObject, 'SecurityRiskAssessmentData', ''));
-    const controlValidationTaskData = cvaTaskDataJSONArray.length > 0 ? SecurityComponentParser.parseCVAFromJSONObject(cvaTaskDataJSONArray) : cvaTaskDataJSONArray;
+    const selectedControls = selectedControlsJSONArray.length > 0 ? SecurityComponentParser.parseCVAFromJSONObject(selectedControlsJSONArray) : selectedControlsJSONArray;
     const data: TaskSubmission = {
       uuid: submissionJSONObject && submissionJSONObject.UUID ? submissionJSONObject.UUID : '',
       taskName: toString(get(submissionJSONObject, "TaskName", "")),
@@ -81,7 +81,7 @@ query {
       isBusinessOwner: get(submissionJSONObject, "QuestionnaireSubmission.IsBusinessOwner", "false") === "true",
       taskSubmissions: TaskParser.parseAlltaskSubmissionforQuestionnaire(submissionJSONObject),
       sraData: securityRiskAssessmentData,
-      cvaTaskData: controlValidationTaskData
+      selectedControls: selectedControls
     };
 
     return data;

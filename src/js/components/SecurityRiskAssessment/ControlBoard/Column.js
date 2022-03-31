@@ -12,6 +12,7 @@ class InnerList extends React.Component {
     }
     return true
   }
+
   render() {
     return this.props.controls.map((control, index) => (
       <ControlCard key={control.id} control={control} index={index} />
@@ -20,8 +21,17 @@ class InnerList extends React.Component {
 }
 
 export default class Column extends Component {
-  render() {
+  state = {
+    controlArrayIsValid: false
+  }
 
+  componentDidUpdate(prevProps) {
+    if (this.props.controls !== prevProps.controls) {
+      this.setState({ controlArrayIsValid: true })
+    }
+  }
+
+  render() {
     let columnIsEmpty
     if (this.props.controls.length === 0) {
       columnIsEmpty = (
@@ -47,7 +57,15 @@ export default class Column extends Component {
                 {...provided.droppableProps}
               >
                 {columnIsEmpty}
-                <InnerList controls={this.props.controls} columnTitle={this.props.column.title} />
+
+                {this.state.controlArrayIsValid ? (
+                  <InnerList
+                    controls={this.props.controls}
+                    columnTitle={this.props.column.title}
+                  />
+                  ) : null
+                }
+
                 {provided.placeholder}
               </div>
             )}
