@@ -3,6 +3,7 @@ import { Draggable } from 'react-beautiful-dnd'
 import { Card, IconButton } from '@material-ui/core'
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import Paperclip from '@material-ui/icons/AttachFile';
+import KeyControlIcon from "../../../../img/icons/key-control-star.svg";
 
 // not the final icons
 import EffectiveIcon from '@material-ui/icons/VerifiedUser';
@@ -71,7 +72,7 @@ export default function CardItem(props) {
     )
   }
 
-  const { name, riskCategories, id, keyControl, evidenceAdded, evidenceRating } = props.control
+  const { name, riskCategories, id, isKeyControl, evidenceAdded, evidenceRating } = props.control;
 
   return (
     <Draggable draggableId={props.control.id} index={props.index}>
@@ -90,8 +91,10 @@ export default function CardItem(props) {
           >
             <div className="card-content">
               <div className="card-header">
-                {keyControl
-                  ? <p className="card-title card-key-control">{'⭐ ' + name}</p>
+                {isKeyControl
+                  ? <p className="card-title card-key-control">
+                      <img src={KeyControlIcon} alt="star icon"/>{name}
+                    </p>
                   : <p className="card-title">{name}</p>
                 }
                 <div className="card-chevron">
