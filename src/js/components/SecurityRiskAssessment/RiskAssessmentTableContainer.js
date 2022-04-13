@@ -5,8 +5,11 @@ import helpIcon from "../../../img/icons/help-outline.svg";
 import HelpModalContainer from "./RiskAssessmentHelpModalContainer";
 
 type Props = {
-  calculatedSRAData: object,
-  hasProductAspect: boolean
+  sraData: object,
+  impactScoreThresholds: object,
+  impactScoreHelpText: string,
+  riskRatingHelpText: string,
+  likelihoodScoreHelpText: string
 };
 
 class RiskAssessmentTableContainer extends Component<Props> {
@@ -14,6 +17,15 @@ class RiskAssessmentTableContainer extends Component<Props> {
    * Render the security risk assessment matrix as an HTML table
    */
   renderTableHeader() {
+
+    const {
+      sraData,
+      impactScoreThresholds,
+      impactScoreHelpText,
+      riskRatingHelpText,
+      likelihoodScoreHelpText
+    } = {...this.props};
+
     return (
       <tr key="risk_assessment_header">
         <th>Risk category</th>
@@ -21,24 +33,24 @@ class RiskAssessmentTableContainer extends Component<Props> {
           Current risk rating &nbsp;
           <HelpModalContainer
             title="Current Risk Rating"
-            helpText={this.props.riskRatingHelpText}
-            riskRatingThresholds={this.props.riskRatingThresholds}
+            helpText={riskRatingHelpText}
+            riskRatingThresholds={sraData.riskRatingThresholds}
           />
         </th>
-        <th>
+        <th className="td-padding-left">
           Likelihood score &nbsp;
           <HelpModalContainer
             title="Likelihood score"
-            helpText={this.props.likelihoodScoreHelpText}
-            likelihoodScoreThresholds={this.props.likelihoodScoreThresholds}
+            helpText={likelihoodScoreHelpText}
+            likelihoodScoreThresholds={sraData.likelihoodThresholds}
           />
         </th>
         <th>
           Impact score &nbsp;
           <HelpModalContainer
             title="Impact score"
-            helpText={this.props.impactScoreHelpText}
-            impactScoreThresholds={this.props.impactScoreThresholds}
+            helpText={impactScoreHelpText}
+            impactScoreThresholds={impactScoreThresholds}
           />
         </th>
       </tr>
@@ -46,13 +58,43 @@ class RiskAssessmentTableContainer extends Component<Props> {
   }
 
   renderTableBody() {
+    const {
+      calculatedSRAData
+    } = {...this.props.sraData};
+
     return (
-      <tr key="">
-        <td>Information disclosure</td>
-        <td>Critical</td>
-        <td>Almost certain</td>
-        <td>Extreme</td>
-      </tr>
+      calculatedSRAData.map((risk, index) =>{
+        return (
+          <tr key={index}>
+            <td>{risk.riskName}</td>
+            <td style={{
+              backgroundColor:risk.riskDetail.currentRiskRating.colour,
+            }}>
+              {risk.riskDetail.currentRiskRating.name}
+            </td>
+            <td className="td-padding-left">
+              <span className="ellipse" style={{
+                backgroundColor:risk.riskDetail.currentLikelihood.colour
+              }}></span>
+              <span className="threshold-name">
+                {risk.riskDetail.currentLikelihood.name}
+              </span>
+              <span>
+                <b>{risk.riskDetail.currentLikelihood.score}</b> / {risk.riskDetail.MaxLikelihoodPenalty}
+              </span>
+            </td>
+            <td>
+              <span className="ellipse" style={{
+                backgroundColor:risk.riskDetail.currentImpact.colour
+              }}></span>
+              <span  className="threshold-name">{risk.riskDetail.currentImpact.name}</span>
+              <span>
+                <b>{risk.riskDetail.currentImpact.score}</b> / {risk.riskDetail.MaxImpactPenalty}
+              </span>
+            </td>
+          </tr>
+        )
+      })
     );
   }
 

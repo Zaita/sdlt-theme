@@ -24,11 +24,17 @@ import {
   DEFAULT_CVA_CONTROLS_ANSWER_YES,
   DEFAULT_CVA_CONTROLS_ANSWER_NO,
   DEFAULT_CVA_CONTROLS_ANSWER_NOT_APPLICABLE,
+  DEFAULT_CVA_CONTROLS_ANSWER_PLANNED,
   DEFAULT_NO_CONTROLS_MESSAGE,
   DEFAULT_CVA_UNFINISHED_TASKS_MESSAGE,
   CTL_STATUS_1,
   CTL_STATUS_2,
-  CTL_STATUS_3
+  CTL_STATUS_3,
+  CTL_STATUS_4,
+  EVALUTION_RATING_1,
+  EVALUTION_RATING_2,
+  EVALUTION_RATING_3,
+  EVALUTION_RATING_4
 } from '../../constants/values.js';
 import SecurityRiskAssessmentUtil from "../../utils/SecurityRiskAssessmentUtil";
 import {loadSiteConfig} from "../../actions/siteConfig";
@@ -294,39 +300,78 @@ class ControlValidationAuditContainer extends Component<Props, State> {
     const options = [
       {'value': CTL_STATUS_1, 'label': DEFAULT_CVA_CONTROLS_ANSWER_YES},
       {'value':CTL_STATUS_2, 'label': DEFAULT_CVA_CONTROLS_ANSWER_NO},
-      {'value':CTL_STATUS_3, 'label': DEFAULT_CVA_CONTROLS_ANSWER_NOT_APPLICABLE}
+      {'value':CTL_STATUS_3, 'label': DEFAULT_CVA_CONTROLS_ANSWER_NOT_APPLICABLE},
+      {'value':CTL_STATUS_4, 'label': DEFAULT_CVA_CONTROLS_ANSWER_PLANNED}
     ];
+
+    const evalution_rating_options = [
+      {'value': EVALUTION_RATING_1, 'label': 'Not Validated'},
+      {'value':EVALUTION_RATING_2, 'label': 'Not Effective'},
+      {'value':EVALUTION_RATING_3, 'label': 'Partially Effective'},
+      {'value':EVALUTION_RATING_4, 'label': 'Effective'}
+    ];
+
     return(
       <div className="my-0 container row" key={controlKey}>
 
-        <div className="col-xs-2">
-          {
-            options.map((option, optionIndex) => {
-              return (
-                <label key={`optionlabel_${controlKey}_${optionIndex}`}>
-                  <input
-                    type="radio"
-                    key={`radiobutton_${controlKey}_${optionIndex}`}
-                    name={controlKey}
-                    value={option.value}
-                    defaultChecked={control.selectedOption === option.value}
-                    disabled={!this.state.isCVATaskEditable}
-                    onClick={() => this.props.dispatchUpdateControlValidationQuestionDataAction({
-                      "selectedOption": option.value,
-                      "controlID":control.id,
-                      "componentID":component.id,
-                      "productAspect":component.productAspect,
-                      "implementationEvidenceUserInput": control.implementationEvidenceUserInput
-                  })}
-                  />
-                  {option.label}
-                </label>
-              );
-            })
-          }
+        <div className="col-xs-6">
+          <div>
+            {
+              options.map((option, optionIndex) => {
+                return (
+                  <label key={`optionlabel_${controlKey}_${optionIndex}`}>
+                    <input
+                      type="radio"
+                      key={`radiobutton_${controlKey}_${optionIndex}`}
+                      name={controlKey}
+                      value={option.value}
+                      defaultChecked={control.selectedOption === option.value}
+                      disabled={!this.state.isCVATaskEditable}
+                      onClick={() => this.props.dispatchUpdateControlValidationQuestionDataAction({
+                        "selectedOption": option.value,
+                        "evalutionRating": control.evalutionRating,
+                        "controlID":control.id,
+                        "componentID":component.id,
+                        "productAspect":component.productAspect,
+                        "implementationEvidenceUserInput": control.implementationEvidenceUserInput
+                    })}
+                    />
+                    {option.label}
+                  </label>
+                );
+              })
+            }
+          </div>
+          <div>
+            {
+              evalution_rating_options.map((option, optionIndex) => {
+                return (
+                  <label key={`evalution_rating_optionlabel_${controlKey}_${optionIndex}`}>
+                    <input
+                      type="radio"
+                      key={`evalution_rating_radiobutton_${controlKey}_${optionIndex}`}
+                      name={`evalution_rating_${controlKey}`}
+                      value={option.value}
+                      defaultChecked={control.evalutionRating === option.value}
+                      disabled={!this.state.isCVATaskEditable}
+                      onClick={() => this.props.dispatchUpdateControlValidationQuestionDataAction({
+                        "selectedOption": control.selectedOption,
+                        "evalutionRating": option.value,
+                        "controlID":control.id,
+                        "componentID":component.id,
+                        "productAspect":component.productAspect,
+                        "implementationEvidenceUserInput": control.implementationEvidenceUserInput
+                    })}
+                    />
+                    {option.label}
+                  </label>
+                );
+              })
+            }
+          </div>
         </div>
 
-        <div className="col-10">
+        <div className="col-7">
           <label key={control.id}>
             <strong>{control.name}</strong>
           </label>
@@ -345,6 +390,7 @@ class ControlValidationAuditContainer extends Component<Props, State> {
             updateEvidenceTextareaData={
               (value) => this.props.dispatchUpdateControlValidationQuestionDataAction({
                 "selectedOption": control.selectedOption,
+                "evalutionRating": control.evalutionRating,
                 "controlID":control.id,
                 "componentID":component.id,
                 "productAspect":component.productAspect,

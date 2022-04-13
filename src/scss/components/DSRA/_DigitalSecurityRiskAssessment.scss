@@ -184,4 +184,21 @@
       }
     }
   }
+
+  .ellipse {
+    height: 7px;
+    width: 7px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 9px;
+  }
+
+  .threshold-name {
+    display: inline-block;
+    width: 100px;
+  }
+
+  .td-padding-left {
+    padding-left: 25px;
+  }
 }

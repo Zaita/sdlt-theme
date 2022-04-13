@@ -30,6 +30,7 @@ export function controlValidationAuditState(state: ControlValidationAuditState =
 
   if (action.type === ActionType.CVA.UPDATE_CONTROL_VALIDATION_AUDIT_DATA) {
     const selectedOption = action.payload.selectedOption;
+    const evalutionRating = action.payload.evalutionRating;
     const productAspect = action.payload.productAspect;
     const controlID = action.payload.controlID;
     const componentID = action.payload.componentID;
@@ -47,6 +48,7 @@ export function controlValidationAuditState(state: ControlValidationAuditState =
       const control = selectedcomponent[0].controls.filter((control) => control.id == controlID);
       if(control.length> 0) {
         control[0].selectedOption = selectedOption;
+        control[0].evalutionRating = evalutionRating;
         control[0].implementationEvidenceUserInput = implementationEvidenceUserInput;
         return {
           ...state,

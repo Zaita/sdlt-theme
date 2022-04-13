@@ -70,6 +70,7 @@ export function saveControlValidationAuditData(uuid: string, controlData?: objec
 
 export function updateControlValidationAuditData(args: {
   selectedOption: string,
+  evalutionRating: string,
   controlID: string,
   componentID: string,
   productAspect: string,
