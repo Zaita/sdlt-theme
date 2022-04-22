@@ -58,8 +58,9 @@ query {
     if (!Array.isArray(selectedControlsJSONArray)) {
       selectedControlsJSONArray = [];
     }
-
+    console.log(get(submissionJSONObject, 'SecurityRiskAssessmentData', ''));
     const securityRiskAssessmentData = JSON.parse(get(submissionJSONObject, 'SecurityRiskAssessmentData', ''));
+
     const selectedControls = selectedControlsJSONArray.length > 0 ? SecurityComponentParser.parseCVAFromJSONObject(selectedControlsJSONArray) : selectedControlsJSONArray;
     const data: TaskSubmission = {
       uuid: submissionJSONObject && submissionJSONObject.UUID ? submissionJSONObject.UUID : '',
