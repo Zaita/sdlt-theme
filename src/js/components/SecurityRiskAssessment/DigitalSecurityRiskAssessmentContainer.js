@@ -51,10 +51,7 @@ const mapDispatchToProps = (dispatch: Dispatch, props: *) => {
       dispatch(loadImpactThreshold());
     },
     dispatchSaveAction(uuid: string, secureToken?: string | null, questionnaireUUID: string, component:string) {
-      //dispatch(completeTaskSubmission({ 'taskSubmissionUUID': uuid, 'secureToken': secureToken, 'questionnaireUUID': questionnaireUUID, 'component': component }));
-    },
-    dispatchFinaliseAction(uuid: string, secureToken?: string | null, questionnaireUUID) {
-      dispatch(completeTaskSubmission({ 'taskSubmissionUUID': uuid, 'secureToken': secureToken, 'questionnaireUUID': questionnaireUUID }));
+      dispatch(completeTaskSubmission({ 'taskSubmissionUUID': uuid, 'secureToken': secureToken, 'questionnaireUUID': questionnaireUUID, 'component': component }));
     }
   };
 };
@@ -89,15 +86,26 @@ class DigitalSecurityRiskAssessmentContainer extends Component<Props> {
     this.setState({ showModal: false });
   };
 
-  renderSubmitModal(questionnaireSubmissionProductName, selectedControls) {
-    const { uuid, dispatchSaveAction, secureToken, component, securityRiskAssessmentData } = { ...this.props };
-    const productName = questionnaireSubmissionProductName;
-    const controls = selectedControls[0].controls;
+  handleSubmit= () => {
+    const {
+      uuid, dispatchSaveAction, secureToken, component, securityRiskAssessmentData
+    } = { ...this.props };
+    dispatchSaveAction(uuid, secureToken, securityRiskAssessmentData.questionnaireSubmissionUUID, component)
+    this.setState({ showModal: false });
+  };
 
-    // NOTE: Verify once #90527 saving controls on the board has been implemented
-    const numberOfControlsInNotImplementedCol = controls.filter(
-      (control) => control.selectedOption === "Intended"
-    ).length;
+  renderSubmitModal(questionnaireSubmissionProductName, selectedControls) {
+    const productName = questionnaireSubmissionProductName;
+    let numberOfControlsInNotImplementedCol = 0;
+
+    if (selectedControls.length) {
+      const controls = selectedControls[0].controls;
+
+      // NOTE: Verify once #90527 saving controls on the board has been implemented
+      numberOfControlsInNotImplementedCol = controls.filter(
+        (control) => control.selectedOption === "Intended"
+      ).length;
+    }
 
     return (
       <ReactModal
@@ -118,21 +126,15 @@ class DigitalSecurityRiskAssessmentContainer extends Component<Props> {
         </div>
         <div className="content">
           <p>
-            You are about to submit the security risk assessment for
+            You are about to submit the security risk assessment for&nbsp;
             {productName ? productName : "Product"}.
           </p>
-          {numberOfControlsInNotImplementedCol === 1 && (
+          {numberOfControlsInNotImplementedCol >= 1 && (
             <p>
-              You still have {numberOfControlsInNotImplementedCol} control
-              that has not been implemented. You will not be able to make
-              any changes once you submit.
-            </p>
-          )}
-          {numberOfControlsInNotImplementedCol > 1 && (
-            <p>
-              You still have {numberOfControlsInNotImplementedCol} controls
-              that have not been implemented. You will not be able to make
-              any changes once you submit.
+              You still have {numberOfControlsInNotImplementedCol}&nbsp;
+              {numberOfControlsInNotImplementedCol == 1 ? 'control' : 'controls'}
+               &nbsp;that {numberOfControlsInNotImplementedCol == 1 ? 'has' : 'have'}
+               &nbsp;not been implemented. You will not be able to make any changes once you submit.
             </p>
           )}
           <p className="confirmation-message">
@@ -148,7 +150,7 @@ class DigitalSecurityRiskAssessmentContainer extends Component<Props> {
           <DarkButton
             title="Yes, continue to submit"
             classes={["confirm-submission-button"]}
-            onClick={dispatchSaveAction(uuid, secureToken, securityRiskAssessmentData.questionnaireSubmissionUUID, component)}
+            onClick={this.handleSubmit}
           />
         </div>
       </ReactModal>

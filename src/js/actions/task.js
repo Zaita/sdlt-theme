@@ -278,9 +278,10 @@ export function completeTaskSubmission(args: {
           component
         });
 
-        await dispatch(loadTaskSubmission({uuid, secureToken, component}));
         if(questionnaireUUID !== undefined) {
           URLUtil.redirectToQuestionnaireSummary(questionnaireUUID, secureToken)
+        } else {
+          await dispatch(loadTaskSubmission({uuid, secureToken, component}));
         }
       } catch (error) {
         ErrorUtil.displayError(error);
