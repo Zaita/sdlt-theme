@@ -59,11 +59,11 @@ class RiskAssessmentTableContainer extends Component<Props> {
 
   renderTableBody() {
     const {
-      calculatedSRAData
-    } = {...this.props.sraData};
+      sraData
+    } = {...this.props};
 
     return (
-      calculatedSRAData.map((risk, index) =>{
+      sraData.map((risk, index) =>{
         return (
           <tr key={index}>
             <td>{risk.riskName}</td>

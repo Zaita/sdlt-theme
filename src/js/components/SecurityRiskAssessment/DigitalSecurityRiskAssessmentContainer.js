@@ -30,6 +30,8 @@ import SecurityRiskAssessmentUtil from "../../utils/SecurityRiskAssessmentUtil";
 import { SubmissionExpired } from "../Common/SubmissionExpired";
 import BackArrow from "../../../img/icons/back-arrow.svg";
 import ControlBoard from "../SecurityRiskAssessment/ControlBoard/ControlBoard";
+import ReactModal from "react-modal";
+import CloseIcon from "../../../img/icons/close.svg";
 
 const mapStateToProps = (state: RootState) => {
   return {
@@ -47,6 +49,9 @@ const mapDispatchToProps = (dispatch: Dispatch, props: *) => {
       dispatch(loadSiteConfig());
       dispatch(loadSecurityRiskAssessment({ uuid, secureToken, component }));
       dispatch(loadImpactThreshold());
+    },
+    dispatchSaveAction(uuid: string, secureToken?: string | null, questionnaireUUID: string, component:string) {
+      //dispatch(completeTaskSubmission({ 'taskSubmissionUUID': uuid, 'secureToken': secureToken, 'questionnaireUUID': questionnaireUUID, 'component': component }));
     },
     dispatchFinaliseAction(uuid: string, secureToken?: string | null, questionnaireUUID) {
       dispatch(completeTaskSubmission({ 'taskSubmissionUUID': uuid, 'secureToken': secureToken, 'questionnaireUUID': questionnaireUUID }));
@@ -68,8 +73,86 @@ type Props = {
 
 class DigitalSecurityRiskAssessmentContainer extends Component<Props> {
   componentDidMount() {
-    const { uuid, dispatchLoadDataAction, secureToken, component} = { ...this.props };
+    const { uuid, dispatchLoadDataAction, secureToken, component } = { ...this.props };
     dispatchLoadDataAction(uuid, secureToken, component);
+  }
+
+  state = {
+    showModal: false,
+  };
+
+  handleOpenSubmitModal = () => {
+    this.setState({ showModal: true });
+  };
+
+  handleCloseSubmitModal = () => {
+    this.setState({ showModal: false });
+  };
+
+  renderSubmitModal(questionnaireSubmissionProductName, selectedControls) {
+    const { uuid, dispatchSaveAction, secureToken, component, securityRiskAssessmentData } = { ...this.props };
+    const productName = questionnaireSubmissionProductName;
+    const controls = selectedControls[0].controls;
+
+    // NOTE: Verify once #90527 saving controls on the board has been implemented
+    const numberOfControlsInNotImplementedCol = controls.filter(
+      (control) => control.selectedOption === "Intended"
+    ).length;
+
+    return (
+      <ReactModal
+        portalClassName="submit-modal"
+        isOpen={this.state.showModal}
+        ariaHideApp={false}
+        parentSelector={() => {
+          return document.querySelector(".SecurityRiskAssessmentContainer");
+        }}
+      >
+        <div className="modal-header">
+          <span className="header-title">
+            <h1>Confirm submission</h1>
+          </span>
+          <div className="close-icon-container" onClick={this.handleCloseSubmitModal}>
+            <img src={CloseIcon} />
+          </div>
+        </div>
+        <div className="content">
+          <p>
+            You are about to submit the security risk assessment for
+            {productName ? productName : "Product"}.
+          </p>
+          {numberOfControlsInNotImplementedCol === 1 && (
+            <p>
+              You still have {numberOfControlsInNotImplementedCol} control
+              that has not been implemented. You will not be able to make
+              any changes once you submit.
+            </p>
+          )}
+          {numberOfControlsInNotImplementedCol > 1 && (
+            <p>
+              You still have {numberOfControlsInNotImplementedCol} controls
+              that have not been implemented. You will not be able to make
+              any changes once you submit.
+            </p>
+          )}
+          <p className="confirmation-message">
+            Are you sure you wish to continue?
+          </p>
+        </div>
+        <div className="button-container">
+          <LightButton
+            title="No, don't submit"
+            classes={["mr-3 confirm-submission-button"]}
+            onClick={this.handleCloseSubmitModal}
+          />
+          <DarkButton
+            title="Yes, continue to submit"
+            classes={["confirm-submission-button"]}
+            onClick={dispatchSaveAction(uuid, secureToken, securityRiskAssessmentData.questionnaireSubmissionUUID, component)}
+          />
+        </div>
+      </ReactModal>
+    )
   }
 
   render() {
@@ -103,7 +186,8 @@ class DigitalSecurityRiskAssessmentContainer extends Component<Props> {
       sraTaskNotImplementedInformationText,
       sraTaskPlannedInformationText,
       sraTaskImplementedInformationText,
-      selectedControls
+      selectedControls,
+      questionnaireSubmissionProductName
     } = { ...securityRiskAssessmentData };
 
     const isSRATaskFinalised = SecurityRiskAssessmentUtil.isSRATaskFinalised(taskSubmissions);
@@ -198,13 +282,22 @@ class DigitalSecurityRiskAssessmentContainer extends Component<Props> {
                     <span>Note: Changes are automatically saved</span>
                   </div>
                   <div className="button-container">
-                    <LightButton classes={["button"]} title="Exit" onClick={() => {
-                      URLUtil.redirectToQuestionnaireSummary(questionnaireSubmissionUUID, secureToken);
-                    }} />
-                    <DarkButton classes={["button button-submit"]} title="Submit" />
+                    <LightButton
+                      classes={["button"]}
+                      title="Save and exit"
+                      onClick={() => {
+                        URLUtil.redirectToQuestionnaireSummary(questionnaireSubmissionUUID, secureToken);
+                      }}
+                    />
+                    <DarkButton
+                      classes={["button button-submit"]}
+                      title="Submit"
+                      onClick={() => this.handleOpenSubmitModal()}
+                    />
                   </div>
                 </div>
               </div>
+              {this.renderSubmitModal(questionnaireSubmissionProductName, selectedControls)}
             </div>
           )
         }
