@@ -103,12 +103,15 @@ class DigitalSecurityRiskAssessmentContainer extends Component<Props> {
     let numberOfControlsInNotImplementedCol = 0;
 
     if (selectedControls.length) {
-      const controls = selectedControls[0].controls;
+      const controls = selectedControls.filter(
+        (obj) => obj.productAspect === this.props.component
+      )[0].controls;
 
-      // NOTE: Verify once #90527 saving controls on the board has been implemented
-      numberOfControlsInNotImplementedCol = controls.filter(
-        (control) => control.selectedOption === "Intended"
-      ).length;
+      if (controls.length) {
+        numberOfControlsInNotImplementedCol = controls.filter(
+          (control) => control.selectedOption === "Intended"
+        ).length;
+      }
     }
 
     return (
