@@ -103,12 +103,12 @@ class DigitalSecurityRiskAssessmentContainer extends Component<Props> {
     let numberOfControlsInNotImplementedCol = 0;
 
     if (selectedControls.length) {
-      const controls = selectedControls.filter(
+      const result = selectedControls.filter(
         (obj) => obj.productAspect === this.props.component
-      )[0].controls;
+      );
 
-      if (controls.length) {
-        numberOfControlsInNotImplementedCol = controls.filter(
+      if (result.length) {
+        numberOfControlsInNotImplementedCol = result[0].controls.filter(
           (control) => control.selectedOption === "Intended"
         ).length;
       }
@@ -289,6 +289,7 @@ class DigitalSecurityRiskAssessmentContainer extends Component<Props> {
                   plannedInformationText={sraTaskPlannedInformationText}
                   implementedInformationText={sraTaskImplementedInformationText}
                   selectedControls={selectedControls}
+                  key={selectedControls.length > 0 ? `${selectedControls[0].id} ${selectedControls[0].name} ${selectedControls[0].productAspect}` : ''}
                   dispatchUpdateCVAControlStatus={(selectedOptionDetail) => {
                     dispatchUpdateCVAControlStatus(selectedOptionDetail);
                   }}
