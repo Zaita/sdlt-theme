@@ -1,4 +1,11 @@
-const initialData = {
+import {
+  CTL_STATUS_1,
+  CTL_STATUS_2,
+  CTL_STATUS_3,
+  CTL_STATUS_4,
+} from '../../../../constants/values.js';
+
+export const initialData = {
   columns: {
     'column-1': {
       id: 'column-1',
@@ -24,6 +31,13 @@ const initialData = {
   columnOrder: ['column-1', 'column-2', 'column-3', 'column-4'],
 }
 
+export const selectedOptionData = {
+  'Not applicable': CTL_STATUS_3,
+  'Not implemented': CTL_STATUS_2,
+  'Planned': CTL_STATUS_4,
+  'Implemented': CTL_STATUS_1
+};
+
 // controls dummy data example
   // controls: {
   //   'control-1': { id: 'control-1', title: 'Input validation and sanitisation', riskCategories: ['Information Disclosure', 'Information Disclosure', 'Information Disclosure'], keyControl: true, evidenceAdded: false, evidenceRating: 'Not Validated' },
@@ -37,6 +51,3 @@ const initialData = {
   //   'control-9': { id: 'control-9', title: 'Separation of duties', riskCategories: ['Information Disclosure', 'Information Disclosure', 'Information Disclosure'], keyControl: true, evidenceAdded: false, evidenceRating: 'Not Effective' },
   //   'control-10': { id: 'control-10', title: 'Disaster recovery plan', riskCategories: ['Information Loss', 'Information Loss'], keyControl: true, evidenceAdded: false, evidenceRating: 'Partially Effective' }
   // }
-
-export default initialData
-
