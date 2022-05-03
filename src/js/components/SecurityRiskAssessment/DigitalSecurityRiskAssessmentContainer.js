@@ -14,11 +14,10 @@ import RiskRatingThresholdContainer from "./RiskRatingThresholdContainer";
 import type { User } from "../../types/User";
 import {
   loadSecurityRiskAssessment,
-  loadImpactThreshold
+  loadImpactThreshold,
+  updateControlValidationAuditData
 } from "../../actions/securityRiskAssessment";
-import {
-  completeTaskSubmission
-} from "../../actions/task";
+import { completeTaskSubmission } from "../../actions/task";
 import type { SecurityRiskAssessment } from "../../types/Task";
 import URLUtil from "../../utils/URLUtil";
 import LightButton from "../Button/LightButton";
@@ -52,6 +51,10 @@ const mapDispatchToProps = (dispatch: Dispatch, props: *) => {
     },
     dispatchSaveAction(uuid: string, secureToken?: string | null, questionnaireUUID: string, component:string) {
       dispatch(completeTaskSubmission({ 'taskSubmissionUUID': uuid, 'secureToken': secureToken, 'questionnaireUUID': questionnaireUUID, 'component': component }));
+    },
+    // update the selectedOption when control cards are moved
+    dispatchUpdateCVAControlStatus(selectedOptionDetail: object) {
+      dispatch(updateControlValidationAuditData(selectedOptionDetail));
     }
   };
 };
@@ -66,6 +69,7 @@ type Props = {
   securityRiskAssessmentData?: SecurityRiskAssessment | null,
   dispatchLoadDataAction?: (uuid: string, secureToken: string, component: string) => void,
   dispatchFinaliseAction?: (uuid: string, secureToken: string) => void,
+  dispatchUpdateCVAControlStatus?: (selectedOptionDetail: object) => void,
 };
 
 class DigitalSecurityRiskAssessmentContainer extends Component<Props> {
@@ -164,7 +168,8 @@ class DigitalSecurityRiskAssessmentContainer extends Component<Props> {
       securityRiskAssessmentData,
       secureToken,
       impactThresholdData,
-      component
+      component,
+      dispatchUpdateCVAControlStatus
     } = { ...this.props };
 
     if (!currentUser || !siteConfig || !securityRiskAssessmentData) {
@@ -191,6 +196,11 @@ class DigitalSecurityRiskAssessmentContainer extends Component<Props> {
       selectedControls,
       questionnaireSubmissionProductName
     } = { ...securityRiskAssessmentData };
+
+    const cvaTaskSubmission = taskSubmissions.filter((taskSubmission) => {
+      return taskSubmission.taskType === "control validation audit";
+    });
+    const cvaTaskSubmissionUUID = cvaTaskSubmission[0].uuid;
 
     const isSRATaskFinalised = SecurityRiskAssessmentUtil.isSRATaskFinalised(taskSubmissions);
     const isSiblingTaskPending = SecurityRiskAssessmentUtil.isSiblingTaskPending(taskSubmissions);
@@ -276,6 +286,10 @@ class DigitalSecurityRiskAssessmentContainer extends Component<Props> {
                   plannedInformationText={sraTaskPlannedInformationText}
                   implementedInformationText={sraTaskImplementedInformationText}
                   selectedControls={selectedControls}
+                  dispatchUpdateCVAControlStatus={(selectedOptionDetail) => {
+                    dispatchUpdateCVAControlStatus(selectedOptionDetail);
+                  }}
+                  cvaTaskSubmissionUUID={cvaTaskSubmissionUUID}
                 />
               </div>
               <div className="bottom-container">

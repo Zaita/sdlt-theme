@@ -61,7 +61,6 @@ query {
     }
 
     const securityRiskAssessmentData = JSON.parse(get(submissionJSONObject, 'SecurityRiskAssessmentData', ''));
-
     const selectedControls = selectedControlsJSONArray.length > 0 ? SecurityComponentParser.parseCVAFromJSONObject(selectedControlsJSONArray) : selectedControlsJSONArray;
     const data: TaskSubmission = {
       uuid: submissionJSONObject && submissionJSONObject.UUID ? submissionJSONObject.UUID : '',
@@ -114,6 +113,39 @@ query {
         value: _.toString(_.get(impactThreshold, "Value", "")),
       }
     });
+
+    return data;
+  }
+
+  static async updateCVAControlStatus(args, csrfToken): Promise {
+    const {componentID, controlID, productAspect, selectedOption, uuid} = {...args};
+    let query = `
+    mutation {
+      updateControlValidationAuditControlStatus(UUID: "${uuid}", ComponentID: "${componentID}", ControlID: "${controlID}", ProductAspect: "${productAspect}", SelectedOption: "${selectedOption}") {
+        UUID
+        SelectedControls
+        SecurityRiskAssessmentData
+      }
+    }`;
+
+    const responseJSONObject = await GraphQLRequestHelper.request({query, csrfToken});
+    const submissionJSONObject = get(responseJSONObject, "data.updateControlValidationAuditControlStatus", null);
+    if (!submissionJSONObject) {
+      throw DEFAULT_NETWORK_ERROR;
+    }
+
+    let selectedControlsJSONArray = JSON.parse(get(submissionJSONObject, "SelectedControls", "[]"));
+    if (!Array.isArray(selectedControlsJSONArray)) {
+      selectedControlsJSONArray = [];
+    }
+    const selectedControls = selectedControlsJSONArray.length > 0 ?
+      SecurityComponentParser.parseCVAFromJSONObject(selectedControlsJSONArray) : selectedControlsJSONArray;
+    const securityRiskAssessmentData = JSON.parse(get(submissionJSONObject, 'SecurityRiskAssessmentData', ''));
+
+    const data = {
+      sraData: securityRiskAssessmentData,
+      selectedControls: selectedControls
+    };
 
     return data;
   }

@@ -1,40 +1,36 @@
 // @flow
 import React, { Component } from 'react';
 import { DragDropContext } from 'react-beautiful-dnd';
-import data from './data/index';
+import { initialData, selectedOptionData } from './data/index';
 import Column from './Column';
 import BoardFilters from './BoardFilters/BoardFilters';
+import { Alert, AlertTitle } from '@material-ui/lab';
+import { cloneDeep } from 'lodash';
 
 type Props = {
   notApplicableInformationText: string,
   notImplementedInformationText: string,
   plannedInformationText: string,
-  implementedInformationText: string
+  implementedInformationText: string,
+  dispatchUpdateCVAControlStatus?: (selectedOptionDetail: object) => void
 }
 
 export default class Board extends Component<Props> {
-  componentDidMount() {
-    const controls = this.addControlsToState();
-    this.setState({ controls: controls });
+  state = {
+    controls: [],
+    columns: initialData.columns,
+    columnOrder: initialData.columnOrder,
+    showNotApplicable: true,
+    message: null
   }
 
-  // update state on page reload
-  componentDidUpdate(prevProps) {
-    if (this.props.selectedControls !== prevProps.selectedControls) {
-      const controls = this.addControlsToState();
-      this.setState({ controls: controls });
-    }
+  componentDidMount() {
+    const controls = this.addControlsToState();
+    this.setState({ controls });
   }
 
   toggleNotApplicable = clickEvent => {
-    this.setState({showNotApplicable: clickEvent.target.checked})
-  }
-
-  state = {
-    controls: [],
-    columns: data.columns,
-    columnOrder: data.columnOrder,
-    showNotApplicable: true
+    this.setState({ showNotApplicable: clickEvent.target.checked })
   }
 
   onDragEnd = (result) => {
@@ -51,6 +47,13 @@ export default class Board extends Component<Props> {
 
     const start = this.state.columns[source.droppableId];
     const finish = this.state.columns[destination.droppableId];
+
+    this.state.message = {
+      severity:'success',
+      icon: '',
+      title:'Changes applied.',
+      text:'Your likelihood and impact scores have been updated.'
+    }
 
     if (start === finish) {
       const newControlIds = Array.from(start.controlIds);
@@ -107,6 +110,18 @@ export default class Board extends Component<Props> {
     };
 
     this.setState(newState);
+
+    // save control with updated selected option in the atabase
+    const { cvaTaskSubmissionUUID, selectedControls } = this.props;
+    const controlID = draggableId.split('_');
+
+    this.props.dispatchUpdateCVAControlStatus({
+      "selectedOption": selectedOptionData[finish.title],
+      "controlID": controlID[2],
+      "componentID": selectedControls[0].id,
+      "productAspect": selectedControls[0].productAspect,
+      "uuid": cvaTaskSubmissionUUID
+    })
   };
 
 
@@ -130,26 +145,26 @@ export default class Board extends Component<Props> {
       }
     })
 
-    this.setControlsNotImplementedColumn(controls);
+    this.addControlsToColumns(controls);
 
     return controls;
   }
 
-  setControlsNotImplementedColumn(controls) {
-    const controlIds = [];
-    const columns = { ...this.state.columns };
-
-    Object.entries(controls).map((control) => {
-      controlIds.push(control[0]);
-    });
+  addControlsToColumns(controls) {
+    const columns = cloneDeep(this.state.columns);
 
     this.state.columnOrder.map((columnId) => {
       const column = columns[columnId];
-      if (column.title === "Not implemented") {
-        column.controlIds = controlIds;
-        this.setState({ columns });
-      }
-    });
+      const columnControlIdsArray = column.controlIds;
+
+      Object.entries(controls).map((control) => {
+        if (control[1].selectedOption === selectedOptionData[column.title]) {
+          columnControlIdsArray.push(control[0]);
+        }
+      });
+    })
+
+    this.setState({ columns });
   }
 
   render() {
@@ -163,21 +178,28 @@ export default class Board extends Component<Props> {
     return (
       <>
         <BoardFilters toggleNotApplicable={this.toggleNotApplicable}/>
+        {this.state.message ? (
+            <Alert severity={this.state.message.severity}>
+              <AlertTitle>{this.state.message.title}</AlertTitle>
+              {this.state.message.text}
+            </Alert>
+          ) : null
+        }
         <DragDropContext onDragEnd={this.onDragEnd}>
           <div className="control-board-container">
             {this.state.columnOrder.map((columnId) => {
               let hideColumn;
               const column = this.state.columns[columnId];
 
-              const controls = column.controlIds.map((controlId) => {
-                return { ...this.state.controls[controlId] };
-              });
-
               if (!this.state.showNotApplicable && column.title == 'Not applicable') {
                 hideColumn = true;
               } else {
                 hideColumn = false;
               }
+
+              const controls = column.controlIds.map((controlId) => {
+                return { ...this.state.controls[controlId] };
+              });
 
               return (
                 <div
