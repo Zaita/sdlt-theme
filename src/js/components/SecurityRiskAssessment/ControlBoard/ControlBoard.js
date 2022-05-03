@@ -6,6 +6,8 @@ import Column from './Column';
 import BoardFilters from './BoardFilters/BoardFilters';
 import { Alert, AlertTitle } from '@material-ui/lab';
 import { cloneDeep } from 'lodash';
+import { Snackbar } from '@material-ui/core';
+import CheckCircle from '@material-ui/icons/CheckCircle';
 
 type Props = {
   notApplicableInformationText: string,
@@ -49,10 +51,15 @@ export default class Board extends Component<Props> {
     const finish = this.state.columns[destination.droppableId];
 
     this.state.message = {
+      open: true,
       severity:'success',
       icon: '',
       title:'Changes applied.',
-      text:'Your likelihood and impact scores have been updated.'
+      text:'Your likelihood and impact scores have been updated.',
+      anchorOrigin: {
+        vertical: 'top',
+        horizontal: 'center',
+      },
     }
 
     if (start === finish) {
@@ -179,10 +186,20 @@ export default class Board extends Component<Props> {
       <>
         <BoardFilters toggleNotApplicable={this.toggleNotApplicable}/>
         {this.state.message ? (
-            <Alert severity={this.state.message.severity}>
+          <Snackbar
+          anchorOrigin={{
+            vertical: 'top',
+            horizontal: 'center',
+          }}
+          open={this.state.message.open}
+          autoHideDuration={5000}
+          onClose={() => this.setState({ message: null })}
+        >
+            <Alert style={{width: '40vw'}} icon={<CheckCircle style={{ color: '#579a36' }}/>}>
               <AlertTitle>{this.state.message.title}</AlertTitle>
               {this.state.message.text}
             </Alert>
+            </Snackbar>
           ) : null
         }
         <DragDropContext onDragEnd={this.onDragEnd}>
