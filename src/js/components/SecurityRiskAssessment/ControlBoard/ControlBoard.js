@@ -15,6 +15,7 @@ type Props = {
   notImplementedInformationText: string,
   plannedInformationText: string,
   implementedInformationText: string,
+  productAspect: string,
   dispatchUpdateCVAControlStatus?: (selectedOptionDetail: object) => void
 }
 
@@ -119,38 +120,44 @@ export default class Board extends Component<Props> {
 
     this.setState(newState);
 
-    // save control with updated selected option in the atabase
-    const { cvaTaskSubmissionUUID, selectedControls } = this.props;
-    const controlID = draggableId.split('_');
+    // save control with updated selected option in the database
+    const { cvaTaskSubmissionUUID, productAspect } = this.props;
+    const regx = /{\d*}/g;
+    const idArray = draggableId.match(regx);
 
     this.props.dispatchUpdateCVAControlStatus({
       "selectedOption": selectedOptionData[finish.title],
-      "controlID": controlID[2],
-      "componentID": selectedControls[0].id,
-      "productAspect": selectedControls[0].productAspect,
+      "controlID": (idArray[1].match(/\d+/g)).pop(),
+      "componentID": (idArray[0].match(/\d+/g)).pop(),
+      "productAspect": productAspect,
       "uuid": cvaTaskSubmissionUUID
     })
   };
 
 
   addControlsToState() {
-    if (this.props.selectedControls.length === 0) {
+    if (!this.props.selectedControls.length) {
       return;
     }
 
-    const securityComponentName = this.props.selectedControls[0].name;
-    const selectedControls = this.props.selectedControls[0].controls;
     let controls = [];
 
-    selectedControls.map(({id, ...control}) => {
-      let key = securityComponentName + "_" + control.name + "_" + id;
-      controls = {
-        ...controls,
-        [key]: {
-          id: key,
-          ...control
+    this.props.selectedControls.map((securityComponentObj) => {
+      const securityComponentName = securityComponentObj.name;
+      const controlsArray = securityComponentObj.controls;
+
+      controlsArray.map(({id, ...control}) => {
+        const uniqeKey = securityComponentName + "-{" + securityComponentObj.id + "}_"
+          + control.name + "-{" + id + "}";
+        const key = uniqeKey.replace(/ /g,"_");
+        controls = {
+          ...controls,
+          [key]: {
+            id: key,
+            ...control
+          }
         }
-      }
+      });
     })
 
     this.addControlsToColumns(controls);

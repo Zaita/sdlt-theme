@@ -284,6 +284,7 @@ class DigitalSecurityRiskAssessmentContainer extends Component<Props> {
               </div>
               <div className="security-risk-assessment-control-board">
                 <ControlBoard
+                  productAspect={this.props.component}
                   notApplicableInformationText={sraTaskNotApplicableInformationText}
                   notImplementedInformationText={sraTaskNotImplementedInformationText}
                   plannedInformationText={sraTaskPlannedInformationText}
