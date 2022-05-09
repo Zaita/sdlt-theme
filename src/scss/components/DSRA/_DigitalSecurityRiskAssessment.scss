@@ -250,4 +250,24 @@
   .td-padding-left {
     padding-left: 25px;
   }
+
+  .positive-red {
+    color: $dark-red;
+    background: #FAE5E5;
+  }
+
+  .negative-green {
+    color: #447529;
+    background: #E8F5E0;
+  }
+
+  .score-difference {
+    padding: 3px 5px 2px;
+    display: inline-block;
+    border-radius: 3px;
+    margin-left: 15px;
+    font-weight: 700;
+    font-weight: bolder;
+    font-style: italic;
+  }
 }

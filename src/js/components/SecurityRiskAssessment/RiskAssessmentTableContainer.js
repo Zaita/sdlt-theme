@@ -86,6 +86,15 @@ class RiskAssessmentTableContainer extends Component<Props> {
               <span>
                 <b>{risk.riskDetail.currentLikelihood.score}</b> / {risk.riskDetail.MaxLikelihoodPenalty}
               </span>
+              {
+                risk.differenceBetweenLikelihoodScore &&
+                (<span className={risk.differenceBetweenLikelihoodScore > 0 ? "score-difference positive-red" : "score-difference negative-green"}>
+                  {
+                    risk.differenceBetweenLikelihoodScore > 0 ?
+                   `+ ${risk.differenceBetweenLikelihoodScore}` : `- ${risk.differenceBetweenLikelihoodScore * -1}`
+                  }
+                </span>)
+              }
             </td>
             <td>
               <span className="ellipse" style={{
@@ -95,6 +104,15 @@ class RiskAssessmentTableContainer extends Component<Props> {
               <span>
                 <b>{risk.riskDetail.currentImpact.score}</b> / {risk.riskDetail.MaxImpactPenalty}
               </span>
+              {
+                risk.differenceBetweenImapctScore &&
+                (<span className={risk.differenceBetweenImapctScore > 0 ? "score-difference positive-red" : "score-difference negative-green"}>
+                {
+                  risk.differenceBetweenImapctScore > 0 ?
+                 `+ ${risk.differenceBetweenImapctScore}` : `- ${risk.differenceBetweenImapctScore * -1}`
+                }
+                </span>)
+            }
             </td>
           </tr>
         )

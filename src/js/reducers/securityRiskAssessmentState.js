@@ -28,11 +28,33 @@ export function securityRiskAssessmentState(state: SecurityRiskAssessmentState =
 
   if (action.type === ActionType.SRA.UPDATE_CVA_CONTROL_STATUS) {
     const selectedControls = action.payload.selectedControls;
-    const sraData = action.payload.sraData;
+    const newSraData = action.payload.sraData;
+    const oldSraData = state.securityRiskAssessmentData.sraData;
     const securityRiskAssessmentDataCopy = cloneDeep(state.securityRiskAssessmentData);
 
+    newSraData.map ((newRiskDetailobj, index) => {
+      const oldRiskDetailObj = oldSraData.filter(
+        (oldObj) => oldObj.riskId === newRiskDetailobj.riskId
+      ).pop();
+      let differenceBetweenLikelihoodScore = 0;
+      let differenceBetweenImapctScore = 0;
+
+      if (oldRiskDetailObj) {
+        differenceBetweenLikelihoodScore =
+          newRiskDetailobj.riskDetail.currentLikelihood.score -
+          oldRiskDetailObj.riskDetail.currentLikelihood.score;
+        differenceBetweenImapctScore =
+          newRiskDetailobj.riskDetail.currentImpact.score -
+          oldRiskDetailObj.riskDetail.currentImpact.score;
+      }
+
+      newRiskDetailobj.differenceBetweenLikelihoodScore = differenceBetweenLikelihoodScore;
+      newRiskDetailobj.differenceBetweenImapctScore = differenceBetweenImapctScore;
+      newSraData[index] = newRiskDetailobj;
+    });
+
     securityRiskAssessmentDataCopy.selectedControls = selectedControls;
-    securityRiskAssessmentDataCopy.sraData = sraData;
+    securityRiskAssessmentDataCopy.sraData = newSraData;
 
     return {
       ...state,
