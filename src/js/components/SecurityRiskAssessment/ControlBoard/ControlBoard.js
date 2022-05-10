@@ -93,6 +93,7 @@ export default class Board extends Component<Props> {
 
     // check if the location of the draggable element changes.
     if (destination.droppableId === source.droppableId && destination.index === source.index) {
+      this.setState({ isFilteringDisabled: false });
       return;
     }
 
