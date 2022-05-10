@@ -85,8 +85,6 @@ export default class Board extends Component<Props> {
   }
 
   onDragEnd = (result) => {
-    this.setState({ isFilteringDisabled: false });
-
     const { destination, source, draggableId } = result;
 
     if (!destination) {
@@ -138,6 +136,8 @@ export default class Board extends Component<Props> {
       };
 
       this.setState(newState);
+      this.setState({ isFilteringDisabled: false });
+
       return;
     }
 

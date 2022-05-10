@@ -112,7 +112,7 @@
 /******/
 /******/ 	var hotApplyOnUpdate = true;
 /******/ 	// eslint-disable-next-line no-unused-vars
-/******/ 	var hotCurrentHash = "b6a99f143338fb5125b6";
+/******/ 	var hotCurrentHash = "daae165530fc10041427";
 /******/ 	var hotRequestTimeout = 10000;
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule;
@@ -15095,10 +15095,6 @@ function (_Component) {
     _this.onDragEnd = function (result) {
       var _objectSpread3;
 
-      _this.setState({
-        isFilteringDisabled: false
-      });
-
       var destination = result.destination,
           source = result.source,
           draggableId = result.draggableId;
@@ -15144,6 +15140,10 @@ function (_Component) {
         });
 
         _this.setState(_newState);
+
+        _this.setState({
+          isFilteringDisabled: false
+        });
 
         return;
       } //moving from one list to another
