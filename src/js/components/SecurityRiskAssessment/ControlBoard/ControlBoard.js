@@ -25,19 +25,68 @@ export default class Board extends Component<Props> {
     columns: initialData.columns,
     columnOrder: initialData.columnOrder,
     showNotApplicable: true,
-    message: null
+    message: null,
+    isFilteringDisabled: false,
+    searchKeywords: null
   }
 
   componentDidMount() {
-    const controls = this.addControlsToState();
+    const controls = this.getControlsDataset();
+    const columns = this.addControlsToColumns(controls);
     this.setState({ controls });
+    this.setState({ columns });
+  }
+
+  componentDidUpdate(prevProps) {
+    if (this.props.selectedControls !== prevProps.selectedControls) {
+      const controls = this.getControlsDataset();
+      this.setState({ controls });
+    }
   }
 
   toggleNotApplicable = clickEvent => {
-    this.setState({ showNotApplicable: clickEvent.target.checked })
+    this.setState({ showNotApplicable: clickEvent.target.checked });
+  }
+
+  updateSearchKeywords = (event) => {
+    this.setState({ searchKeywords: event.target.value.trim() }, () =>
+      this.handleSearch()
+    );
+  };
+
+  handleSearch = () => {
+    const { searchKeywords } = this.state;
+    const controlsCopy = { ...this.state.controls };
+
+    // reset all column controlIds when search keywords is empty
+    if (searchKeywords === "") {
+      this.setState({ columns: this.addControlsToColumns(controlsCopy) });
+      return;
+    }
+
+    // filter control names by the search keywords
+    const result = Object.fromEntries(
+      Object.entries(controlsCopy).filter((control) =>
+        control[1].name.toLowerCase().includes(searchKeywords.toLowerCase())
+      )
+    );
+
+    // when there are no results, remove all controlIds from columns
+    // else update all column controlIds
+    if (Object.keys(result).length == 0) {
+      this.setState({ columns: initialData.columns });
+    } else {
+      this.updateControlsInColumns(result);
+    }
+  }
+
+  onDragStart = () => {
+    this.setState({ isFilteringDisabled: true });
   }
 
   onDragEnd = (result) => {
+    this.setState({ isFilteringDisabled: false });
+
     const { destination, source, draggableId } = result;
 
     if (!destination) {
@@ -132,10 +181,12 @@ export default class Board extends Component<Props> {
       "productAspect": productAspect,
       "uuid": cvaTaskSubmissionUUID
     })
+
+    this.setState({ isFilteringDisabled: false });
   };
 
 
-  addControlsToState() {
+  getControlsDataset() {
     if (!this.props.selectedControls.length) {
       return;
     }
@@ -160,13 +211,15 @@ export default class Board extends Component<Props> {
       });
     })
 
-    this.addControlsToColumns(controls);
-
     return controls;
   }
 
   addControlsToColumns(controls) {
-    const columns = cloneDeep(this.state.columns);
+    const columns = cloneDeep(initialData.columns);
+
+    if (!controls) {
+      return columns;
+    }
 
     this.state.columnOrder.map((columnId) => {
       const column = columns[columnId];
@@ -176,6 +229,29 @@ export default class Board extends Component<Props> {
         if (control[1].selectedOption === selectedOptionData[column.title]) {
           columnControlIdsArray.push(control[0]);
         }
+      });
+    })
+
+    return columns;
+  }
+
+  updateControlsInColumns(controls) {
+    const controlsCopy = { ...this.state.controls };
+
+    // get unfiltered column data
+    const columns = this.addControlsToColumns(controlsCopy);
+
+    this.state.columnOrder.map((columnId) => {
+      const column = columns[columnId];
+      let columnControlIdsArray = column.controlIds;
+      let updatedControlIds = [];
+
+      Object.entries(controls).map((control) => {
+        if (columnControlIdsArray.includes(control[0])) {
+          updatedControlIds.push(control[0]);
+        }
+
+        column.controlIds = updatedControlIds;
       });
     })
 
@@ -192,7 +268,11 @@ export default class Board extends Component<Props> {
 
     return (
       <>
-        <BoardFilters toggleNotApplicable={this.toggleNotApplicable}/>
+        <BoardFilters
+          toggleNotApplicable={this.toggleNotApplicable}
+          updateSearchKeywords={this.updateSearchKeywords}
+          isFilteringDisabled={this.state.isFilteringDisabled}
+        />
         {this.state.message ? (
           <Snackbar
           anchorOrigin={{
@@ -210,7 +290,7 @@ export default class Board extends Component<Props> {
             </Snackbar>
           ) : null
         }
-        <DragDropContext onDragEnd={this.onDragEnd}>
+        <DragDropContext onDragStart={this.onDragStart} onDragEnd={this.onDragEnd}>
           <div className="control-board-container">
             {this.state.columnOrder.map((columnId) => {
               let hideColumn;

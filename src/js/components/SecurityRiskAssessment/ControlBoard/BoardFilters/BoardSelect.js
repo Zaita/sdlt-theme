@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import { FormLabel, MenuItem, Select } from '@material-ui/core';
 import ChevronIcon from '@material-ui/icons/ChevronRight';
-import { makeStyles } from '@material-ui/core/styles';
 
 export default class BoardSelect extends Component {
 
@@ -17,7 +16,8 @@ export default class BoardSelect extends Component {
   }
 
   render() {
-    const { label, filterParameters, addClass } = this.props
+    const { label, filterParameters, addClass, isFilteringDisabled } = this.props;
+
     return (
       <div className='board-select'>
         <FormLabel className="board-filter-label">{label}</FormLabel>
@@ -41,7 +41,9 @@ export default class BoardSelect extends Component {
           className={addClass === 'sort-by' ? 'board-select-input sort-by' : 'board-select-input'}
           variant="outlined"
           defaultValue={filterParameters[0].title}
-          onChange={this.handleChange}>
+          onChange={this.handleChange}
+          disabled={isFilteringDisabled}
+        >
           {filterParameters.map((parameter) => (
             <MenuItem
               style={{ fontSize: 'small' }}
