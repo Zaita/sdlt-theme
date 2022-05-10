@@ -6,8 +6,13 @@ import { riskCategories, sortBy } from './data';
 
 export default class BoardFilters extends Component {
   render() {
-    const { updateSearchKeywords, isFilteringDisabled, toggleNotApplicable } = this.props;
-    
+    const {
+      updateSearchKeywords,
+      isFilteringDisabled,
+      toggleNotApplicable,
+      updateSelectedRiskCategory
+    } = this.props;
+
     return (
       <div className="board-filters">
         <BoardSearch
@@ -19,6 +24,7 @@ export default class BoardFilters extends Component {
           label={"Risk category"}
           filterParameters={riskCategories}
           isFilteringDisabled={isFilteringDisabled}
+          handleChange={updateSelectedRiskCategory}
         />
         <BoardSelect
           label={"Sort by"}

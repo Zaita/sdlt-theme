@@ -27,7 +27,8 @@ export default class Board extends Component<Props> {
     showNotApplicable: true,
     message: null,
     isFilteringDisabled: false,
-    searchKeywords: null
+    searchKeywords: '',
+    selectedRiskCategory: 'All'
   }
 
   componentDidMount() {
@@ -54,22 +55,45 @@ export default class Board extends Component<Props> {
     );
   };
 
-  handleSearch = () => {
-    const { searchKeywords } = this.state;
-    const controlsCopy = { ...this.state.controls };
+  updateSelectedRiskCategory = (event) => {
+    this.setState({ selectedRiskCategory: event.target.value }, () =>
+      this.handleSearch()
+    );
+  };
 
-    // reset all column controlIds when search keywords is empty
-    if (searchKeywords === "") {
-      this.setState({ columns: this.addControlsToColumns(controlsCopy) });
-      return;
+  filterSelectedRiskCategory = (controlsArray) => {
+    const { selectedRiskCategory } = this.state;
+
+    if (selectedRiskCategory == "All") {
+      return controlsArray;
+    } else {
+      return Object.fromEntries(
+        Object.entries(controlsArray).filter((item) => {
+          const riskCategories = item[1].riskCategories;
+          return riskCategories.some(
+            (riskCategory) =>
+              riskCategory.name.toLowerCase() ===
+              selectedRiskCategory.toLowerCase()
+          );
+        })
+      );
     }
+  };
 
-    // filter control names by the search keywords
-    const result = Object.fromEntries(
-      Object.entries(controlsCopy).filter((control) =>
+  filterSearchKeywords = (controlsArray) => {
+    const { searchKeywords } = this.state;
+
+    return Object.fromEntries(
+      Object.entries(controlsArray).filter((control) =>
         control[1].name.toLowerCase().includes(searchKeywords.toLowerCase())
       )
     );
+  }
+
+  handleSearch = () => {
+    const controlsCopy = { ...this.state.controls };
+    let result = this.filterSearchKeywords(controlsCopy);
+    result = this.filterSelectedRiskCategory(result);
 
     // when there are no results, remove all controlIds from columns
     // else update all column controlIds
@@ -272,6 +296,7 @@ export default class Board extends Component<Props> {
         <BoardFilters
           toggleNotApplicable={this.toggleNotApplicable}
           updateSearchKeywords={this.updateSearchKeywords}
+          updateSelectedRiskCategory={this.updateSelectedRiskCategory}
           isFilteringDisabled={this.state.isFilteringDisabled}
         />
         {this.state.message ? (
