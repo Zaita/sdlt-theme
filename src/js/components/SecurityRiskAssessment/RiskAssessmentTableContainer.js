@@ -9,7 +9,9 @@ type Props = {
   impactScoreThresholds: object,
   impactScoreHelpText: string,
   riskRatingHelpText: string,
-  likelihoodScoreHelpText: string
+  likelihoodScoreHelpText: string,
+  likelihoodRatingThresholds: object,
+  riskRatingThresholds: object
 };
 
 class RiskAssessmentTableContainer extends Component<Props> {
@@ -23,7 +25,9 @@ class RiskAssessmentTableContainer extends Component<Props> {
       impactScoreThresholds,
       impactScoreHelpText,
       riskRatingHelpText,
-      likelihoodScoreHelpText
+      likelihoodScoreHelpText,
+      likelihoodRatingThresholds,
+      riskRatingThresholds
     } = {...this.props};
 
     return (
@@ -34,7 +38,7 @@ class RiskAssessmentTableContainer extends Component<Props> {
           <HelpModalContainer
             title="Current Risk Rating"
             helpText={riskRatingHelpText}
-            riskRatingThresholds={sraData.riskRatingThresholds}
+            riskRatingThresholds={riskRatingThresholds}
           />
         </th>
         <th className="td-padding-left">
@@ -42,7 +46,7 @@ class RiskAssessmentTableContainer extends Component<Props> {
           <HelpModalContainer
             title="Likelihood score"
             helpText={likelihoodScoreHelpText}
-            likelihoodScoreThresholds={sraData.likelihoodThresholds}
+            likelihoodScoreThresholds={likelihoodRatingThresholds}
           />
         </th>
         <th>

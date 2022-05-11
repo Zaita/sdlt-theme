@@ -44,6 +44,8 @@ query {
     Status
     SecurityRiskAssessmentData
     SelectedControls
+    LikelihoodRatingsThresholds
+    RiskRatingThresholdsMatix
   }
 }`;
 
@@ -85,7 +87,9 @@ query {
       isBusinessOwner: get(submissionJSONObject, "QuestionnaireSubmission.IsBusinessOwner", "false") === "true",
       taskSubmissions: TaskParser.parseAlltaskSubmissionforQuestionnaire(submissionJSONObject),
       sraData: securityRiskAssessmentData,
-      selectedControls: selectedControls
+      selectedControls: selectedControls,
+      likelihoodRatingThresholds: JSON.parse(get(submissionJSONObject, 'LikelihoodRatingsThresholds', '')),
+      riskRatingThresholds: JSON.parse(get(submissionJSONObject, 'RiskRatingThresholdsMatix', ''))
     };
 
     return data;

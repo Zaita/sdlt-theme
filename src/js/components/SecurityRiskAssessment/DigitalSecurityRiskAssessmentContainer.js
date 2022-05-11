@@ -197,7 +197,9 @@ class DigitalSecurityRiskAssessmentContainer extends Component<Props> {
       sraTaskPlannedInformationText,
       sraTaskImplementedInformationText,
       selectedControls,
-      questionnaireSubmissionProductName
+      questionnaireSubmissionProductName,
+      likelihoodRatingThresholds,
+      riskRatingThresholds
     } = { ...securityRiskAssessmentData };
 
     const cvaTaskSubmission = taskSubmissions.filter((taskSubmission) => {
@@ -273,6 +275,8 @@ class DigitalSecurityRiskAssessmentContainer extends Component<Props> {
                 <RiskAssessmentTableContainer
                   riskRatingHelpText={sraTaskRiskRatingHelpText}
                   likelihoodScoreHelpText={sraTaskLikelihoodScoreHelpText}
+                  likelihoodRatingThresholds={likelihoodRatingThresholds}
+                  riskRatingThresholds={riskRatingThresholds}
                   sraData={sraData}
                   impactScoreHelpText={sraTaskImpactScoreHelpText}
                   impactScoreThresholds={impactThresholdData}
