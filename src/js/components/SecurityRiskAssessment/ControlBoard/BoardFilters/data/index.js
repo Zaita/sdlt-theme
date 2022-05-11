@@ -16,5 +16,4 @@ export const sortBy = [
     { id: 5, title: 'Effectiveness' },
     { id: 6, title: 'Evidence added' },
     { id: 7, title: 'Number of risk categories' },
-
 ]
