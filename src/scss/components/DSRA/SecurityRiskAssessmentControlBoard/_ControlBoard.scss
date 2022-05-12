@@ -2,6 +2,38 @@
   display: flex;
   justify-content: center;
   overflow-x: scroll;
+  min-height: 539.5px;
+
+  .no-search-results-container {
+    width: 100%;
+    min-height: 50vh;
+    margin-left: 2px;
+    margin-right: 2px;
+
+    .column-header-container {
+      display: flex;
+
+      .column-header {
+        margin-right: 14px;
+      }
+    }
+
+    .no-search-results-message-container {
+      color: #727272;
+      text-align: center;
+      margin-top: 35px;
+
+      img {
+        margin-bottom: 5px;
+      }
+
+      .no-search-results-message {
+        display: inline-block;
+        width: 260px;
+        line-height: 16px;
+      }
+    }
+  }
 }
 
 [role="alert"] {

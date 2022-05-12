@@ -9,6 +9,8 @@ import AlertTitle from '@material-ui/lab/AlertTitle';
 import { cloneDeep } from 'lodash';
 import { Snackbar } from '@material-ui/core';
 import CheckCircle from '@material-ui/icons/CheckCircle';
+import InformationTooltip from './InformationTooltip';
+import SearchIcon from '../../../../img/icons/search-icon.svg';
 
 type Props = {
   notApplicableInformationText: string,
@@ -291,6 +293,39 @@ export default class Board extends Component<Props> {
       'Implemented': this.props.implementedInformationText
     }
 
+    let noSearchResults;
+    if (this.state.columns === initialData.columns) {
+      noSearchResults = (
+        <div className="no-search-results-container">
+          <div className="column-header-container">
+            {this.state.columnOrder.map((columnId) => {
+              const column = this.state.columns[columnId];
+              return (
+                <div
+                  className="column-header"
+                  key={column.id}
+                  style={{
+                    display: !this.state.showNotApplicable && column.title == 'Not applicable' ? "none" : ""
+                  }}
+                >
+                  <h5 className="column-title">{column.title}</h5>
+                  <InformationTooltip columnInformation={informationTextData[column.title]}/>
+                </div>
+              );
+          })}
+          </div>
+          <div className="no-search-results-message-container">
+            <img src={SearchIcon} alt="search icon"/>
+            <h4>No results found</h4>
+            <span className="no-search-results-message">
+              There are no controls that match your search. Try adjusting your
+              search and filter criteria.
+            </span>
+          </div>
+        </div>
+      )
+    }
+
     return (
       <>
         <BoardFilters
@@ -318,11 +353,13 @@ export default class Board extends Component<Props> {
         }
         <DragDropContext onDragStart={this.onDragStart} onDragEnd={this.onDragEnd}>
           <div className="control-board-container">
+            {noSearchResults ? noSearchResults :  ''}
+
             {this.state.columnOrder.map((columnId) => {
               let hideColumn;
               const column = this.state.columns[columnId];
 
-              if (!this.state.showNotApplicable && column.title == 'Not applicable') {
+              if (!this.state.showNotApplicable && column.title == 'Not applicable' || noSearchResults) {
                 hideColumn = true;
               } else {
                 hideColumn = false;
