@@ -11,6 +11,7 @@ import { Snackbar } from '@material-ui/core';
 import CheckCircle from '@material-ui/icons/CheckCircle';
 import InformationTooltip from './InformationTooltip';
 import SearchIcon from '../../../../img/icons/search-icon.svg';
+import ControlBoardUtil from '../../../utils/ControlBoardUtil';
 
 type Props = {
   notApplicableInformationText: string,
@@ -31,7 +32,9 @@ export default class Board extends Component<Props> {
     message: null,
     isFilteringDisabled: false,
     searchKeywords: '',
-    selectedRiskCategory: 'All'
+    selectedRiskCategory: 'All',
+    sortBy: 'Alphabetical (A-Z)',
+    unorderedColumns: initialData.columns
   }
 
   componentDidMount() {
@@ -44,7 +47,18 @@ export default class Board extends Component<Props> {
   componentDidUpdate(prevProps) {
     if (this.props.selectedControls !== prevProps.selectedControls) {
       const controls = this.getControlsDataset();
-      this.setState({ controls });
+
+      // persist sorting order moving from one list to another
+      this.setState({ controls }, () => {
+        if (this.state.sortBy === "None") {
+          const columnsCopy = { ...this.state.columns };
+          this.setState ({ unorderedColumns: columnsCopy }, () => {
+            this.handleSearch();
+          })
+        } else {
+          this.handleSearch();
+        }
+      });
 
       if (!this.state.message) {
         const columns = this.addControlsToColumns(controls);
@@ -67,6 +81,12 @@ export default class Board extends Component<Props> {
     this.setState({ selectedRiskCategory: event.target.value }, () =>
       this.handleSearch()
     );
+  };
+
+  updateSortByOption = (event) => {
+    this.setState ({ sortBy: event.target.value }, () => {
+      this.handleSearch()
+    });
   };
 
   filterSelectedRiskCategory = (controlsArray) => {
@@ -98,10 +118,41 @@ export default class Board extends Component<Props> {
     );
   }
 
+  sortControls(controlsArray) {
+    const { sortBy } = this.state;
+    let sortedControls = [];
+
+    switch (sortBy) {
+      case "Alphabetical (A-Z)":
+        sortedControls = ControlBoardUtil.sortByAscending(controlsArray);
+        break;
+      case "Alphabetical (Z-A)":
+        sortedControls = ControlBoardUtil.sortByDescending(controlsArray);
+        break;
+      case "Key controls first":
+        sortedControls = ControlBoardUtil.sortByKeyControlsFirst(controlsArray);
+        break;
+      case "Effectiveness":
+        sortedControls = ControlBoardUtil.sortByEffectiveness(controlsArray);
+        break;
+      case "Evidence added":
+        sortedControls = ControlBoardUtil.sortByEvidenceAdded(controlsArray);
+        break;
+      case "Number of risk categories":
+        sortedControls = ControlBoardUtil.sortByNumberOfRiskCategories(controlsArray);
+        break;
+      default:
+        sortedControls = controlsArray;
+    }
+
+    return sortedControls
+  };
+
   handleSearch = () => {
     const controlsCopy = { ...this.state.controls };
     let result = this.filterSearchKeywords(controlsCopy);
     result = this.filterSelectedRiskCategory(result);
+    result = this.sortControls(result);
 
     // when there are no results, remove all controlIds from columns
     // else update all column controlIds
@@ -120,6 +171,7 @@ export default class Board extends Component<Props> {
     const { destination, source, draggableId } = result;
 
     if (!destination) {
+      this.setState({ isFilteringDisabled: false });
       return;
     }
 
@@ -165,16 +217,23 @@ export default class Board extends Component<Props> {
         columns: {
           ...this.state.columns,
           [newColumn.id]: newColumn,
-        }
+        },
+        isFilteringDisabled: false
       };
 
-      this.setState(newState);
-      this.setState({ isFilteringDisabled: false });
+      this.setState(newState, () => {
+        if (this.state.sortBy === "None") {
+          const columnsCopy = { ...this.state.columns };
+          this.setState({ unorderedColumns: columnsCopy });
+        } else {
+          this.handleSearch();
+        }
+      });
 
       return;
     }
 
-    //moving from one list to another
+    // moving from one list to another
     const startControlIds = Array.from(start.controlIds);
 
     startControlIds.splice(source.index, 1);
@@ -186,6 +245,7 @@ export default class Board extends Component<Props> {
 
     const finishControlIds = Array.from(finish.controlIds);
     finishControlIds.splice(destination.index, 0, draggableId);
+
     const newFinish = {
       ...finish,
       controlIds: finishControlIds,
@@ -272,7 +332,7 @@ export default class Board extends Component<Props> {
     const controlsCopy = { ...this.state.controls };
 
     // get unfiltered column data
-    const columns = this.addControlsToColumns(controlsCopy);
+    let columns = this.addControlsToColumns(controlsCopy);
 
     this.state.columnOrder.map((columnId) => {
       const column = columns[columnId];
@@ -287,6 +347,15 @@ export default class Board extends Component<Props> {
         column.controlIds = updatedControlIds;
       });
     })
+
+    // persist 'none' sort by order when switching between sorts
+    if (this.state.sortBy === "None") {
+      columns = ControlBoardUtil.sortByNone(
+        this.state.columnOrder,
+        columns,
+        this.state.unorderedColumns
+      );
+    }
 
     this.setState({ columns });
   }
@@ -338,6 +407,7 @@ export default class Board extends Component<Props> {
           toggleNotApplicable={this.toggleNotApplicable}
           updateSearchKeywords={this.updateSearchKeywords}
           updateSelectedRiskCategory={this.updateSelectedRiskCategory}
+          updateSortByOption={this.updateSortByOption}
           isFilteringDisabled={this.state.isFilteringDisabled}
         />
         {this.state.message ? (
