@@ -104,9 +104,7 @@ type Props = {
 };
 
 type State = {
-  isCVATaskEditable: boolean,
-  isSRATaskFinalised: boolean,
-  canEdit: boolean
+  isCVATaskEditable: boolean
 };
 
 let autoSaveCVATask;
@@ -115,9 +113,7 @@ class ControlValidationAuditContainer extends Component<Props, State> {
   constructor(props) {
     super(props);
     this.state = {
-      isCVATaskEditable: false,
-      isSRATaskFinalised: false,
-      canEdit: false
+      isCVATaskEditable: false
     }
   }
 
@@ -140,15 +136,12 @@ class ControlValidationAuditContainer extends Component<Props, State> {
       } = {...this.props};
 
       const isSubmitter = controlValidationAuditData.submitterID === currentUser.id;
-      const canEdit = (isSubmitter || controlValidationAuditData.isTaskCollborator);
-      const isSRATaskFinalised = SecurityRiskAssessmentUtil.isSRATaskFinalised(controlValidationAuditData.siblingSubmissions);
-      const isCVATaskEditable = (canEdit && !isSRATaskFinalised);
+      const isCVATaskEditable = (isSubmitter || controlValidationAuditData.isTaskCollborator);
 
       this.setState({
-        canEdit: canEdit,
-        isSRATaskFinalised: isSRATaskFinalised,
         isCVATaskEditable: isCVATaskEditable
       });
+
 
       this.autoSaveCVATask = setInterval(
         async () => {
@@ -159,7 +152,7 @@ class ControlValidationAuditContainer extends Component<Props, State> {
         600000
       );
     } catch(e) {
-      ErrorUtil.displayError(error);
+      ErrorUtil.displayError(e);
     }
   }
 
@@ -169,7 +162,6 @@ class ControlValidationAuditContainer extends Component<Props, State> {
   componentWillUnmount() {
     clearInterval(this.autoSaveCVATask);
   }
-
 
   /**
    * Call db save Api logic in every 10 mins
@@ -501,16 +493,15 @@ class ControlValidationAuditContainer extends Component<Props, State> {
                 <h3>Have These Controls Been Implemented?</h3>
                 {
                   ['start','in_progress'].includes(controlValidationAuditData.status)
-                  && !this.state.canEdit
+                  && !this.state.isCVATaskEditable
                   && (
                         <SubmissionNotCompleted/>
                     )
                 }
                 {
-                  (this.state.canEdit || controlValidationAuditData.status == "complete") &&
+                  (this.state.isCVATaskEditable || controlValidationAuditData.status == "complete") &&
                   (
                     <div>
-                      {this.state.isSRATaskFinalised ? SecurityRiskAssessmentUtil.getSraIsFinalisedAlert() : false}
                       {this.renderCVAQuestionsForm()}
                     </div>
                   )
