@@ -1,6 +1,6 @@
 // @flow
 import React, {Component} from "react";
-import { Icon } from 'react-fa';
+import Icon from 'react-fontawesome';
 import tinymce from "tinymce";
 import 'tinymce/themes/modern';
 import { Editor } from "@tinymce/tinymce-react";

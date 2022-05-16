@@ -33,7 +33,7 @@ const devScss = () => {
       .pipe(sass({includePaths: []}).on("error", sass.logError))
       .pipe(postcss([
         autoprefixer({
-          browsers: ["last 2 versions"],
+          overrideBrowserslist: ["last 2 versions"],
           cascade: false,
           remove: false,
         }),
@@ -48,7 +48,7 @@ const prodScss = () => {
       .pipe(sourcemaps.init())
       .pipe(postcss([
         autoprefixer({
-          browsers: ["last 2 versions"],
+          overrideBrowserslist: ["last 2 versions"],
           cascade: false,
           remove: false,
         }),

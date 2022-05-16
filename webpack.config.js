@@ -22,6 +22,7 @@ module.exports = (env, argv) => {
               [
                 "@babel/preset-env", {
                 "useBuiltIns": "entry",
+                "corejs": "3.22.4",
                 "targets": {
                   "browsers": ["last 2 versions", "ie >= 11"],
                 },
@@ -30,7 +31,9 @@ module.exports = (env, argv) => {
               "@babel/preset-flow",
             ],
             plugins: [
-              ["@babel/plugin-proposal-class-properties", {"loose": true}]
+              ["@babel/plugin-proposal-class-properties", { loose: true}],
+              ["@babel/plugin-proposal-private-methods", { loose: true}],
+              ["@babel/plugin-proposal-private-property-in-object", { loose: true}]
             ]
           },
         },

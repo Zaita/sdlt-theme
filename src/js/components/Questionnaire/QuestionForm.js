@@ -485,31 +485,33 @@ class QuestionForm extends Component<Props> {
                         <label className={required > 0 ? "required" : ""}>{label}</label>
                       </div>
                       <div>
-                        <Field name={id} render={({field}) => {
-                          let date = null;
-                          const dateValue = field.value || null;
-                          if (dateValue && dateValue.trim().length > 0) {
-                            date = moment(dateValue).toDate();
-                          }
+                        <Field name={id}>
+                          {({field}) => {
+                            let date = null;
+                            const dateValue = field.value || null;
+                            if (dateValue && dateValue.trim().length > 0) {
+                              date = moment(dateValue).toDate();
+                            }
 
-                          return (
-                            <DatePicker
-                                        dateFormat="dd-MM-yyyy"
-                                        className={classes.join(" ")}
-                                        selected={date}
-                                        onChange={(value) => {
-                                          if (!value) {
-                                            setFieldValue(id, null);
-                                            return;
-                                          }
-                                          const date = moment(value).format("YYYY-MM-DD");
-                                          setFieldValue(id, date);
-                                        }}
-                                        placeholderText={placeholder}
-                                        dropdownMode="scroll"
-                                        withPortal/>
-                          );
-                        }}/>
+                            return (
+                              <DatePicker
+                                          dateFormat="dd-MM-yyyy"
+                                          className={classes.join(" ")}
+                                          selected={date}
+                                          onChange={(value) => {
+                                            if (!value) {
+                                              setFieldValue(id, null);
+                                              return;
+                                            }
+                                            const date = moment(value).format("YYYY-MM-DD");
+                                            setFieldValue(id, date);
+                                          }}
+                                          placeholderText={placeholder}
+                                          dropdownMode="scroll"
+                                          withPortal/>
+                            );
+                          }}
+                        </Field>
                       </div>
                       {
                         hasError && (
