@@ -48,8 +48,8 @@ export function securityRiskAssessmentState(state: SecurityRiskAssessmentState =
           oldRiskDetailObj.riskDetail.currentImpact.score;
       }
 
-      newRiskDetailobj.differenceBetweenLikelihoodScore = differenceBetweenLikelihoodScore;
-      newRiskDetailobj.differenceBetweenImapctScore = differenceBetweenImapctScore;
+      newRiskDetailobj.differenceBetweenLikelihoodScore = parseFloat(differenceBetweenLikelihoodScore.toFixed(2));
+      newRiskDetailobj.differenceBetweenImapctScore = parseFloat(differenceBetweenImapctScore.toFixed(2));
       newSraData[index] = newRiskDetailobj;
     });
 
