@@ -248,6 +248,8 @@ class DigitalSecurityRiskAssessmentContainer extends Component<Props> {
       }
     }
 
+    const randomKey = Math.floor(1000 + Math.random() * 9000);
+
     return (
       <div className="SecurityRiskAssessmentContainer">
 
@@ -294,7 +296,7 @@ class DigitalSecurityRiskAssessmentContainer extends Component<Props> {
                   plannedInformationText={sraTaskPlannedInformationText}
                   implementedInformationText={sraTaskImplementedInformationText}
                   selectedControls={selectedControls}
-                  key={selectedControls.length > 0 ? `${selectedControls[0].id} ${selectedControls[0].name} ${selectedControls[0].productAspect}` : ''}
+                  key={selectedControls.length > 0 ? `${selectedControls[0].id} ${selectedControls[0].name} ${selectedControls[0].productAspect} ${randomKey}` : ''}
                   dispatchUpdateCVAControlStatus={(selectedOptionDetail) => {
                     dispatchUpdateCVAControlStatus(selectedOptionDetail);
                   }}
