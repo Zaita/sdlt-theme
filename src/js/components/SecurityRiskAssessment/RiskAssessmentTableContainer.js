@@ -87,13 +87,18 @@ class RiskAssessmentTableContainer extends Component<Props> {
                 <b>{risk.riskDetail.currentLikelihood.score}</b> / {risk.riskDetail.MaxLikelihoodPenalty}
               </span>
               {
-                risk.differenceBetweenLikelihoodScore &&
-                (<span className={risk.differenceBetweenLikelihoodScore > 0 ? "score-difference positive-red" : "score-difference negative-green"}>
-                  {
-                    risk.differenceBetweenLikelihoodScore > 0 ?
-                   `+ ${risk.differenceBetweenLikelihoodScore}` : `- ${risk.differenceBetweenLikelihoodScore * -1}`
-                  }
-                </span>)
+                risk.differenceBetweenLikelihoodScore > 0 && (
+                  <span className="score-difference positive-red">
+                    + {risk.differenceBetweenLikelihoodScore}
+                  </span>
+                )
+              }
+              {
+                risk.differenceBetweenLikelihoodScore < 0 && (
+                  <span className="score-difference negative-green">
+                    - {risk.differenceBetweenLikelihoodScore * -1}
+                  </span>
+                )
               }
             </td>
             <td>
@@ -105,14 +110,19 @@ class RiskAssessmentTableContainer extends Component<Props> {
                 <b>{risk.riskDetail.currentImpact.score}</b> / {risk.riskDetail.MaxImpactPenalty}
               </span>
               {
-                risk.differenceBetweenImapctScore &&
-                (<span className={risk.differenceBetweenImapctScore > 0 ? "score-difference positive-red" : "score-difference negative-green"}>
-                {
-                  risk.differenceBetweenImapctScore > 0 ?
-                 `+ ${risk.differenceBetweenImapctScore}` : `- ${risk.differenceBetweenImapctScore * -1}`
-                }
-                </span>)
-            }
+                risk.differenceBetweenImapctScore > 0 && (
+                  <span className="score-difference positive-red">
+                    + {risk.differenceBetweenImapctScore}
+                  </span>
+                )
+              }
+              {
+                risk.differenceBetweenImapctScore < 0 && (
+                  <span className="score-difference negative-green">
+                    - {risk.differenceBetweenImapctScore * -1}
+                  </span>
+                )
+              }
             </td>
           </tr>
         )
