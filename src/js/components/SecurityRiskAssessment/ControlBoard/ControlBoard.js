@@ -44,6 +44,11 @@ export default class Board extends Component<Props> {
     if (this.props.selectedControls !== prevProps.selectedControls) {
       const controls = this.getControlsDataset();
       this.setState({ controls });
+
+      if (!this.state.message) {
+        const columns = this.addControlsToColumns(controls);
+        this.setState({ columns });
+      }
     }
   }
 
