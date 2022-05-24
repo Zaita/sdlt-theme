@@ -64,6 +64,7 @@ class StartContainer extends Component<Props> {
 
         <Start keyInformation={keyInformation}
                user={user}
+               title={title}
                onStartButtonClick={() => {
                  dispatchCreateInProgressSubmissionAction(questionnaireID);
                }}/>

@@ -15,7 +15,8 @@ type Props = {
   informationClassificationTaskResult: string,
   riskProfileData: Array<*>,
   resultForCertificationAndAccreditation: Array<*>,
-  component: string
+  component: string,
+  taskSubmissionTaskType: string,
 };
 
 class Questionnaire extends Component<Props> {
@@ -95,7 +96,9 @@ class Questionnaire extends Component<Props> {
       handleTaskSaveDraftButtonClick,
       handleTaskSubmitButtonClick,
       loadResultForCertificationAndAccreditation,
-      component
+      component,
+      questionnaireTitle,
+      taskSubmissionTaskType
     } = {...this.props};
 
     const currentQuestion = questions.find((question) => {
@@ -103,19 +106,50 @@ class Questionnaire extends Component<Props> {
     });
 
     const currentQuestionIndex = questions.findIndex((question) => question.id === currentQuestion.id);
+    const isRiskQuestionnaire = taskSubmissionTaskType == "risk questionnaire";
+
+    const hideLeftBar = () => {
+      if (currentQuestionIndex === 0 && isRiskQuestionnaire) {
+        return;
+      }
+      return (
+        <LeftBar
+        questions={questions}
+        onItemClick={onLeftBarItemClick}
+        component={component}
+      />
+      )
+    }
+
+    const title = () => {
+      if (currentQuestionIndex === 0 && isRiskQuestionnaire) {
+        return "Key information"
+      }
+      return "Questions";
+    }
+
+    const questionnaireContainer = () => {
+      if (currentQuestionIndex === 0 && isRiskQuestionnaire) {
+        return "key-information-form-container"
+      } else {
+        return "form-container"
+      }
+    }
 
     return (
       <div className="Questionnaire mx-1">
         <div className="major">
-          <div className="title">Questions</div>
-          <div className="form-container">
-            <LeftBar questions={questions} onItemClick={onLeftBarItemClick} component={component}/>
+          <div className="title">{title()}</div>
+          <div className={questionnaireContainer()}>
+            {hideLeftBar()}
             {
               currentQuestion &&
               <QuestionForm
+                taskSubmissionTaskType={taskSubmissionTaskType}
                 index={currentQuestionIndex}
                 key={currentQuestion.id}
                 question={currentQuestion}
+                questionnaireTitle={questionnaireTitle}
                 serviceRegister={serviceRegister}
                 riskProfileData={riskProfileData}
                 resultForCertificationAndAccreditation={resultForCertificationAndAccreditation}

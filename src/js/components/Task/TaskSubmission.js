@@ -67,19 +67,54 @@ class TaskSubmission extends Component<Props> {
       />
     );
 
-    const backLink = showBackLink ? (
-      <div className="back-link" onClick={() => this.sendBackToQestionnaire()}>
-        <img src={BackArrow}/>
-        Back
-      </div>
-    ) : null;
+    const backLinkSelector = () => {
+      if (taskSubmission.isCurrentUserAnApprover) {
+        return backLinkTaskApprover();
+      } else if (displayPreviousQuestionBackLink) {
+        return previousQuestionBackLink();
+      } else {
+        return backLink();
+      }
+    }
 
-    const backLinkTaskApprover = showBackLink ? (
-      <div className="back-link" onClick={() => URLUtil.redirectToApprovals()}>
-        <img src={BackArrow}/>
-        Back
-      </div>
-    ) : null;
+
+    const currentQuestion = taskSubmission.questions.find(question => question.isCurrent);
+    const currentQuestionIndex = taskSubmission.questions.indexOf(currentQuestion);
+    const previousQuestion = taskSubmission.questions[currentQuestionIndex - 1];
+    const displayPreviousQuestionBackLink = taskSubmission.taskType == "risk questionnaire" && currentQuestionIndex !== 0 && taskSubmission.status !== "complete";
+
+    const backLink = () => {
+      return (
+        <div className="back-link" onClick={() => this.sendBackToQestionnaire()}>
+          <img src={BackArrow}/>
+          Back
+        </div>
+      );
+    };
+
+    const previousQuestionBackLink = () => {
+      return (
+        <div
+          className="back-link"
+          onClick={() => moveToPreviousQuestion(previousQuestion, component)}
+        >
+          <img src={BackArrow} />
+          Back
+        </div>
+      );
+    };
+
+    const backLinkTaskApprover = () => {
+      return (
+        <div
+          className="back-link"
+          onClick={() => URLUtil.redirectToApprovals()}
+        >
+          <img src={BackArrow} />
+          Back
+        </div>
+      );
+    };
 
     const isSRATaskFinalised = taskSubmission.taskType === 'risk questionnaire' && SecurityRiskAssessmentUtil.isSRATaskFinalised(taskSubmission.siblingSubmissions);
 
@@ -172,6 +207,8 @@ class TaskSubmission extends Component<Props> {
           onLeftBarItemClick={moveToPreviousQuestion}
           handleTaskSaveDraftButtonClick={this.handleTaskSaveDraftButtonClick.bind(this)}
           component={component}
+          questionnaireTitle={taskSubmission.taskName}
+          taskSubmissionTaskType={taskSubmission.taskType}
         />
       );
     }
@@ -186,7 +223,7 @@ class TaskSubmission extends Component<Props> {
                 taskSubmission.taskType === 'risk questionnaire' &&
                 isSRATaskFinalised ? SecurityRiskAssessmentUtil.getSraIsFinalisedAlert() : false
               }
-              {taskSubmission.isCurrentUserAnApprover ? backLinkTaskApprover : backLink}
+              {backLinkSelector()}
               {body}
               <div className={`buttons ${viewAs != "approver" ? 'buttons-hideborder': ''}`}>
                 <div className="buttons-left">

@@ -13,6 +13,7 @@
 
         .title {
           @include title;
+          color: #0E0E0E;
         }
 
         .form-container{
@@ -22,6 +23,24 @@
           align-items: stretch;
           @import "QuestionForm";
         }
+
+        .key-information-form-container {
+          @import "QuestionForm";
+
+          .information.actions {
+            margin-top: 1.25rem;
+            margin-bottom: 2rem;
+            float: right;
+
+            button {
+              width: 85px;
+            }
+          }
+        }
+    }
+
+    .key-info {
+      font-size: 12px;
     }
 }
 

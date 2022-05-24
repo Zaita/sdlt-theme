@@ -10,7 +10,8 @@ import QuestionNotApplicableIcon from "../../../img/icons/not-applicable.svg";
 type Props = {
   question: Question,
   onItemClick: (question: Question) => void,
-  index: number
+  index: number,
+  component: string,
 };
 
 export default class LeftBarItem extends Component<Props> {
@@ -27,7 +28,7 @@ export default class LeftBarItem extends Component<Props> {
                   onItemClick(question, component);
                 }}
         >
-          {index+1}.  {question.title}
+          {index + 1}.  {question.title}
         </button>
       </div>
     );
