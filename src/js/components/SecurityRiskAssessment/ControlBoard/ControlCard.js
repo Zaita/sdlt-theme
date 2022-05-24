@@ -4,6 +4,7 @@ import { Card, IconButton } from '@material-ui/core'
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import Paperclip from '@material-ui/icons/AttachFile';
 import KeyControlIcon from "../../../../img/icons/key-control-star.svg";
+import {Link} from "react-router-dom";
 
 // not the final icons
 import EffectiveIcon from '@material-ui/icons/VerifiedUser';
@@ -98,9 +99,14 @@ export default function CardItem(props) {
                   : <p className="card-title">{name}</p>
                 }
                 <div className="card-chevron">
-                  <IconButton aria-label="show more">
-                    <ChevronRightIcon />
-                  </IconButton>
+                  <Link to={{
+                    pathname: '/control-detail-Page',
+                    state: {props}
+                  }}>
+                    <IconButton aria-label="show more">
+                      <ChevronRightIcon />
+                    </IconButton>
+                  </Link>
                 </div>
               </div>
               <div className={!expanded ? 'card-footer' : 'card-footer flex-column'} onClick={handleExpandClick}>

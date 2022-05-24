@@ -299,6 +299,7 @@ class DigitalSecurityRiskAssessmentContainer extends Component<Props> {
                     dispatchUpdateCVAControlStatus(selectedOptionDetail);
                   }}
                   cvaTaskSubmissionUUID={cvaTaskSubmissionUUID}
+                  productName={securityRiskAssessmentData.questionnaireSubmissionProductName}
                 />
               </div>
               <div className="bottom-container">

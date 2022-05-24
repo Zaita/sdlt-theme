@@ -17,6 +17,7 @@ type Props = {
   notImplementedInformationText: string,
   plannedInformationText: string,
   implementedInformationText: string,
+  productName: string,
   productAspect: string,
   dispatchUpdateCVAControlStatus?: (selectedOptionDetail: object) => void
 }
@@ -383,6 +384,8 @@ export default class Board extends Component<Props> {
                   <Column
                     column={column}
                     controls={controls}
+                    cvaTaskSubmissionUUID={this.props.cvaTaskSubmissionUUID}
+                    productName={this.props.productName}
                     informationText={informationTextData[column.title]}
                   />
                 </div>

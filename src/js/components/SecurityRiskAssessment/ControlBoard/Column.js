@@ -14,8 +14,15 @@ class InnerList extends React.Component {
   }
 
   render() {
+    const { cvaTaskSubmissionUUID, productName } = this.props;
     return this.props.controls.map((control, index) => (
-      <ControlCard key={control.id} control={control} index={index} />
+      <ControlCard
+        key={control.id}
+        control={control}
+        index={index}
+        cvaTaskSubmissionUUID={cvaTaskSubmissionUUID}
+        productName={productName}
+      />
     ))
   }
 }
@@ -62,6 +69,8 @@ export default class Column extends Component {
                   <InnerList
                     controls={this.props.controls}
                     columnTitle={this.props.column.title}
+                    cvaTaskSubmissionUUID={this.props.cvaTaskSubmissionUUID}
+                    productName={this.props.productName}
                   />
                   ) : null
                 }

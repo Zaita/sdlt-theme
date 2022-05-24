@@ -17,6 +17,7 @@ import AwaitingApprovalList from "../QuestionnaireSubmissionList/AwaitingApprova
 import MyProductList from "../QuestionnaireSubmissionList/MyProductList";
 import SecurityRiskAssessmentContainer from "../SecurityRiskAssessment/DigitalSecurityRiskAssessmentContainer.js";
 import ControlValidationAuditContainer from "../ControlValidationAudit/ControlValidationAuditContainer.js";
+import ControlDetailContainer from "../ControlValidationAudit/ControlDetailContainer.js";
 import { parse } from "query-string";
 import { Loading } from "../Common/Loading.js";
 import { withRouter } from 'react-router-dom';
@@ -166,6 +167,16 @@ class MainApp extends Component<*> {
                 return (
                   <div className="gray-bg">
                     <ControlValidationAuditContainer uuid={match.params.uuid} secureToken={secureToken} component={component}/>
+                  </div>
+                );
+              }}
+            </Route>
+
+            <Route exact path='/control-detail-Page/'>
+              {() => {
+                return (
+                  <div className="gray-bg">
+                      <ControlDetailContainer />;
                   </div>
                 );
               }}
