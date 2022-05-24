@@ -54,14 +54,16 @@ class Breadcrumbs extends Component {
         path == "/task/submission/:uuid" ||
         path == "/security-risk-assessment/submission/:uuid" ||
         path == "/control-validation-audit/submission/:uuid" ||
-        path == "/component-selection/submission/:uuid" ?
+        path == "/component-selection/submission/:uuid" ||
+        path == "/control-detail-Page/" ?
         this.getApprovalsBreadcrumb(showApprovalBreadcrumb) : null
         }
 
         {path == "/task/submission/:uuid" ||
         path == "/security-risk-assessment/submission/:uuid" ||
         path == "/control-validation-audit/submission/:uuid" ||
-        path == "/component-selection/submission/:uuid" ?
+        path == "/component-selection/submission/:uuid" ||
+        path == "/control-detail-Page/" ?
         this.getProductNameBreadcrumb(productName, isTaskApprover) : null
         }
 
