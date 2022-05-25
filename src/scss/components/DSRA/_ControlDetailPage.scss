@@ -25,4 +25,34 @@
         brightness(102%) contrast(101%);
     }
   }
+
+  .control-description-container {
+    border-bottom: 2px solid #d9d9d9;
+    margin-top: 24px;
+
+    .control-description {
+      margin-bottom: 25px;
+    }
+  }
+
+  h5 {
+    color: #0E0E0E;
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    line-height: 16px;
+  }
+
+  .help-text {
+    font-size: 11px;
+    line-height: 16px;
+  }
+
+  .control-detail-link {
+    a {
+      color: $light-blue;
+      text-decoration: underline;
+      font-weight: bold;
+    }
+  }
 }
