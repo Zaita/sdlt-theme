@@ -1,13 +1,15 @@
- // @flow
-import React, {Component, useEffect, useState} from "react";
-import {connect} from "react-redux";
-import type {RootState} from "../../store/RootState";
-import {Dispatch} from "redux";
+// @flow
+import React, { useEffect } from "react";
+import { connect } from "react-redux";
+import type { RootState } from "../../store/RootState";
+import { Dispatch } from "redux";
 import Header from "../Header/Header";
 import Footer from "../Footer/Footer";
 import { useLocation } from "react-router-dom";
 import { loadSiteConfig } from "../../actions/siteConfig";
 import { loadCurrentUser } from "../../actions/user";
+import { IS_KEY_CONTROL_MESSAGE } from "../../constants/values";
+import KeyControlIcon from "../../../img/icons/key-control-star.svg";
 
 const mapStateToProps = (state: RootState) => {
   return {
@@ -18,7 +20,7 @@ const mapStateToProps = (state: RootState) => {
 
 const mapDispatchToProps = (dispatch: Dispatch, props: *) => {
   return {
-    dispatchLoadDataAction () {
+    dispatchLoadDataAction() {
       dispatch(loadCurrentUser());
       dispatch(loadSiteConfig());
     }
@@ -34,37 +36,44 @@ function ControlDetailContainer(props) {
     return null;
   }
 
-  const {
-    siteConfig,
-    currentUser,
-    dispatchLoadDataAction
-  } = { ...props };
+  const { siteConfig, currentUser, dispatchLoadDataAction } = { ...props };
 
   useEffect(() => {
     dispatchLoadDataAction();
-  }, [])
+  }, []);
 
-  const {
-    control,
-    productName
-  } = { ...state.props };
+  const { productName } = { ...state.props };
+  const { name, isKeyControl } = { ...state.props.control };
 
   if (!currentUser || !siteConfig) {
     return null;
   }
 
+  const keyControlMessageParts = IS_KEY_CONTROL_MESSAGE.match(/[^.]+[.]+/g);
+
   return (
-    <div className="SecurityRiskAssessmentContainer">
+    <div className="ControlDetailContainer">
       <Header
-        pageTitle={control.name}
+        pageTitle={name}
         logopath={siteConfig.logoPath}
         productName={"test product"}
         questionnaireSubmissionUUID={"a57317ee-8825-4764-982e-13a5d8d84db1"}
         showSubmissionBreadcrumb={true}
         showApprovalBreadcrumb={false}
       />
-      <div className="SecurityRiskAssessment">
-        test
+
+      <div className="ControlDetail">
+        {isKeyControl && (
+          <div className="alert key-control-banner">
+            <img
+              className="key-control-icon"
+              src={KeyControlIcon}
+              alt="star icon"
+            />
+            <strong>{keyControlMessageParts[0]}</strong>&nbsp;
+            {keyControlMessageParts[1]}
+          </div>
+        )}
       </div>
     </div>
   );

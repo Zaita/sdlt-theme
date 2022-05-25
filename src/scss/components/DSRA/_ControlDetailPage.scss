@@ -1,0 +1,28 @@
+@import "../../variables";
+
+.ControlDetailContainer {
+  .ControlDetail {
+    max-width: map_get($container-max-widths, xl);
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 80px;
+  }
+
+  .alert.key-control-banner {
+    display: flex;
+    align-items: center;
+    height: 44px;
+    font-size: 11px;
+    line-height: 16px;
+    border-radius: 0;
+    background-color: #ffddbe;
+
+    .key-control-icon {
+      width: 14px;
+      margin-right: 12px;
+      margin-bottom: 2px;
+      filter: invert(54%) sepia(76%) saturate(723%) hue-rotate(344deg)
+        brightness(102%) contrast(101%);
+    }
+  }
+}
