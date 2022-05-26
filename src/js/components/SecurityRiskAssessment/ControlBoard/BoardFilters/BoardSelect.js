@@ -34,7 +34,7 @@ export default class BoardSelect extends Component {
           IconComponent={ChevronIcon}
           className={addClass === 'sort-by' ? 'board-select-input sort-by' : 'board-select-input'}
           variant="outlined"
-          defaultValue={filterParameters[0].title}
+          defaultValue={label === 'Sort by' ? filterParameters[1].title : filterParameters[0].title}
           onChange={handleChange}
           disabled={isFilteringDisabled}
         >

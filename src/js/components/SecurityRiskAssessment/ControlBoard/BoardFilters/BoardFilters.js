@@ -10,7 +10,8 @@ export default class BoardFilters extends Component {
       updateSearchKeywords,
       isFilteringDisabled,
       toggleNotApplicable,
-      updateSelectedRiskCategory
+      updateSelectedRiskCategory,
+      updateSortByOption
     } = this.props;
 
     return (
@@ -31,6 +32,7 @@ export default class BoardFilters extends Component {
           filterParameters={sortBy}
           addClass={"sort-by"}
           isFilteringDisabled={isFilteringDisabled}
+          handleChange={updateSortByOption}
         />
         <BoardCheckbox
           label={"Show not applicable"}
