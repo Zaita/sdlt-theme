@@ -43,7 +43,7 @@ function ControlDetailContainer(props) {
   }, []);
 
   const { productName } = { ...state.props };
-  const { name, isKeyControl } = { ...state.props.control };
+  const { name, isKeyControl, description } = { ...state.props.control };
 
   if (!currentUser || !siteConfig) {
     return null;
@@ -74,6 +74,14 @@ function ControlDetailContainer(props) {
             {keyControlMessageParts[1]}
           </div>
         )}
+
+        <div className="control-description-container">
+          <h5>Description</h5>
+          <div
+            className="control-description help-text control-detail-link"
+            dangerouslySetInnerHTML={{ __html: description }}
+          />
+        </div>
       </div>
     </div>
   );
