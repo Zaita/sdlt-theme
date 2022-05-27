@@ -10,6 +10,8 @@ import { loadSiteConfig } from "../../actions/siteConfig";
 import { loadCurrentUser } from "../../actions/user";
 import { IS_KEY_CONTROL_MESSAGE } from "../../constants/values";
 import KeyControlIcon from "../../../img/icons/key-control-star.svg";
+import BackArrow from "../../../img/icons/back-arrow.svg";
+import URLUtil from "../../utils/URLUtil";
 
 const mapStateToProps = (state: RootState) => {
   return {
@@ -30,7 +32,6 @@ const mapDispatchToProps = (dispatch: Dispatch, props: *) => {
 function ControlDetailContainer(props) {
   const location = useLocation();
   const state = location.state;
-  let showSubmissionBreadcrumb = true;
 
   if (!props || !state) {
     return null;
@@ -42,12 +43,36 @@ function ControlDetailContainer(props) {
     dispatchLoadDataAction();
   }, []);
 
-  const { productName } = { ...state.props };
+  const {
+    productName,
+    sraTaskSubmissionUUID,
+    cvaTaskSubmissionUUID,
+    secureToken,
+    showSubmissionBreadcrumb,
+    showApprovalBreadcrumb,
+    questionnaireSubmissionUUID,
+    sraTaskName,
+    cvaTaskName,
+    comingFrom,
+    productAspect
+  } = { ...state.props };
   const { name, isKeyControl, description } = { ...state.props.control };
 
   if (!currentUser || !siteConfig) {
     return null;
   }
+
+  const backLinkUrl = () => {comingFrom == 'sra' ?
+    URLUtil.redirectToSecurityRiskAssessment(sraTaskSubmissionUUID, secureToken, 'redirect', productAspect) :
+    URLUtil.redirectToControlValidationAudit(cvaTaskSubmissionUUID, secureToken, 'redirect', productAspect) ;
+  };
+
+  const backLink = (
+    <div className="back-link" onClick={backLinkUrl}>
+      <img src={BackArrow} />
+      Back
+    </div>
+  );
 
   const keyControlMessageParts = IS_KEY_CONTROL_MESSAGE.match(/[^.]+[.]+/g);
 
@@ -56,13 +81,21 @@ function ControlDetailContainer(props) {
       <Header
         pageTitle={name}
         logopath={siteConfig.logoPath}
-        productName={"test product"}
-        questionnaireSubmissionUUID={"a57317ee-8825-4764-982e-13a5d8d84db1"}
-        showSubmissionBreadcrumb={true}
-        showApprovalBreadcrumb={false}
+        productName={productName}
+        questionnaireSubmissionUUID={questionnaireSubmissionUUID}
+        showSubmissionBreadcrumb={showSubmissionBreadcrumb}
+        showApprovalBreadcrumb={showApprovalBreadcrumb}
+        sraTaskName={sraTaskName}
+        cvaTaskName={cvaTaskName}
+        sraTaskSubmissionUUID={sraTaskSubmissionUUID}
+        cvaTaskSubmissionUUID={cvaTaskSubmissionUUID}
+        comingFrom={comingFrom}
+        component={productAspect}
       />
 
       <div className="ControlDetail">
+        {backLink}
+
         {isKeyControl && (
           <div className="alert key-control-banner">
             <img

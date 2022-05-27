@@ -5,7 +5,6 @@ import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import Paperclip from '@material-ui/icons/AttachFile';
 import KeyControlIcon from "../../../../img/icons/key-control-star.svg";
 import {Link} from "react-router-dom";
-
 // not the final icons
 import EffectiveIcon from '@material-ui/icons/VerifiedUser';
 import PartiallyEffectiveIcon from '@material-ui/icons/Policy';

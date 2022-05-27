@@ -38,7 +38,7 @@ export default class URLUtil {
         return url;
       }
 
-      window.location.href = `/#/${url}`;
+      window.location.href = `/#${url}`;
   }
 
   static redirectToComponentSelectionSubmission(uuid: string, token: string = "", returnType: string = "redirect") {
@@ -52,7 +52,7 @@ export default class URLUtil {
       return url;
     }
 
-    window.location.href = `/#/${url}`;
+    window.location.href = `/#${url}`;
   }
 
   static redirectToSecurityRiskAssessment(uuid: string, token: string = "", returnType: string = "redirect", component: string = '') {
@@ -70,7 +70,7 @@ export default class URLUtil {
       return url;
     }
 
-    window.location.href = `/#/${url}`;
+    window.location.href = `/#${url}`;
   }
 
   static redirectToControlValidationAudit(uuid: string, token: string = "", returnType: string = "redirect", component: string = '') {
@@ -88,7 +88,7 @@ export default class URLUtil {
       return url;
     }
 
-    window.location.href = `/#/${url}`;
+    window.location.href = `/#${url}`;
   }
 
   static redirectToLogout() {

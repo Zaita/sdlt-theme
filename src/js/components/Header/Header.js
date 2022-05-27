@@ -28,7 +28,14 @@ class Header extends Component<Props> {
     showApprovalBreadcrumb: false,
     showSubmissionBreadcrumb: false,
     subHeaderImagePath: "",
-    component: ""
+    component: "",
+    sraTaskName: "",
+    questionnaireSubmissionUUID: "",
+    cvaTaskSubmissionUUID: "",
+    sraTaskSubmissionUUID: "",
+    comingFrom: "",
+    sraTaskName: "",
+    cvaTaskName: ""
   };
 
   render() {
@@ -42,7 +49,12 @@ class Header extends Component<Props> {
       showApprovalBreadcrumb,
       showSubmissionBreadcrumb,
       subHeaderImagePath,
-      component
+      component,
+      sraTaskSubmissionUUID,
+      cvaTaskSubmissionUUID,
+      comingFrom,
+      sraTaskName,
+      cvaTaskName
     } = { ...this.props };
 
     let isHomePage = false;
@@ -78,6 +90,12 @@ class Header extends Component<Props> {
               questionnaireSubmissionUUID={questionnaireSubmissionUUID}
               showApprovalBreadcrumb={showApprovalBreadcrumb}
               isTaskApprover={isTaskApprover}
+              sraTaskSubmissionUUID={sraTaskSubmissionUUID}
+              cvaTaskSubmissionUUID={cvaTaskSubmissionUUID}
+              comingFrom={comingFrom}
+              sraTaskName={sraTaskName}
+              cvaTaskName={cvaTaskName}
+              component={component}
             />
             <h1>{ component !== ""? `${pageTitle} (${component})`: pageTitle }</h1>
           </div>

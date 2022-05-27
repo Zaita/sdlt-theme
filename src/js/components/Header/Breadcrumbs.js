@@ -34,8 +34,35 @@ class Breadcrumbs extends Component {
     }
   };
 
+  getSraBreadcrumb = () => {
+    return (
+      <Link onClick={() => this.sendBackToSecurityRiskAssessment()}>
+        {this.props.sraTaskName}
+      </Link>
+    )
+  };
+
+  getCvaBreadcrumb = () => {
+    return (
+      <Link onClick={() => this.sendBackToControlValidationAudit()}>
+        {this.props.cvaTaskName}
+      </Link>
+    )
+  };
+
+
   sendBackToQuestionnaireSummaryPage() {
     URLUtil.redirectToQuestionnaireSummary(this.props.questionnaireSubmissionUUID);
+  }
+
+  sendBackToSecurityRiskAssessment() {
+    const {sraTaskSubmissionUUID, secureToken, component} = { ...this.props };
+    URLUtil.redirectToSecurityRiskAssessment(sraTaskSubmissionUUID, secureToken, 'redirect', component)
+  }
+
+  sendBackToControlValidationAudit() {
+    const {cvaTaskSubmissionUUID, secureToken, component} = { ...this.props };
+    URLUtil.redirectToControlValidationAudit(cvaTaskSubmissionUUID, secureToken, 'redirect', component)
   }
 
   render() {
@@ -67,7 +94,19 @@ class Breadcrumbs extends Component {
         this.getProductNameBreadcrumb(productName, isTaskApprover) : null
         }
 
-        <MuiBreadcrumbs separator={<NavigateNextIcon fontSize="inherit" />} aria-label="breadcrumb"/>
+        {
+          !this.props.comingFrom && (
+            <MuiBreadcrumbs separator={<NavigateNextIcon fontSize="inherit" />} aria-label="breadcrumb"/>
+          )
+        }
+
+        {
+          this.props.comingFrom == "sra" && this.getSraBreadcrumb()
+        }
+
+        {
+          this.props.comingFrom == "cva" && this.getCvaBreadcrumb()
+        }
       </MuiBreadcrumbs>
     );
   }

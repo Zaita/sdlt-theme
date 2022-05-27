@@ -252,10 +252,10 @@ class DigitalSecurityRiskAssessmentContainer extends Component<Props> {
       <div className="SecurityRiskAssessmentContainer">
 
         <Header
-          pageTitle={securityRiskAssessmentData.taskName}
+          pageTitle={taskName}
           logopath={siteConfig.logoPath}
-          productName={securityRiskAssessmentData.questionnaireSubmissionProductName}
-          questionnaireSubmissionUUID={securityRiskAssessmentData.questionnaireSubmissionUUID}
+          productName={questionnaireSubmissionProductName}
+          questionnaireSubmissionUUID={questionnaireSubmissionUUID}
           showSubmissionBreadcrumb={showSubmissionBreadcrumb}
           showApprovalBreadcrumb={showApprovalBreadcrumb}
           component={component}
@@ -298,8 +298,15 @@ class DigitalSecurityRiskAssessmentContainer extends Component<Props> {
                   dispatchUpdateCVAControlStatus={(selectedOptionDetail) => {
                     dispatchUpdateCVAControlStatus(selectedOptionDetail);
                   }}
+                  comingFrom={"sra"}
+                  showSubmissionBreadcrumb={showSubmissionBreadcrumb}
+                  showApprovalBreadcrumb={showApprovalBreadcrumb}
+                  sraTaskSubmissionUUID={uuid}
+                  sraTaskName={taskName}
                   cvaTaskSubmissionUUID={cvaTaskSubmissionUUID}
-                  productName={securityRiskAssessmentData.questionnaireSubmissionProductName}
+                  secureToken={secureToken}
+                  productName={questionnaireSubmissionProductName}
+                  questionnaireSubmissionUUID={questionnaireSubmissionUUID}
                 />
               </div>
               <div className="bottom-container">
