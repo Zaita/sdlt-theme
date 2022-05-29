@@ -14,7 +14,19 @@ class InnerList extends React.Component {
   }
 
   render() {
-    const { cvaTaskSubmissionUUID, productName } = this.props;
+    const {
+      cvaTaskSubmissionUUID,
+      productName,
+      sraTaskSubmissionUUID,
+      secureToken,
+      showSubmissionBreadcrumb,
+      showApprovalBreadcrumb,
+      questionnaireSubmissionUUID,
+      comingFrom,
+      sraTaskName,
+      productAspect
+    } = this.props;
+
     return this.props.controls.map((control, index) => (
       <ControlCard
         key={control.id}
@@ -22,6 +34,14 @@ class InnerList extends React.Component {
         index={index}
         cvaTaskSubmissionUUID={cvaTaskSubmissionUUID}
         productName={productName}
+        productAspect={productAspect}
+        sraTaskSubmissionUUID={sraTaskSubmissionUUID}
+        secureToken={secureToken}
+        showSubmissionBreadcrumb={showSubmissionBreadcrumb}
+        showApprovalBreadcrumb={showApprovalBreadcrumb}
+        questionnaireSubmissionUUID={questionnaireSubmissionUUID}
+        comingFrom={comingFrom}
+        sraTaskName={sraTaskName}
       />
     ))
   }
@@ -39,12 +59,28 @@ export default class Column extends Component {
   }
 
   render() {
+    const {
+      column,
+      controls,
+      cvaTaskSubmissionUUID,
+      productName,
+      productAspect,
+      questionnaireSubmissionUUID,
+      sraTaskSubmissionUUID,
+      sraTaskName,
+      secureToken,
+      showSubmissionBreadcrumb,
+      showApprovalBreadcrumb,
+      comingFrom,
+      informationText,
+    } = { ...this.props };
+
     let columnIsEmpty
-    if (this.props.controls.length === 0) {
+    if (controls.length === 0) {
       columnIsEmpty = (
         <div className='empty-column-text'>
           <OpenWithIcon className='directional-drag-arrow' />
-          <p>Click and drag a control to move it into '{this.props.column.title}'.</p>
+          <p>Click and drag a control to move it into '{column.title}'.</p>
         </div>
       )
     }
@@ -52,11 +88,11 @@ export default class Column extends Component {
     return (
       <>
         <div className='column-header'>
-          <h5 className='column-title'>{this.props.column.title}</h5>
-          <InformationTooltip columnInformation={this.props.informationText} />
+          <h5 className='column-title'>{column.title}</h5>
+          <InformationTooltip columnInformation={informationText} />
         </div>
         <div className={columnIsEmpty ? 'dotted-border column-card-list' : 'column-card-list'}>
-          <Droppable droppableId={this.props.column.id}>
+          <Droppable droppableId={column.id}>
             {(provided, snapshot) => (
               <div
                 ref={provided.innerRef}
@@ -67,10 +103,18 @@ export default class Column extends Component {
 
                 {this.state.controlArrayIsValid ? (
                   <InnerList
-                    controls={this.props.controls}
-                    columnTitle={this.props.column.title}
-                    cvaTaskSubmissionUUID={this.props.cvaTaskSubmissionUUID}
-                    productName={this.props.productName}
+                    controls={controls}
+                    columnTitle={column.title}
+                    cvaTaskSubmissionUUID={cvaTaskSubmissionUUID}
+                    productName={productName}
+                    productAspect={productAspect}
+                    sraTaskSubmissionUUID={sraTaskSubmissionUUID}
+                    secureToken={secureToken}
+                    showSubmissionBreadcrumb={showSubmissionBreadcrumb}
+                    showApprovalBreadcrumb={showApprovalBreadcrumb}
+                    questionnaireSubmissionUUID={questionnaireSubmissionUUID}
+                    comingFrom={comingFrom}
+                    sraTaskName={sraTaskName}
                   />
                   ) : null
                 }

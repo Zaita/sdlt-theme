@@ -20,6 +20,12 @@ type Props = {
   implementedInformationText: string,
   productName: string,
   productAspect: string,
+  sraTaskName: string,
+  sraTaskSubmissionUUID: string,
+  cvaTaskSubmissionUUID: string,
+  secureToken: string,
+  questionnaireSubmissionUUID: string,
+  comingFrom: string,
   dispatchUpdateCVAControlStatus?: (selectedOptionDetail: object) => void
 }
 
@@ -361,11 +367,28 @@ export default class Board extends Component<Props> {
   }
 
   render() {
+    const {
+      notApplicableInformationText,
+      notImplementedInformationText,
+      plannedInformationText,
+      implementedInformationText,
+      cvaTaskSubmissionUUID,
+      productName,
+      productAspect,
+      questionnaireSubmissionUUID,
+      sraTaskSubmissionUUID,
+      sraTaskName,
+      secureToken,
+      showSubmissionBreadcrumb,
+      showApprovalBreadcrumb,
+      comingFrom
+    } = { ...this.props };
+
     const informationTextData = {
-      'Not applicable': this.props.notApplicableInformationText,
-      'Not implemented': this.props.notImplementedInformationText,
-      'Planned': this.props.plannedInformationText,
-      'Implemented': this.props.implementedInformationText
+      'Not applicable': notApplicableInformationText,
+      'Not implemented': notImplementedInformationText,
+      'Planned': plannedInformationText,
+      'Implemented': implementedInformationText
     }
 
     let noSearchResults;
@@ -454,8 +477,16 @@ export default class Board extends Component<Props> {
                   <Column
                     column={column}
                     controls={controls}
-                    cvaTaskSubmissionUUID={this.props.cvaTaskSubmissionUUID}
-                    productName={this.props.productName}
+                    cvaTaskSubmissionUUID={cvaTaskSubmissionUUID}
+                    productName={productName}
+                    productAspect={productAspect}
+                    questionnaireSubmissionUUID={questionnaireSubmissionUUID}
+                    sraTaskSubmissionUUID={sraTaskSubmissionUUID}
+                    sraTaskName={sraTaskName}
+                    secureToken={secureToken}
+                    showSubmissionBreadcrumb={showSubmissionBreadcrumb}
+                    showApprovalBreadcrumb={showApprovalBreadcrumb}
+                    comingFrom={comingFrom}
                     informationText={informationTextData[column.title]}
                   />
                 </div>
