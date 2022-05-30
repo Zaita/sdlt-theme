@@ -56,17 +56,11 @@
     }
   }
 
-  .control-implementation-container {
-    margin-top: 24px;
-    color: $black;
-
-    .control-implementation-status-dropdown {
-      margin-top: 15px;
-    }
-
+  .control-implementation-status-container {
     .react-select-container {
       max-width: 147px;
       font-size: 11px;
+      margin-top: 15px;
 
       .react-select__control {
         border: solid 1px $light-blue;
@@ -124,6 +118,36 @@
             }
           }
         }
+      }
+    }
+  }
+
+  .control-implementation-container {
+    margin-top: 24px;
+    color: $black;
+  }
+
+  .control-implementation-status-and-owner-subcontainer {
+    display: flex;
+    .control-owner-team {
+      display: block;
+    }
+
+    .control-implementation-status-container {
+      flex: 1;
+      h5 {
+        margin-bottom: 15px;
+      }
+    }
+
+    .control-owner-details-container {
+      flex: 2;
+      h5 {
+        margin-bottom: 11px;
+      }
+
+      .control-owner-email {
+        display: inline;
       }
     }
   }

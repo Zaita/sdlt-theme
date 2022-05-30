@@ -8,6 +8,7 @@ import Footer from "../Footer/Footer";
 import { useLocation } from "react-router-dom";
 import { loadSiteConfig } from "../../actions/siteConfig";
 import { loadCurrentUser } from "../../actions/user";
+import { updateCVAControlDetailData } from "../../actions/securityRiskAssessment";
 import KeyControlIcon from "../../../img/icons/key-control-star.svg";
 import BackArrow from "../../../img/icons/back-arrow.svg";
 import URLUtil from "../../utils/URLUtil";
@@ -32,6 +33,10 @@ const mapDispatchToProps = (dispatch: Dispatch, props: *) => {
     dispatchLoadDataAction() {
       dispatch(loadCurrentUser());
       dispatch(loadSiteConfig());
+    },
+    // update the control object before clicking on save button
+    dispatchUpdateCVAControlDetailAction(controlID: string, fieldName: string, updatedValue: string) {
+      dispatch(updateCVAControlDetailData(controlID, fieldName, updatedValue));
     }
   };
 };
@@ -44,7 +49,12 @@ function ControlDetailContainer(props) {
     return null;
   }
 
-  const { siteConfig, currentUser, dispatchLoadDataAction } = { ...props };
+  const {
+    siteConfig,
+    currentUser,
+    dispatchLoadDataAction,
+    dispatchUpdateCVAControlDetailAction
+  } = { ...props };
 
   useEffect(() => {
     dispatchLoadDataAction();
@@ -64,7 +74,14 @@ function ControlDetailContainer(props) {
     productAspect
   } = { ...state.props };
 
-  const { name, isKeyControl, description, selectedOption } = { ...state.props.control };
+  const {
+    id,
+    name,
+    isKeyControl,
+    description,
+    selectedOption,
+    controlOwnerDetails
+  } = { ...state.props.control };
 
   if (!currentUser || !siteConfig) {
     return null;
@@ -92,7 +109,10 @@ function ControlDetailContainer(props) {
   ];
 
   const initialImplementationStatus = implementationStatusOptions.find(({ value }) => value === selectedOption);
-  const [implementationStatus, setImplementationStatus] = useState(initialImplementationStatus.value);
+
+  const regex = /{\d*}/g;
+  const controlIdArray = id.match(regex);
+  const controlID = (controlIdArray[1].match(/\d+/g)).pop();
 
   return (
     <div className="ControlDetailContainer">
@@ -135,22 +155,49 @@ function ControlDetailContainer(props) {
         </div>
 
         <div className="control-implementation-container">
-          <h5>Implementation status</h5>
-          <div className="control-implementation-status-dropdown">
-            <Select
-              options={implementationStatusOptions}
-              defaultValue={initialImplementationStatus}
-              className="react-select-container"
-              classNamePrefix="react-select"
-              styles={{
-                dropdownIndicator: (provided, state) => ({
-                  ...provided,
-                  transform: state.selectProps.menuIsOpen && "rotate(180deg)"
-                })
-              }}
-              onChange={(selectedOption) => setImplementationStatus(selectedOption.value)}
-              isSearchable={false}
-            />
+          <div className="control-implementation-status-and-owner-subcontainer">
+            <div className="control-implementation-status-container">
+              <h5>Implementation status</h5>
+                <Select
+                  options={implementationStatusOptions}
+                  defaultValue={initialImplementationStatus}
+                  className="react-select-container"
+                  classNamePrefix="react-select"
+                  styles={{
+                    dropdownIndicator: (provided, state) => ({
+                      ...provided,
+                      transform: state.selectProps.menuIsOpen && "rotate(180deg)"
+                    })
+                  }}
+                  onChange={(selectedOption) => dispatchUpdateCVAControlDetailAction({
+                    "controlID": controlID,
+                    "fieldName": "selectedOption",
+                    "updatedValue": selectedOption.value
+                  })}
+                  isSearchable={false}
+                />
+            </div>
+
+            <div className="control-owner-details-container">
+              <h5>Control owner</h5>
+              <div className="help-text">
+                {controlOwnerDetails[0].name}
+                {controlOwnerDetails[0].email && (
+                  <p className="control-owner-email">
+                    &nbsp;(
+                    <span className="control-detail-link">
+                      <a href={"mailto:" + controlOwnerDetails[0].email}>
+                        {controlOwnerDetails[0].email}
+                      </a>
+                    </span>
+                    )
+                  </p>
+                )}
+                <span className="control-owner-team">
+                  {controlOwnerDetails[0].team}
+                </span>
+              </div>
+            </div>
           </div>
         </div>
       </div>

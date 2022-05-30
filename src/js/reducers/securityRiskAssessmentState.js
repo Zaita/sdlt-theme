@@ -62,5 +62,28 @@ export function securityRiskAssessmentState(state: SecurityRiskAssessmentState =
     };
   }
 
+  if (action.type === ActionType.SRA.UPDATE_CVA_CONTROL_DETAIL_DATA) {
+    const controlID = action.payload.controlID;
+    const fieldName = action.payload.fieldName;
+    const updatedValue = action.payload.updatedValue;
+    const securityRiskAssessmentDataCopy = cloneDeep(state.securityRiskAssessmentData);
+    const selectedControls = securityRiskAssessmentDataCopy.selectedControls;
+
+    if (selectedControls.length > 0) {
+      const control = selectedControls[0].controls.filter(
+        (control) => control.id == controlID
+      );
+
+      if (control.length > 0) {
+        control[0][fieldName] = updatedValue;
+
+        return {
+          ...state,
+          securityRiskAssessmentData: securityRiskAssessmentDataCopy
+        };
+      }
+    }
+  }
+
   return state;
 }
