@@ -24,11 +24,13 @@ class InnerList extends React.Component {
       questionnaireSubmissionUUID,
       comingFrom,
       sraTaskName,
-      productAspect
+      productAspect,
+      column
     } = this.props;
 
     return this.props.controls.map((control, index) => (
       <ControlCard
+        column={column}
         key={control.id}
         control={control}
         index={index}
@@ -103,6 +105,7 @@ export default class Column extends Component {
 
                 {this.state.controlArrayIsValid ? (
                   <InnerList
+                    column={column}
                     controls={controls}
                     columnTitle={column.title}
                     cvaTaskSubmissionUUID={cvaTaskSubmissionUUID}
