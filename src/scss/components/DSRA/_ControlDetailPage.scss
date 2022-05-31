@@ -151,4 +151,31 @@
       }
     }
   }
+
+  .implementation-evidence-container {
+    margin-top: 24px;
+    p {
+      margin-bottom: 14px;
+    }
+  }
+
+  .implementation-evidence {
+    border: 1px solid #808080;
+    border-radius: 5px;
+    overflow: hidden;
+  }
+
+  .implementation-evidence.focus {
+    border-color: $light-blue;
+  }
+
+  .mce-panel {
+    background-color: $white;
+    border: none;
+  }
+
+  .mce-container * {
+    max-height: 72px;
+    border-radius: 5px;
+  }
 }
