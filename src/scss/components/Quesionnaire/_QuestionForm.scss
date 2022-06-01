@@ -203,6 +203,7 @@
       width: auto;
       margin: 0 7px 7px 0;
       top: 11px;
+      accent-color: $light-blue;
     }
 
     .required:after {
@@ -303,5 +304,11 @@
         }
       }
     }
+  }
+
+  &.initial-risk-impact-assessment {
+    width: 100%;
+    min-height: unset;
+    padding-bottom: 30px;
   }
 }
