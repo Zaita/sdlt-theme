@@ -20,6 +20,8 @@ import {
   CTL_STATUS_4
 } from "../../constants/values";
 import Select from 'react-select';
+import 'tinymce/themes/modern';
+import { Editor } from "@tinymce/tinymce-react";
 
 const mapStateToProps = (state: RootState) => {
   return {
@@ -80,12 +82,16 @@ function ControlDetailContainer(props) {
     isKeyControl,
     description,
     selectedOption,
-    controlOwnerDetails
+    controlOwnerDetails,
+    implementationEvidenceHelpText,
+    implementationEvidenceUserInput
   } = { ...state.props.control };
 
   if (!currentUser || !siteConfig) {
     return null;
   }
+
+  const [isTextAreaFocus, setIsTextAreaFocus] = useState(false);
 
   const backLinkUrl = () => {comingFrom == 'sra' ?
     URLUtil.redirectToSecurityRiskAssessment(sraTaskSubmissionUUID, secureToken, 'redirect', productAspect) :
@@ -113,6 +119,15 @@ function ControlDetailContainer(props) {
   const regex = /{\d*}/g;
   const controlIdArray = id.match(regex);
   const controlID = (controlIdArray[1].match(/\d+/g)).pop();
+
+  const handleOnBlur = (event, fieldName) => {
+    setIsTextAreaFocus(false);
+    dispatchUpdateCVAControlDetailAction({
+      controlID: controlID,
+      fieldName: fieldName,
+      updatedValue: event.target.getContent(),
+    });
+  }
 
   return (
     <div className="ControlDetailContainer">
@@ -180,23 +195,53 @@ function ControlDetailContainer(props) {
 
             <div className="control-owner-details-container">
               <h5>Control owner</h5>
-              <div className="help-text">
-                {controlOwnerDetails[0].name}
-                {controlOwnerDetails[0].email && (
-                  <p className="control-owner-email">
-                    &nbsp;(
-                    <span className="control-detail-link">
-                      <a href={"mailto:" + controlOwnerDetails[0].email}>
-                        {controlOwnerDetails[0].email}
-                      </a>
-                    </span>
-                    )
-                  </p>
-                )}
-                <span className="control-owner-team">
-                  {controlOwnerDetails[0].team}
-                </span>
-              </div>
+              {controlOwnerDetails.length > 0 && (
+                <div className="help-text">
+                  {controlOwnerDetails[0].name}
+                  {controlOwnerDetails[0].email && (
+                    <p className="control-owner-email">
+                      &nbsp;(
+                      <span className="control-detail-link">
+                        <a href={"mailto:" + controlOwnerDetails[0].email}>
+                          {controlOwnerDetails[0].email}
+                        </a>
+                      </span>
+                        )
+                    </p>
+                  )}
+                  <span className="control-owner-team">
+                    {controlOwnerDetails[0].team}
+                  </span>
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div className="implementation-evidence-container">
+            <h5>Evidence of implementation</h5>
+            <p className="help-text">
+              {implementationEvidenceHelpText}
+            </p>
+            <div className={`implementation-evidence ${isTextAreaFocus ? "focus" : ""}`}>
+              <Editor
+                initialValue={implementationEvidenceUserInput}
+                init={{
+                  selector: "textarea",
+                  height: "73",
+                  menubar: false,
+                  toolbar: false,
+                  statusbar: false,
+                  content_style:
+                    "body { font-size: 11px; line-height: 16px; }" +
+                    "html { scrollbar-color: #2371A6 #fff; }",
+                  skin_url:
+                    "resources/vendor/silverstripe/admin/thirdparty/tinymce/skins/silverstripe",
+                }}
+                onFocus={() => setIsTextAreaFocus(true)}
+                onBlur={(event) => {
+                  handleOnBlur(event, "implementationEvidenceUserInput")
+                }}
+              />
             </div>
           </div>
         </div>
