@@ -53,7 +53,14 @@ export default class SecurityComponentParser {
                 name: toString(get(riskCategory, "name", ""))
               }
             }),
-            isKeyControl: Boolean(get(control, "isKeyControl", false))
+            isKeyControl: Boolean(get(control, "isKeyControl", false)),
+            controlOwnerDetails: (get(control, "controlOwnerDetails") || []).map((controlOwnerDetail) => {
+              return {
+                name: toString(get(controlOwnerDetail, "name", "")),
+                email: toString(get(controlOwnerDetail, "email", "")),
+                team: toString(get(controlOwnerDetail, "team", ""))
+              }
+            }),
           }
         }),
         jiraTicketLink: toString(get(jsonObject, "jiraTicketLink", "")),
