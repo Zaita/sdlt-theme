@@ -172,7 +172,7 @@ class MainApp extends Component<*> {
               }}
             </Route>
 
-            <Route exact path='/control-detail-Page/'>
+            <Route exact path='/control-detail-page/'>
               {() => {
                 return (
                   <div className="gray-bg">

@@ -1,89 +1,148 @@
-import React, { useState } from 'react'
-import { Draggable } from 'react-beautiful-dnd'
-import { Card, IconButton } from '@material-ui/core'
-import ChevronRightIcon from '@material-ui/icons/ChevronRight';
-import Paperclip from '@material-ui/icons/AttachFile';
+//@flow
+
+import React, { useState } from "react";
+import { Draggable } from "react-beautiful-dnd";
+import { Card, IconButton } from "@material-ui/core";
+import ChevronRightIcon from "@material-ui/icons/ChevronRight";
 import KeyControlIcon from "../../../../img/icons/key-control-star.svg";
-import {Link} from "react-router-dom";
-// not the final icons
-import EffectiveIcon from '@material-ui/icons/VerifiedUser';
-import PartiallyEffectiveIcon from '@material-ui/icons/Policy';
-import NotEffectiveIcon from '@material-ui/icons/Security';
-import NotValidatedIcon from '@material-ui/icons/Cancel';
+import { Link } from "react-router-dom";
+import effectiveIconSvg from "../../../../img/icons/approve.svg";
+import partiallyEffectiveIconSvg from "../../../../img/icons/partially-effective.svg";
+import notEffectiveIconSvg from "../../../../img/icons/not-effective.svg";
 
+type Props = {
+  evalutionRating: string,
+  id: string,
+  isKeyControl: boolean,
+  index: number,
+  implementationEvidenceUserInput: string,
+  name: string,
+  riskCategories: Array<string>,
+  column: Object,
+  control: Object,
+};
 
-export default function CardItem(props) {
+export default function CardItem(props: Props) {
   const [expanded, setExpanded] = useState(false);
 
-  const evidenceIconsMap = {
-    "Not Validated": <NotValidatedIcon />,
-    "Not Effective": <NotEffectiveIcon />,
-    "Partially Effective": <PartiallyEffectiveIcon />,
-    "Effective": <EffectiveIcon />
-  }
+  const {
+    name,
+    riskCategories,
+    id,
+    isKeyControl,
+    evalutionRating,
+    implementationEvidenceUserInput,
+  } = props.control;
+
+  const { column, index } = props;
+
+  const evaluationRatingIconsMap = {
+    "Not Validated": notEffectiveIconSvg,
+    "Not Effective": notEffectiveIconSvg,
+    "Partially Effective": partiallyEffectiveIconSvg,
+    "Effective": effectiveIconSvg
+  };
+
+  const EvaluationRatingIcon = (evaluationRatingIconsMap, icon) => {
+    return (
+      <img
+        className="effectiveness-icon"
+        src={evaluationRatingIconsMap[icon]}
+        alt={icon + " icon"}
+      />
+    );
+  };
+
+  const controlsInImplementedColumn = (column) => {
+    if (column.id !== "column-4" || column.title !== "Implemented") {
+      return;
+    }
+
+    const implementedControlIds = column.controlIds;
+    return implementedControlIds;
+  };
+
+  const isControlImplemented = () => {
+    const implementedControls = controlsInImplementedColumn(column);
+
+    if (implementedControls == undefined) {
+      return;
+    }
+
+    const isImplemented = implementedControls?.includes(id);
+    return isImplemented;
+  };
+
+  const isEvidenceAddedToControl = () => {
+    if (implementationEvidenceUserInput !== "") {
+      return true;
+    }
+  };
+
+  const isControlImplementedAndHasEvidence = () => {
+    if (isControlImplemented() && isEvidenceAddedToControl()) {
+      return true;
+    }
+  };
 
   const handleExpandClick = () => {
     setExpanded(!expanded);
   };
 
-  const riskCategoryDisplay = (arr) => {
-    if (!expanded && arr.length)
+  const riskCategoryDisplay = () => {
+    if (!expanded && riskCategories.length > 0) {
       return (
         <>
-          <p className="card-risk-category">{arr[0].name}</p>
-          {arr.length > 1
-            ? <p className="card-weight">+{arr.length-1}</p>
-            : ''
-          }
+          <p className="card-risk-category">{riskCategories[0].name}</p>
+          {riskCategories.length > 1 ? (
+            <p className="card-weight">+{riskCategories.length - 1}</p>
+          ) : (
+            ""
+          )}
         </>
-      )
+      );
+    }
 
-    return arr.map((risk, i) => (
-      <p className="card-risk-category" key={i}>{risk.name}</p>
-    ))
-  }
+    return riskCategories.map((risk, i) => (
+      <p className="card-risk-category" key={i}>
+        {risk.name}
+      </p>
+    ));
+  };
 
-  // get card column position from state, and implement the following evidence methods only if the card is in the 'implemented' column.
-  const evidenceStatus = (evidence) => {
-    if (!evidence) {
-      return
+  const evidenceStatus = () => {
+    return (
+      <div className="evidence-status">
+        {EvaluationRatingIcon(evaluationRatingIconsMap, "Effective")}
+        <p className="evidence-text">Evidence Added</p>
+      </div>
+    );
+  };
+
+  const evaluationRatingStatus = () => {
+    if (evalutionRating == "") {
+      return;
     }
 
     return (
-      <div>
-        <Paperclip />
-        <p>Evidence Added</p>
+      <div className="evidence-evaluation-rating">
+        {EvaluationRatingIcon(evaluationRatingIconsMap, evalutionRating)}
+        <p className="evidence-text">{evalutionRating}</p>
       </div>
-    )
-  }
-
-  //consider material ui migration or include fontawesome
-  const evidenceRatingStatus = (evidenceRating, icons) => {
-    if (!evidenceRating) {
-      return
-    }
-
-    const icon = icons[evidenceRating]
-    return (
-      <div className="evidence">
-        <p>{icon}</p>
-        <p>{evidenceRating}</p>
-      </div>
-    )
-  }
-
-  const { name, riskCategories, id, isKeyControl, evidenceAdded, evidenceRating } = props.control;
+    );
+  };
 
   return (
-    <Draggable draggableId={props.control.id} index={props.index}>
+    <Draggable draggableId={id} index={index}>
       {(provided, snapshot) => {
         const draggingStyle = {
-          backgroundColor: snapshot.isDragging ? 'lightgrey' : 'white',
+          backgroundColor: snapshot.isDragging ? "lightgrey" : "white",
           ...provided.draggableProps.style,
         };
 
         return (
-          <Card className="material-card"
+          <Card
+            className="material-card"
             {...provided.draggableProps}
             {...provided.dragHandleProps}
             ref={provided.innerRef}
@@ -91,33 +150,41 @@ export default function CardItem(props) {
           >
             <div className="card-content">
               <div className="card-header">
-                {isKeyControl
-                  ? <p className="card-title card-key-control">
-                      <img src={KeyControlIcon} alt="star icon"/>{name}
-                    </p>
-                  : <p className="card-title">{name}</p>
-                }
+                {isKeyControl ? (
+                  <p className="card-title card-key-control">
+                    <img src={KeyControlIcon} alt="star icon" />
+                    {name}
+                  </p>
+                ) : (
+                  <p className="card-title">{name}</p>
+                )}
                 <div className="card-chevron">
-                  <Link to={{
-                    pathname: '/control-detail-Page',
-                    state: {props}
-                  }}>
+                  <Link
+                    to={{
+                      pathname: "/control-detail-page",
+                      state: { props },
+                    }}
+                  >
                     <IconButton aria-label="show more">
                       <ChevronRightIcon />
                     </IconButton>
                   </Link>
                 </div>
               </div>
-              <div className={!expanded ? 'card-footer' : 'card-footer flex-column'} onClick={handleExpandClick}>
-                {riskCategoryDisplay(riskCategories)}
-                {evidenceStatus(evidenceAdded)}
-                {/* {evidenceRatingStatus(evidenceRating, evidenceIconsMap)} */}
+              <div
+                className={
+                  !expanded ? "card-footer" : "card-footer flex-column"
+                }
+                onClick={!isControlImplemented() ? handleExpandClick : null}
+              >
+                {isControlImplemented() ? null : riskCategoryDisplay()}
+                {isControlImplementedAndHasEvidence() ? evidenceStatus() : null}
+                {isControlImplemented() ? evaluationRatingStatus() : null}
               </div>
             </div>
           </Card>
-        )
-
+        );
       }}
     </Draggable>
-  )
+  );
 }
