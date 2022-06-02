@@ -11,7 +11,7 @@ import partiallyEffectiveIconSvg from "../../../../img/icons/partially-effective
 import notEffectiveIconSvg from "../../../../img/icons/not-effective.svg";
 
 type Props = {
-  evalutionRating: string,
+  evaluationRating: string,
   id: string,
   isKeyControl: boolean,
   index: number,
@@ -30,7 +30,7 @@ export default function CardItem(props: Props) {
     riskCategories,
     id,
     isKeyControl,
-    evalutionRating,
+    evaluationRating,
     implementationEvidenceUserInput,
   } = props.control;
 
@@ -120,14 +120,14 @@ export default function CardItem(props: Props) {
   };
 
   const evaluationRatingStatus = () => {
-    if (evalutionRating == "") {
+    if (evaluationRating == "") {
       return;
     }
 
     return (
       <div className="evidence-evaluation-rating">
-        {EvaluationRatingIcon(evaluationRatingIconsMap, evalutionRating)}
-        <p className="evidence-text">{evalutionRating}</p>
+        {EvaluationRatingIcon(evaluationRatingIconsMap, evaluationRating)}
+        <p className="evidence-text">{evaluationRating}</p>
       </div>
     );
   };

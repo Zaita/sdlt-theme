@@ -1,10 +1,10 @@
 // @flow
 
 import {
-  EVALUTION_RATING_1,
-  EVALUTION_RATING_2,
-  EVALUTION_RATING_3,
-  EVALUTION_RATING_4,
+  EVALUATION_RATING_1,
+  EVALUATION_RATING_2,
+  EVALUATION_RATING_3,
+  EVALUATION_RATING_4,
 } from "./../constants/values.js";
 
 export default class ControlBoardUtil {
@@ -38,17 +38,17 @@ export default class ControlBoardUtil {
 
   static sortByEffectiveness(controlsArray) {
     const sortOrder = [
-      EVALUTION_RATING_4,
-      EVALUTION_RATING_3,
-      EVALUTION_RATING_2,
-      EVALUTION_RATING_1,
+      EVALUATION_RATING_4,
+      EVALUATION_RATING_3,
+      EVALUATION_RATING_2,
+      EVALUATION_RATING_1,
     ];
 
     return Object.fromEntries(
       Object.entries(controlsArray).sort((a, b) => {
         return (
-          sortOrder.indexOf(a[1].evalutionRating) -
-          sortOrder.indexOf(b[1].evalutionRating)
+          sortOrder.indexOf(a[1].evaluationRating) -
+          sortOrder.indexOf(b[1].evaluationRating)
         );
       })
     );

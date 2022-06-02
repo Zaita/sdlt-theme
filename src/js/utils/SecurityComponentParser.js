@@ -42,7 +42,7 @@ export default class SecurityComponentParser {
             id: toString(get(control, "id", "")),
             name: toString(get(control, "name", "")),
             selectedOption: toString(get(control, "selectedOption", "")),
-            evalutionRating: toString(get(control, "evalutionRating", "")),
+            evaluationRating: toString(get(control, "evaluationRating", "")),
             description: toString(get(control, "description", "")),
             implementationGuidance: toString(get(control, "implementationGuidance", "")),
             implementationEvidence: toString(get(control, "implementationEvidence", "")),
