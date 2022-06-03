@@ -22,6 +22,11 @@ import {
 import Select from 'react-select';
 import 'tinymce/themes/modern';
 import { Editor } from "@tinymce/tinymce-react";
+import Accordion from '@material-ui/core/Accordion';
+import AccordionSummary from '@material-ui/core/AccordionSummary';
+import AccordionDetails from '@material-ui/core/AccordionDetails';
+import Typography from '@material-ui/core/Typography';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
 const mapStateToProps = (state: RootState) => {
   return {
@@ -84,7 +89,8 @@ function ControlDetailContainer(props) {
     selectedOption,
     controlOwnerDetails,
     implementationEvidenceHelpText,
-    implementationEvidenceUserInput
+    implementationEvidenceUserInput,
+    implementationGuidance
   } = { ...state.props.control };
 
   if (!currentUser || !siteConfig) {
@@ -243,6 +249,24 @@ function ControlDetailContainer(props) {
                 }}
               />
             </div>
+          </div>
+
+          <div className="implementation-guidance-container">
+            <Accordion>
+              <AccordionSummary
+                expandIcon={<ExpandMoreIcon />}
+                aria-controls="implementation-guidance-content"
+                id="implementation-guidance-header"
+              >
+                <Typography>How to implement this control</Typography>
+              </AccordionSummary>
+              <AccordionDetails>
+                <div
+                  className="implementation-guidance-content control-detail-link"
+                  dangerouslySetInnerHTML={{ __html: implementationGuidance }}
+                />
+              </AccordionDetails>
+            </Accordion>
           </div>
         </div>
       </div>
