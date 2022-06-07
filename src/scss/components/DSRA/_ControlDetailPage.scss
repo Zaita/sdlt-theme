@@ -130,14 +130,22 @@
     color: $black;
   }
 
-  .control-implementation-status-and-owner-subcontainer {
+  .control-implementation-status-container,
+  .implementation-audit-container {
+    flex: 1;
+  }
+
+  .control-implementation-status-and-owner-subcontainer,
+  .implementation-audit-and-evaluation-rating-subcontainer {
     display: flex;
+  }
+
+  .control-implementation-status-and-owner-subcontainer {
     .control-owner-team {
       display: block;
     }
 
     .control-implementation-status-container {
-      flex: 1;
       h5 {
         margin-bottom: 15px;
       }
@@ -213,6 +221,16 @@
 
     .implementation-guidance-content {
       padding-right: 20px;
+    }
+  }
+
+  .control-audit-container {
+    margin-top: 28px;
+    border-top: 2px solid #d9d9d9;
+    padding-top: 25px;
+
+    .implementation-audit-content {
+      width: 300px;
     }
   }
 }
