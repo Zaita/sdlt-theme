@@ -28,7 +28,7 @@ function TooltipStyled(props) {
   return <Tooltip classes={classes} {...props} />;
 }
 
-function InformationTooltip({ columnInformation }) {
+function InformationTooltip({ content }) {
   const [open, setOpen] = useState(false);
 
   const handleTooltipClose = () => {
@@ -41,7 +41,7 @@ function InformationTooltip({ columnInformation }) {
 
   return (
     <ClickAwayListener onClickAway={handleTooltipClose}>
-      <div>
+      <div className="information-tooltip-container">
         <TooltipStyled
           PopperProps={{
             disablePortal: true,
@@ -50,7 +50,7 @@ function InformationTooltip({ columnInformation }) {
           disableFocusListener
           disableHoverListener
           disableTouchListener
-          title={columnInformation}
+          title={content}
           placement="bottom"
           TransitionComponent={Fade} TransitionProps={{ timeout: 0 }}
           arrow
