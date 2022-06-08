@@ -90,7 +90,8 @@ function ControlDetailContainer(props) {
     controlOwnerDetails,
     implementationEvidenceHelpText,
     implementationEvidenceUserInput,
-    implementationGuidance
+    implementationGuidance,
+    implementationAuditHelpText
   } = { ...state.props.control };
 
   if (!currentUser || !siteConfig) {
@@ -134,6 +135,20 @@ function ControlDetailContainer(props) {
       updatedValue: event.target.getContent(),
     });
   }
+
+  const implementationAuditRolesArray = [
+    { name: "Your project", value: "<strong>Your project</strong>" },
+    { name: "Security Architect", value: "<strong>Security Architect</strong>" },
+    { name: "External Vendor", value: "<strong>External Vendor</strong>" }
+  ];
+
+  let updatedImplementationAuditHelpText = implementationAuditHelpText;
+  implementationAuditRolesArray.forEach((role) => {
+    updatedImplementationAuditHelpText = updatedImplementationAuditHelpText.replaceAll(
+      role.name,
+      role.value
+    );
+  });
 
   return (
     <div className="ControlDetailContainer">
@@ -267,6 +282,18 @@ function ControlDetailContainer(props) {
                 />
               </AccordionDetails>
             </Accordion>
+          </div>
+        </div>
+
+        <div className="control-audit-container">
+          <div className="implementation-audit-and-evaluation-rating-subcontainer">
+            <div className="implementation-audit-container">
+              <h5>Implementation audit</h5>
+              <div
+                className="implementation-audit-content help-text"
+                dangerouslySetInnerHTML={{ __html: updatedImplementationAuditHelpText }}
+              />
+            </div>
           </div>
         </div>
       </div>

@@ -61,7 +61,8 @@ export default class SecurityComponentParser {
                 team: toString(get(controlOwnerDetail, "team", ""))
               }
             }),
-            implementationEvidenceHelpText: toString(get(control, "implementationEvidenceHelpText", ""))
+            implementationEvidenceHelpText: toString(get(control, "implementationEvidenceHelpText", "")),
+            implementationAuditHelpText: toString(get(control, "implementationAuditHelpText", ""))
           }
         }),
         jiraTicketLink: toString(get(jsonObject, "jiraTicketLink", "")),
