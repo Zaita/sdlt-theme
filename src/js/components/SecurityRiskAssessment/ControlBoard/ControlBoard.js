@@ -9,7 +9,7 @@ import AlertTitle from '@material-ui/lab/AlertTitle';
 import { cloneDeep } from 'lodash';
 import { Snackbar } from '@material-ui/core';
 import CheckCircle from '@material-ui/icons/CheckCircle';
-import InformationTooltip from './InformationTooltip';
+import InformationTooltip from '../../Common/InformationTooltip';
 import SearchIcon from '../../../../img/icons/search-icon.svg';
 import ControlBoardUtil from '../../../utils/ControlBoardUtil';
 
@@ -407,7 +407,7 @@ export default class Board extends Component<Props> {
                   }}
                 >
                   <h5 className="column-title">{column.title}</h5>
-                  <InformationTooltip columnInformation={informationTextData[column.title]}/>
+                  <InformationTooltip content={informationTextData[column.title]}/>
                 </div>
               );
           })}

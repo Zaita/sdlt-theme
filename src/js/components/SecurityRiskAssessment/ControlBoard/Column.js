@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Droppable } from 'react-beautiful-dnd';
 import ControlCard from './ControlCard';
-import InformationTooltip from './InformationTooltip';
+import InformationTooltip from '../../Common/InformationTooltip';
 import OpenWithIcon from '@material-ui/icons/OpenWith';
 
 // optimization
@@ -91,7 +91,7 @@ export default class Column extends Component {
       <>
         <div className='column-header'>
           <h5 className='column-title'>{column.title}</h5>
-          <InformationTooltip columnInformation={informationText} />
+          <InformationTooltip content={informationText} />
         </div>
         <div className={columnIsEmpty ? 'dotted-border column-card-list' : 'column-card-list'}>
           <Droppable droppableId={column.id}>

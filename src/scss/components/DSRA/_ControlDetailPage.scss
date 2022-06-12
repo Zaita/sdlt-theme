@@ -59,7 +59,8 @@
     }
   }
 
-  .control-implementation-status-container {
+  .control-implementation-status-container,
+  .evaluation-rating-container {
     .react-select-container {
       max-width: 147px;
       font-size: 11px;
@@ -103,7 +104,7 @@
         border-radius: 0 0 5px 5px;
 
         .react-select__menu-list {
-          height: 128px;
+          height: fit-content;
           padding-bottom: 0;
           padding-top: 0;
           border-radius: 0 0 5px 5px;
@@ -135,6 +136,11 @@
     flex: 1;
   }
 
+  .control-owner-details-container,
+  .evaluation-rating-container {
+    flex: 2;
+  }
+
   .control-implementation-status-and-owner-subcontainer,
   .implementation-audit-and-evaluation-rating-subcontainer {
     display: flex;
@@ -152,7 +158,6 @@
     }
 
     .control-owner-details-container {
-      flex: 2;
       h5 {
         margin-bottom: 11px;
       }
@@ -231,6 +236,32 @@
 
     .implementation-audit-content {
       width: 300px;
+    }
+  }
+  
+  .evaluation-rating-container {
+    .evaluation-rating-heading {
+      display: flex;
+      align-items: center;
+      h5 {
+        margin-right: 2px;
+      }
+    }
+
+    .react-select-container.evaluation-dropdown-container {
+      margin-top: 4px;
+    }
+
+    .evaluation-rating-tooltip-info {
+      color: $white;
+      p:last-child {
+        margin-bottom: 0;
+      }
+
+      .evaluation-rating-label {
+        display: block;
+        font-weight: 700;
+      }
     }
   }
 }

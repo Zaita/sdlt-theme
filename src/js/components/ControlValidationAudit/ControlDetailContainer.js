@@ -17,8 +17,13 @@ import {
   CTL_STATUS_1,
   CTL_STATUS_2,
   CTL_STATUS_3,
-  CTL_STATUS_4
+  CTL_STATUS_4,
+  EVALUTION_RATING_1,
+  EVALUTION_RATING_2,
+  EVALUTION_RATING_3,
+  EVALUTION_RATING_4
 } from "../../constants/values";
+import InformationTooltip from "../Common/InformationTooltip";
 import Select from 'react-select';
 import 'tinymce/themes/modern';
 import { Editor } from "@tinymce/tinymce-react";
@@ -91,7 +96,8 @@ function ControlDetailContainer(props) {
     implementationEvidenceHelpText,
     implementationEvidenceUserInput,
     implementationGuidance,
-    implementationAuditHelpText
+    implementationAuditHelpText,
+    evalutionRating
   } = { ...state.props.control };
 
   if (!currentUser || !siteConfig) {
@@ -122,6 +128,7 @@ function ControlDetailContainer(props) {
   ];
 
   const initialImplementationStatus = implementationStatusOptions.find(({ value }) => value === selectedOption);
+  const [implementationStatus, setImplementationStatus] = useState(initialImplementationStatus.value);
 
   const regex = /{\d*}/g;
   const controlIdArray = id.match(regex);
@@ -149,6 +156,40 @@ function ControlDetailContainer(props) {
       role.value
     );
   });
+
+  const evaluationRatingTooltipInformation = (
+    <div className="evaluation-rating-tooltip-info">
+      <p>
+        <span className="evaluation-rating-label">Effective:</span>
+        The implementation of this control is effective.
+      </p>
+      <p>
+        <span className="evaluation-rating-label">Partially effective:</span>
+        The implementation of this control is moderately effective.
+      </p>
+      <p>
+        <span className="evaluation-rating-label">Not effective:</span>
+        The implementation of this control is not effective.
+      </p>
+    </div>
+  );
+
+  const evaluationRatingOptions = [
+    { value: EVALUTION_RATING_4, label: "Effective" },
+    { value: EVALUTION_RATING_3, label: "Partially effective" },
+    { value: EVALUTION_RATING_2, label: "Not effective" },
+  ];
+
+  let initialEvaluationRating = evaluationRatingOptions.find(({ value }) => value === evalutionRating);
+
+  if (!initialEvaluationRating) {
+    initialEvaluationRating = {
+      value: EVALUTION_RATING_1, label: "Select"
+    }
+  }
+
+  const [evaluationRating, setEvaluationRating] = useState(initialEvaluationRating.value);
+  let updatedEvaluationRating = evaluationRatingOptions.find(({ value }) => value === evaluationRating);
 
   return (
     <div className="ControlDetailContainer">
@@ -205,11 +246,16 @@ function ControlDetailContainer(props) {
                       transform: state.selectProps.menuIsOpen && "rotate(180deg)"
                     })
                   }}
-                  onChange={(selectedOption) => dispatchUpdateCVAControlDetailAction({
-                    "controlID": controlID,
-                    "fieldName": "selectedOption",
-                    "updatedValue": selectedOption.value
-                  })}
+                  onChange={(selectedOption) =>
+                    dispatchUpdateCVAControlDetailAction(
+                      {
+                        controlID: controlID,
+                        fieldName: "selectedOption",
+                        updatedValue: selectedOption.value,
+                      },
+                      setImplementationStatus(selectedOption.value)
+                    )
+                  }
                   isSearchable={false}
                 />
             </div>
@@ -293,6 +339,47 @@ function ControlDetailContainer(props) {
                 className="implementation-audit-content help-text"
                 dangerouslySetInnerHTML={{ __html: updatedImplementationAuditHelpText }}
               />
+            </div>
+
+            <div className="evaluation-rating-container">
+              <div className="evaluation-rating-heading">
+                <h5>Evaluation rating</h5>
+                <InformationTooltip content={evaluationRatingTooltipInformation}/>
+              </div>
+
+              {implementationStatus != CTL_STATUS_1 && (
+                <p className="help-text">
+                  This control needs to be implemented first before it can be audited.
+                </p>
+              )}
+
+              {implementationStatus === CTL_STATUS_1 && (
+                <Select
+                  options={evaluationRatingOptions}
+                  defaultValue={initialEvaluationRating}
+                  value={updatedEvaluationRating}
+                  className="react-select-container evaluation-dropdown-container"
+                  classNamePrefix="react-select"
+                  styles={{
+                    dropdownIndicator: (provided, state) => ({
+                      ...provided,
+                      transform:
+                        state.selectProps.menuIsOpen && "rotate(180deg)"
+                    }),
+                  }}
+                  onChange={(evaluationRating) =>
+                    dispatchUpdateCVAControlDetailAction(
+                      {
+                        controlID: controlID,
+                        fieldName: "evalutionRating",
+                        updatedValue: evaluationRating.value
+                      },
+                      setEvaluationRating(evaluationRating.value)
+                    )
+                  }
+                  isSearchable={false}
+                />
+              )}
             </div>
           </div>
         </div>
