@@ -49,6 +49,7 @@
   .help-text {
     font-size: 11px;
     line-height: 16px;
+    white-space: pre-wrap;
   }
 
   .control-detail-link {
@@ -168,7 +169,7 @@
     }
   }
 
-  .implementation-evidence-container {
+  .editor-container {
     margin-top: 24px;
     p {
       margin-bottom: 14px;
@@ -179,13 +180,13 @@
     }
   }
 
-  .implementation-evidence {
+  .editor-text-field {
     border: 1px solid #808080;
     border-radius: 5px;
     overflow: hidden;
   }
 
-  .implementation-evidence.focus {
+  .editor-text-field.focus {
     border-color: $light-blue;
   }
 
@@ -238,7 +239,7 @@
       width: 300px;
     }
   }
-  
+
   .evaluation-rating-container {
     .evaluation-rating-heading {
       display: flex;
