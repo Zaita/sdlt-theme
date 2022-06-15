@@ -47,6 +47,9 @@ export default class SecurityComponentParser {
             implementationGuidance: toString(get(control, "implementationGuidance", "")),
             implementationEvidence: toString(get(control, "implementationEvidence", "")),
             implementationEvidenceUserInput: toString(get(control, "implementationEvidenceUserInput", "")),
+            auditMethodUserInput: toString(get(control, "auditMethodUserInput", "")),
+            auditNotesAndFindingsUserInput: toString(get(control, "auditNotesAndFindingsUserInput", "")),
+            auditRecommendationsUserInput: toString(get(control, "auditRecommendationsUserInput", "")),
             riskCategories: (get(control, "riskCategories") || []).map((riskCategory) => {
               return {
                 id: toString(get(riskCategory, "id", "")),

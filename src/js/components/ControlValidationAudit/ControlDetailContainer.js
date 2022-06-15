@@ -97,14 +97,19 @@ function ControlDetailContainer(props) {
     implementationEvidenceUserInput,
     implementationGuidance,
     implementationAuditHelpText,
-    evalutionRating
+    evalutionRating,
+    auditMethodUserInput,
+    auditNotesAndFindingsUserInput,
+    auditRecommendationsUserInput
   } = { ...state.props.control };
 
   if (!currentUser || !siteConfig) {
     return null;
   }
 
-  const [isTextAreaFocus, setIsTextAreaFocus] = useState(false);
+  const auditMethodHelpText = 'The audit process is based on the GCDO Assurance framework, and the guidelines for auditing management systems ISO / IEC 19011:2011.\nDescribe the activities and methods used to perform the audit of the control (e.g. documentation review, interviews, evidence or observations, testing).';
+  const auditNotesAndFindingsHelpText = 'Explain the rationale for the control evaluation rating and identify issues in this section.';
+  const auditRecommendationsHelpText = 'Describe the remediation activities to address the identified control deficiencies with respect to the control evaluation and the risk ratings.';
 
   const backLinkUrl = () => {comingFrom == 'sra' ?
     URLUtil.redirectToSecurityRiskAssessment(sraTaskSubmissionUUID, secureToken, 'redirect', productAspect) :
@@ -117,6 +122,47 @@ function ControlDetailContainer(props) {
       Back
     </div>
   );
+
+  const EditorField = ({heading, helpText, initialValue, fieldName}) => {
+    const [isTextAreaFocus, setIsTextAreaFocus] = useState(false);
+
+    const handleOnBlur = (event, fieldName) => {
+      setIsTextAreaFocus(false);
+      dispatchUpdateCVAControlDetailAction({
+        controlID: controlID,
+        fieldName: fieldName,
+        updatedValue: event.target.getContent(),
+      });
+    }
+
+    return (
+      <div className="editor-container">
+        <h5>{heading}</h5>
+        <p className="help-text">{helpText}</p>
+        <div className={`editor-text-field ${isTextAreaFocus ? "focus" : ""}`}>
+          <Editor
+            initialValue={initialValue}
+            init={{
+              selector: "textarea",
+              height: "73",
+              menubar: false,
+              toolbar: false,
+              statusbar: false,
+              content_style:
+                "body { font-size: 11px; line-height: 16px; }" +
+                "html { scrollbar-color: #2371A6 #fff; }",
+              skin_url:
+                "resources/vendor/silverstripe/admin/thirdparty/tinymce/skins/silverstripe",
+            }}
+            onFocus={() => setIsTextAreaFocus(true)}
+            onBlur={(event) => {
+              handleOnBlur(event, fieldName);
+            }}
+          />
+        </div>
+      </div>
+    );
+  };
 
   const keyControlMessageParts = IS_KEY_CONTROL_MESSAGE.match(/[^.]+[.]+/g);
 
@@ -133,15 +179,6 @@ function ControlDetailContainer(props) {
   const regex = /{\d*}/g;
   const controlIdArray = id.match(regex);
   const controlID = (controlIdArray[1].match(/\d+/g)).pop();
-
-  const handleOnBlur = (event, fieldName) => {
-    setIsTextAreaFocus(false);
-    dispatchUpdateCVAControlDetailAction({
-      controlID: controlID,
-      fieldName: fieldName,
-      updatedValue: event.target.getContent(),
-    });
-  }
 
   const implementationAuditRolesArray = [
     { name: "Your project", value: "<strong>Your project</strong>" },
@@ -235,29 +272,29 @@ function ControlDetailContainer(props) {
           <div className="control-implementation-status-and-owner-subcontainer">
             <div className="control-implementation-status-container">
               <h5>Implementation status</h5>
-                <Select
-                  options={implementationStatusOptions}
-                  defaultValue={initialImplementationStatus}
-                  className="react-select-container"
-                  classNamePrefix="react-select"
-                  styles={{
-                    dropdownIndicator: (provided, state) => ({
-                      ...provided,
-                      transform: state.selectProps.menuIsOpen && "rotate(180deg)"
-                    })
-                  }}
-                  onChange={(selectedOption) =>
-                    dispatchUpdateCVAControlDetailAction(
-                      {
-                        controlID: controlID,
-                        fieldName: "selectedOption",
-                        updatedValue: selectedOption.value,
-                      },
-                      setImplementationStatus(selectedOption.value)
-                    )
-                  }
-                  isSearchable={false}
-                />
+              <Select
+                options={implementationStatusOptions}
+                defaultValue={initialImplementationStatus}
+                className="react-select-container"
+                classNamePrefix="react-select"
+                styles={{
+                  dropdownIndicator: (provided, state) => ({
+                    ...provided,
+                    transform: state.selectProps.menuIsOpen && "rotate(180deg)",
+                  }),
+                }}
+                onChange={(selectedOption) =>
+                  dispatchUpdateCVAControlDetailAction(
+                    {
+                      controlID: controlID,
+                      fieldName: "selectedOption",
+                      updatedValue: selectedOption.value,
+                    },
+                    setImplementationStatus(selectedOption.value)
+                  )
+                }
+                isSearchable={false}
+              />
             </div>
 
             <div className="control-owner-details-container">
@@ -273,7 +310,7 @@ function ControlDetailContainer(props) {
                           {controlOwnerDetails[0].email}
                         </a>
                       </span>
-                        )
+                      )
                     </p>
                   )}
                   <span className="control-owner-team">
@@ -284,33 +321,12 @@ function ControlDetailContainer(props) {
             </div>
           </div>
 
-          <div className="implementation-evidence-container">
-            <h5>Evidence of implementation</h5>
-            <p className="help-text">
-              {implementationEvidenceHelpText}
-            </p>
-            <div className={`implementation-evidence ${isTextAreaFocus ? "focus" : ""}`}>
-              <Editor
-                initialValue={implementationEvidenceUserInput}
-                init={{
-                  selector: "textarea",
-                  height: "73",
-                  menubar: false,
-                  toolbar: false,
-                  statusbar: false,
-                  content_style:
-                    "body { font-size: 11px; line-height: 16px; }" +
-                    "html { scrollbar-color: #2371A6 #fff; }",
-                  skin_url:
-                    "resources/vendor/silverstripe/admin/thirdparty/tinymce/skins/silverstripe",
-                }}
-                onFocus={() => setIsTextAreaFocus(true)}
-                onBlur={(event) => {
-                  handleOnBlur(event, "implementationEvidenceUserInput")
-                }}
-              />
-            </div>
-          </div>
+          <EditorField
+            heading="Evidence of implementation"
+            helpText={implementationEvidenceHelpText}
+            initialValue={implementationEvidenceUserInput}
+            fieldName="implementationEvidence"
+          />
 
           <div className="implementation-guidance-container">
             <Accordion>
@@ -337,19 +353,24 @@ function ControlDetailContainer(props) {
               <h5>Implementation audit</h5>
               <div
                 className="implementation-audit-content help-text"
-                dangerouslySetInnerHTML={{ __html: updatedImplementationAuditHelpText }}
+                dangerouslySetInnerHTML={{
+                  __html: updatedImplementationAuditHelpText,
+                }}
               />
             </div>
 
             <div className="evaluation-rating-container">
               <div className="evaluation-rating-heading">
                 <h5>Evaluation rating</h5>
-                <InformationTooltip content={evaluationRatingTooltipInformation}/>
+                <InformationTooltip
+                  content={evaluationRatingTooltipInformation}
+                />
               </div>
 
               {implementationStatus != CTL_STATUS_1 && (
                 <p className="help-text">
-                  This control needs to be implemented first before it can be audited.
+                  This control needs to be implemented first before it can be
+                  audited.
                 </p>
               )}
 
@@ -364,7 +385,7 @@ function ControlDetailContainer(props) {
                     dropdownIndicator: (provided, state) => ({
                       ...provided,
                       transform:
-                        state.selectProps.menuIsOpen && "rotate(180deg)"
+                        state.selectProps.menuIsOpen && "rotate(180deg)",
                     }),
                   }}
                   onChange={(evaluationRating) =>
@@ -372,7 +393,7 @@ function ControlDetailContainer(props) {
                       {
                         controlID: controlID,
                         fieldName: "evalutionRating",
-                        updatedValue: evaluationRating.value
+                        updatedValue: evaluationRating.value,
                       },
                       setEvaluationRating(evaluationRating.value)
                     )
@@ -382,6 +403,27 @@ function ControlDetailContainer(props) {
               )}
             </div>
           </div>
+
+          <EditorField
+            heading="Audit method"
+            helpText={auditMethodHelpText}
+            initialValue={auditMethodUserInput}
+            fieldName="auditMethodUserInput"
+          />
+
+          <EditorField
+            heading="Audit notes and findings"
+            helpText={auditNotesAndFindingsHelpText}
+            initialValue={auditNotesAndFindingsUserInput}
+            fieldName="auditNotesAndFindingsUserInput"
+          />
+
+          <EditorField
+            heading="Audit recommendations"
+            helpText={auditRecommendationsHelpText}
+            initialValue={auditRecommendationsUserInput}
+            fieldName="auditRecommendationsUserInput"
+          />
         </div>
       </div>
     </div>
