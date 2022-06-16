@@ -112,3 +112,28 @@ export function reSyncWithJira (uuid: string) : ThunkAction {
     }
   }
 }
+
+export function updateCVAControlDetailData(args: {
+  updatedControl: object,
+  controlID: string,
+  componentID: string,
+  productAspect: string,
+  cvaTaskSubmissionUUID: string,
+  sraTaskSubmissionUUID: string,
+  comingFrom: string
+}): ThunkAction {
+  return async (dispatch) => {
+    try {
+      const csrfToken = await CSRFTokenService.getCSRFToken();
+      const {uuid} = await ControlValidationAuditDataService.updateCVAControlDetails(args, csrfToken);
+      if (args.comingFrom == "sra") {
+        URLUtil.redirectToSecurityRiskAssessment(args.sraTaskSubmissionUUID, '', 'redirect', args.productAspect);
+      } else {
+        URLUtil.redirectToControlValidationAudit(args.sraTaskSubmissionUUID, '', 'redirect', args.productAspect);
+      }
+    }
+    catch (error) {
+      ErrorUtil.displayError(error);
+    }
+  };
+}

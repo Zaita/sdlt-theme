@@ -8,7 +8,7 @@ import Footer from "../Footer/Footer";
 import { useLocation } from "react-router-dom";
 import { loadSiteConfig } from "../../actions/siteConfig";
 import { loadCurrentUser } from "../../actions/user";
-import { updateCVAControlDetailData } from "../../actions/securityRiskAssessment";
+import { updateCVAControlDetailData } from "../../actions/controlValidationAudit";
 import KeyControlIcon from "../../../img/icons/key-control-star.svg";
 import BackArrow from "../../../img/icons/back-arrow.svg";
 import URLUtil from "../../utils/URLUtil";
@@ -32,6 +32,8 @@ import AccordionSummary from '@material-ui/core/AccordionSummary';
 import AccordionDetails from '@material-ui/core/AccordionDetails';
 import Typography from '@material-ui/core/Typography';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import DarkButton from "../Button/DarkButton";
+import EditorField from "../Common/EditorField";
 
 const mapStateToProps = (state: RootState) => {
   return {
@@ -46,9 +48,17 @@ const mapDispatchToProps = (dispatch: Dispatch, props: *) => {
       dispatch(loadCurrentUser());
       dispatch(loadSiteConfig());
     },
-    // update the control object before clicking on save button
-    dispatchUpdateCVAControlDetailAction(controlID: string, fieldName: string, updatedValue: string) {
-      dispatch(updateCVAControlDetailData(controlID, fieldName, updatedValue));
+    // update the control object:  clicking on save button
+    dispatchUpdateCVAControlDetailAction(
+      updatedControl: object,
+      controlID: string,
+      componentID: string,
+      productAspect: string,
+      cvaTaskSubmissionUUID: string,
+      sraTaskSubmissionUUID: string,
+      comingFrom: string
+    ) {
+      dispatch(updateCVAControlDetailData({updatedControl, controlID, componentID, productAspect, cvaTaskSubmissionUUID, sraTaskSubmissionUUID, comingFrom}));
     }
   };
 };
@@ -107,6 +117,7 @@ function ControlDetailContainer(props) {
     return null;
   }
 
+  const [currentControlData, setCurrentControlData] = useState({...state.props.control});
   const auditMethodHelpText = 'The audit process is based on the GCDO Assurance framework, and the guidelines for auditing management systems ISO / IEC 19011:2011.\nDescribe the activities and methods used to perform the audit of the control (e.g. documentation review, interviews, evidence or observations, testing).';
   const auditNotesAndFindingsHelpText = 'Explain the rationale for the control evaluation rating and identify issues in this section.';
   const auditRecommendationsHelpText = 'Describe the remediation activities to address the identified control deficiencies with respect to the control evaluation and the risk ratings.';
@@ -123,46 +134,18 @@ function ControlDetailContainer(props) {
     </div>
   );
 
-  const EditorField = ({heading, helpText, initialValue, fieldName}) => {
-    const [isTextAreaFocus, setIsTextAreaFocus] = useState(false);
+  const updateCVAControlDetail = (fieldName, fieldValue) => {
+    setCurrentControlData({...currentControlData, [fieldName]: fieldValue});
+  }
 
-    const handleOnBlur = (event, fieldName) => {
-      setIsTextAreaFocus(false);
-      dispatchUpdateCVAControlDetailAction({
-        controlID: controlID,
-        fieldName: fieldName,
-        updatedValue: event.target.getContent(),
-      });
-    }
-
-    return (
-      <div className="editor-container">
-        <h5>{heading}</h5>
-        <p className="help-text">{helpText}</p>
-        <div className={`editor-text-field ${isTextAreaFocus ? "focus" : ""}`}>
-          <Editor
-            initialValue={initialValue}
-            init={{
-              selector: "textarea",
-              height: "73",
-              menubar: false,
-              toolbar: false,
-              statusbar: false,
-              content_style:
-                "body { font-size: 11px; line-height: 16px; }" +
-                "html { scrollbar-color: #2371A6 #fff; }",
-              skin_url:
-                "resources/vendor/silverstripe/admin/thirdparty/tinymce/skins/silverstripe",
-            }}
-            onFocus={() => setIsTextAreaFocus(true)}
-            onBlur={(event) => {
-              handleOnBlur(event, fieldName);
-            }}
-          />
-        </div>
-      </div>
-    );
-  };
+  const saveCVAControlDetail = (currentControlData) => {
+    const regx = /{\d*}/g;
+    const idArray = currentControlData.id.match(regx);
+    const controlID = (idArray[1].match(/\d+/g)).pop();
+    const componentID = (idArray[0].match(/\d+/g)).pop();
+    currentControlData.id = controlID;
+    dispatchUpdateCVAControlDetailAction(currentControlData, controlID, componentID, productAspect, cvaTaskSubmissionUUID, sraTaskSubmissionUUID, comingFrom);
+  }
 
   const keyControlMessageParts = IS_KEY_CONTROL_MESSAGE.match(/[^.]+[.]+/g);
 
@@ -172,13 +155,6 @@ function ControlDetailContainer(props) {
     { value: CTL_STATUS_4, label: "Planned" },
     { value: CTL_STATUS_1, label: "Implemented"}
   ];
-
-  const initialImplementationStatus = implementationStatusOptions.find(({ value }) => value === selectedOption);
-  const [implementationStatus, setImplementationStatus] = useState(initialImplementationStatus.value);
-
-  const regex = /{\d*}/g;
-  const controlIdArray = id.match(regex);
-  const controlID = (controlIdArray[1].match(/\d+/g)).pop();
 
   const implementationAuditRolesArray = [
     { name: "Your project", value: "<strong>Your project</strong>" },
@@ -224,9 +200,6 @@ function ControlDetailContainer(props) {
       value: EVALUTION_RATING_1, label: "Select"
     }
   }
-
-  const [evaluationRating, setEvaluationRating] = useState(initialEvaluationRating.value);
-  let updatedEvaluationRating = evaluationRatingOptions.find(({ value }) => value === evaluationRating);
 
   return (
     <div className="ControlDetailContainer">
@@ -274,26 +247,19 @@ function ControlDetailContainer(props) {
               <h5>Implementation status</h5>
               <Select
                 options={implementationStatusOptions}
-                defaultValue={initialImplementationStatus}
+                defaultValue={implementationStatusOptions.find(({ value }) => value === selectedOption)}
                 className="react-select-container"
                 classNamePrefix="react-select"
+                isSearchable={false}
                 styles={{
                   dropdownIndicator: (provided, state) => ({
                     ...provided,
-                    transform: state.selectProps.menuIsOpen && "rotate(180deg)",
-                  }),
+                    transform: state.selectProps.menuIsOpen && "rotate(180deg)"
+                  })
                 }}
                 onChange={(selectedOption) =>
-                  dispatchUpdateCVAControlDetailAction(
-                    {
-                      controlID: controlID,
-                      fieldName: "selectedOption",
-                      updatedValue: selectedOption.value,
-                    },
-                    setImplementationStatus(selectedOption.value)
-                  )
+                  updateCVAControlDetail('selectedOption', selectedOption.value)
                 }
-                isSearchable={false}
               />
             </div>
 
@@ -324,8 +290,9 @@ function ControlDetailContainer(props) {
           <EditorField
             heading="Evidence of implementation"
             helpText={implementationEvidenceHelpText}
-            initialValue={implementationEvidenceUserInput}
-            fieldName="implementationEvidence"
+            initialValue={currentControlData.implementationEvidenceUserInput}
+            fieldName="implementationEvidenceUserInput"
+            onBlurUpdate={updateCVAControlDetail}
           />
 
           <div className="implementation-guidance-container">
@@ -367,38 +334,29 @@ function ControlDetailContainer(props) {
                 />
               </div>
 
-              {implementationStatus != CTL_STATUS_1 && (
+              {currentControlData.selectedOption != CTL_STATUS_1 && (
                 <p className="help-text">
-                  This control needs to be implemented first before it can be
-                  audited.
+                  This control needs to be implemented first before it can be audited.
                 </p>
               )}
 
-              {implementationStatus === CTL_STATUS_1 && (
+              {currentControlData.selectedOption === CTL_STATUS_1 && (
                 <Select
                   options={evaluationRatingOptions}
                   defaultValue={initialEvaluationRating}
-                  value={updatedEvaluationRating}
                   className="react-select-container evaluation-dropdown-container"
                   classNamePrefix="react-select"
+                  isSearchable={false}
                   styles={{
                     dropdownIndicator: (provided, state) => ({
                       ...provided,
                       transform:
-                        state.selectProps.menuIsOpen && "rotate(180deg)",
+                        state.selectProps.menuIsOpen && "rotate(180deg)"
                     }),
                   }}
                   onChange={(evaluationRating) =>
-                    dispatchUpdateCVAControlDetailAction(
-                      {
-                        controlID: controlID,
-                        fieldName: "evalutionRating",
-                        updatedValue: evaluationRating.value,
-                      },
-                      setEvaluationRating(evaluationRating.value)
-                    )
+                    updateCVAControlDetail('evalutionRating', evaluationRating.value)
                   }
-                  isSearchable={false}
                 />
               )}
             </div>
@@ -407,23 +365,34 @@ function ControlDetailContainer(props) {
           <EditorField
             heading="Audit method"
             helpText={auditMethodHelpText}
-            initialValue={auditMethodUserInput}
+            initialValue={currentControlData.auditMethodUserInput}
             fieldName="auditMethodUserInput"
+            onBlurUpdate={updateCVAControlDetail}
           />
 
           <EditorField
             heading="Audit notes and findings"
             helpText={auditNotesAndFindingsHelpText}
-            initialValue={auditNotesAndFindingsUserInput}
+            initialValue={currentControlData.auditNotesAndFindingsUserInput}
             fieldName="auditNotesAndFindingsUserInput"
+            onBlurUpdate={updateCVAControlDetail}
           />
 
           <EditorField
             heading="Audit recommendations"
             helpText={auditRecommendationsHelpText}
-            initialValue={auditRecommendationsUserInput}
+            initialValue={currentControlData.auditRecommendationsUserInput}
             fieldName="auditRecommendationsUserInput"
+            onBlurUpdate={updateCVAControlDetail}
           />
+        </div>
+        <div className="bottom-container">
+          <div className="button-container">
+            <DarkButton
+              title="Save"
+              onClick={() => saveCVAControlDetail(currentControlData)}
+            />
+          </div>
         </div>
       </div>
     </div>

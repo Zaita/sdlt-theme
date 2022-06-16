@@ -17,9 +17,11 @@ type Props = {
   index: number,
   implementationEvidenceUserInput: string,
   name: string,
+  productAspect: string,
   riskCategories: Array<string>,
   column: Object,
   control: Object,
+  cvaTaskSubmissionUUID: string
 };
 
 export default function CardItem(props: Props) {

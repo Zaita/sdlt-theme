@@ -71,17 +71,3 @@ export function updateControlValidationAuditData(args: {
     }
   };
 }
-
-export function updateCVAControlDetailData(args: {
-  controlID: string,
-  fieldName: string,
-  updatedValue: string
-}): ThunkAction {
-  return async (dispatch) => {
-    const action = {
-      type: ActionType.SRA.UPDATE_CVA_CONTROL_DETAIL_DATA,
-      payload: args
-    };
-    await dispatch(action);
-  }
-}

@@ -124,4 +124,32 @@ mutation {
     const components = jsonArray.length > 0 ? SecurityComponentParser.parseCVAFromJSONObject(jsonArray) : jsonArray;
     return components;
   }
+
+  static async updateCVAControlDetails(args, csrfToken): Promise {
+    const {componentID, controlID, productAspect, updatedControl, cvaTaskSubmissionUUID} = {...args};
+    const controlDataStr = window.btoa(
+      unescape(
+        encodeURIComponent(
+          JSON.stringify(
+            updatedControl
+          )
+        )
+      )
+    );
+    let query = `
+    mutation {
+      updateControlValidationAuditControlDetails(UUID: "${cvaTaskSubmissionUUID}", ComponentID: "${componentID}", ControlID: "${controlID}", ProductAspect: "${productAspect}", UpdatedControl: "${controlDataStr}") {
+        UUID
+      }
+    }`;
+
+    const responseJSONObject = await GraphQLRequestHelper.request({query, csrfToken});
+    const submissionHash = get(responseJSONObject, "data.updateControlValidationAuditControlDetails.UUID", null);
+
+    if (!submissionHash) {
+      throw DEFAULT_NETWORK_ERROR;
+    }
+
+    return submissionHash;
+  }
 }
