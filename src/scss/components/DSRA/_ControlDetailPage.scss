@@ -265,4 +265,14 @@
       }
     }
   }
+
+  .bottom-container{
+    margin-top: 25px;
+    border-top: 2px solid $light-gray;
+    padding-top: 18px;
+
+    .button-container {
+      float: right;
+    }
+  }
 }
