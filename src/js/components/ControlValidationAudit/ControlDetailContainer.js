@@ -26,7 +26,6 @@ import {
 import InformationTooltip from "../Common/InformationTooltip";
 import Select from 'react-select';
 import 'tinymce/themes/modern';
-import { Editor } from "@tinymce/tinymce-react";
 import Accordion from '@material-ui/core/Accordion';
 import AccordionSummary from '@material-ui/core/AccordionSummary';
 import AccordionDetails from '@material-ui/core/AccordionDetails';
@@ -34,6 +33,8 @@ import Typography from '@material-ui/core/Typography';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import DarkButton from "../Button/DarkButton";
 import EditorField from "../Common/EditorField";
+import { UnsavedChangesModal } from "./UnsavedChangesModal";
+import { isEqual } from "lodash";
 
 const mapStateToProps = (state: RootState) => {
   return {
@@ -117,14 +118,44 @@ function ControlDetailContainer(props) {
     return null;
   }
 
-  const [currentControlData, setCurrentControlData] = useState({...state.props.control});
   const auditMethodHelpText = 'The audit process is based on the GCDO Assurance framework, and the guidelines for auditing management systems ISO / IEC 19011:2011.\nDescribe the activities and methods used to perform the audit of the control (e.g. documentation review, interviews, evidence or observations, testing).';
   const auditNotesAndFindingsHelpText = 'Explain the rationale for the control evaluation rating and identify issues in this section.';
   const auditRecommendationsHelpText = 'Describe the remediation activities to address the identified control deficiencies with respect to the control evaluation and the risk ratings.';
 
-  const backLinkUrl = () => {comingFrom == 'sra' ?
-    URLUtil.redirectToSecurityRiskAssessment(sraTaskSubmissionUUID, secureToken, 'redirect', productAspect) :
-    URLUtil.redirectToControlValidationAudit(cvaTaskSubmissionUUID, secureToken, 'redirect', productAspect) ;
+  const [currentControlData, setCurrentControlData] = useState({...state.props.control});
+  const [openModal, setOpenModal] = useState(false);
+  const [unsavedChanges, setUnsavedChanges] = useState(false);
+
+  const resetModalState = (action) => {
+    if (action === "cancel") {
+      setOpenModal(false);
+      return;
+    }
+    setOpenModal(false);
+    setUnsavedChanges(false);
+  }
+
+  const handleCloseSubmitModal = () => {
+    saveCVAControlDetail(state.props.control);
+    setOpenModal(false);
+  };
+
+  const handleSubmit = () => {
+    saveCVAControlDetail(currentControlData);
+    resetModalState();
+  };
+
+  const backLinkUrl = () => {
+    if (unsavedChanges) {
+      setOpenModal(true);
+      return;
+    }
+
+    if (comingFrom == 'sra' && !unsavedChanges) {
+      URLUtil.redirectToSecurityRiskAssessment(sraTaskSubmissionUUID, secureToken, 'redirect', productAspect)
+    } else if (comingFrom !=='sra' && !unsavedChanges) {
+      URLUtil.redirectToControlValidationAudit(cvaTaskSubmissionUUID, secureToken, 'redirect', productAspect)
+    }
   };
 
   const backLink = (
@@ -135,8 +166,8 @@ function ControlDetailContainer(props) {
   );
 
   const updateCVAControlDetail = (fieldName, fieldValue) => {
-    setCurrentControlData({...currentControlData, [fieldName]: fieldValue});
-  }
+    setCurrentControlData({ ...currentControlData, [fieldName]: fieldValue });
+  };
 
   const saveCVAControlDetail = (currentControlData) => {
     const regx = /{\d*}/g;
@@ -201,8 +232,24 @@ function ControlDetailContainer(props) {
     }
   }
 
+  useEffect(() => {
+    if (isEqual(currentControlData, state?.props?.control)) {
+      setUnsavedChanges(false);
+    }
+    else {
+      setUnsavedChanges(true);
+    }
+
+  }, [currentControlData, state?.props?.control]);
+
   return (
     <div className="ControlDetailContainer">
+      <UnsavedChangesModal
+        when={openModal}
+        handleCloseSubmitModal={() => handleCloseSubmitModal()}
+        handleSubmit={() => handleSubmit()}
+        resetModalState={resetModalState}
+      />
       <Header
         pageTitle={name}
         logopath={siteConfig.logoPath}
@@ -247,18 +294,20 @@ function ControlDetailContainer(props) {
               <h5>Implementation status</h5>
               <Select
                 options={implementationStatusOptions}
-                defaultValue={implementationStatusOptions.find(({ value }) => value === selectedOption)}
+                defaultValue={implementationStatusOptions.find(
+                  ({ value }) => value === selectedOption
+                )}
                 className="react-select-container"
                 classNamePrefix="react-select"
                 isSearchable={false}
                 styles={{
                   dropdownIndicator: (provided, state) => ({
                     ...provided,
-                    transform: state.selectProps.menuIsOpen && "rotate(180deg)"
-                  })
+                    transform: state.selectProps.menuIsOpen && "rotate(180deg)",
+                  }),
                 }}
                 onChange={(selectedOption) =>
-                  updateCVAControlDetail('selectedOption', selectedOption.value)
+                  updateCVAControlDetail("selectedOption", selectedOption.value)
                 }
               />
             </div>
@@ -336,7 +385,8 @@ function ControlDetailContainer(props) {
 
               {currentControlData.selectedOption != CTL_STATUS_1 && (
                 <p className="help-text">
-                  This control needs to be implemented first before it can be audited.
+                  This control needs to be implemented first before it can be
+                  audited.
                 </p>
               )}
 
@@ -351,11 +401,11 @@ function ControlDetailContainer(props) {
                     dropdownIndicator: (provided, state) => ({
                       ...provided,
                       transform:
-                        state.selectProps.menuIsOpen && "rotate(180deg)"
+                        state.selectProps.menuIsOpen && "rotate(180deg)",
                     }),
                   }}
                   onChange={(evaluationRating) =>
-                    updateCVAControlDetail('evalutionRating', evaluationRating.value)
+                    updateCVAControlDetail("evalutionRating", evaluationRating.value)
                   }
                 />
               )}

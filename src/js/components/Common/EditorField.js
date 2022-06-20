@@ -7,7 +7,7 @@ type Props = {
   helpText: string,
   initialValue: string,
   fieldName: string,
-  onBlurUpdate: function,
+  onBlurUpdate: (fieldName: string, content: string) => void,
 };
 
 export default function EditorField(props: Props) {
