@@ -276,3 +276,53 @@
     }
   }
 }
+
+.unsaved-changes-modal {
+  .ReactModal__Content {
+    width: 417px;
+    border-radius: 5px;
+
+    .modal-header {
+      margin: -20px -20px 14px -20px;
+      padding: 18px 19px 9px 19px;
+
+      h1 {
+        font-size: 18px;
+        font-weight: 700;
+        color: $dark-blue;
+      }
+
+      .close-icon-container {
+        cursor: pointer;
+      }
+    }
+
+    .content {
+      padding-top: 6px;
+      font-size: 11px;
+      color: #111;
+      width: 360px;
+
+      p {
+        margin-bottom: 11px;
+        line-height: 13px;
+      }
+
+      .confirmation-message {
+        font-weight: 700;
+        margin-bottom: 27px;
+      }
+    }
+
+    .button-container {
+      margin-top: 25px;
+      display: flex;
+      justify-content: center;
+      .confirm-save-button {
+        padding: 0px 20px;
+        width: 183px;
+        height: 34px;
+      }
+    }
+  }
+}

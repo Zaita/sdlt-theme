@@ -11,7 +11,7 @@ type Props = {
 };
 
 export default function EditorField(props: Props) {
-  const { heading, helpText, initialValue, fieldName, onBlurUpdate } = props;
+  const { heading, helpText, initialValue, fieldName, onBlurUpdate, setUnsavedChanges } = props;
   const [isTextAreaFocus, setIsTextAreaFocus] = useState(false);
 
   const handleOnBlur = (event) => {
@@ -41,6 +41,7 @@ export default function EditorField(props: Props) {
           }}
           onFocus={() => setIsTextAreaFocus(true)}
           onBlur={(event) => handleOnBlur(event)}
+          onChange={() => setUnsavedChanges(true)}
         />
       </div>
     </div>

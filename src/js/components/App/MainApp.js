@@ -204,7 +204,7 @@ class MainApp extends Component<*> {
             </Route>
 
             <Route path='/MySubmissions'>
-              {({ match }) => {
+              {() => {
                 return (
                   <div className="gray-bg">
                     <MySubmissionList />
@@ -213,7 +213,7 @@ class MainApp extends Component<*> {
               }}
             </Route>
             <Route path='/AwaitingApprovals'>
-              {({ match }) => {
+              {() => {
                 return (
                   <div className="gray-bg">
                     <AwaitingApprovalList />
