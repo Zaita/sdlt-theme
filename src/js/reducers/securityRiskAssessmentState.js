@@ -28,6 +28,7 @@ export function securityRiskAssessmentState(state: SecurityRiskAssessmentState =
 
   if (action.type === ActionType.SRA.UPDATE_CVA_CONTROL_STATUS) {
     const selectedControls = action.payload.selectedControls;
+    const scoresAndPaneltiesObj = action.payload.scoresAndPaneltiesObj;
     const newSraData = action.payload.sraData;
     const oldSraData = state.securityRiskAssessmentData.sraData;
     const securityRiskAssessmentDataCopy = cloneDeep(state.securityRiskAssessmentData);
@@ -54,6 +55,7 @@ export function securityRiskAssessmentState(state: SecurityRiskAssessmentState =
     });
 
     securityRiskAssessmentDataCopy.selectedControls = selectedControls;
+    securityRiskAssessmentDataCopy.scoresAndPaneltiesObj = scoresAndPaneltiesObj;
     securityRiskAssessmentDataCopy.sraData = newSraData;
 
     return {

@@ -72,4 +72,48 @@ export default class SecurityComponentParser {
       }
     });
   }
+
+  static parseScoresAndPanelties(securityRiskAssessmentData: object) {
+    const componentObj = {};
+
+    securityRiskAssessmentData.map((riskObj) => {
+      if(!riskObj.riskDetail.components) {
+        return componentObj;
+      }
+      riskObj.riskDetail.components.map((component) => {
+        let controlObj = {};
+        const controls = component.implementedControls.concat(component.recommendedControls);
+
+        if (component.id in componentObj) {
+          controlObj = componentObj[component.id];
+        }
+
+        controls.map((control) => {
+          const scoreObj = {
+            riskId: riskObj.riskId,
+            riskName: riskObj.riskName,
+            componentId: component.id,
+            componentName: component.name,
+            controlId: control.id,
+            controlName: control.name,
+            normaliseLikelihood: control.likelihoodWeight,
+            normaliseImpact: control.impactWeight,
+            impactPenalty: control.impactPenalty,
+            likelihoodPenalty: control.likelihoodPenalty,
+          }
+
+          if (control.id in controlObj) {
+            const arr = controlObj[control.id];
+            arr.push(scoreObj);
+            controlObj[control.id] = arr;
+          } else {
+            controlObj[control.id] = [scoreObj];
+          }
+        });
+        componentObj[component.id] = controlObj;
+      });
+    });
+
+    return componentObj;
+  }
 }

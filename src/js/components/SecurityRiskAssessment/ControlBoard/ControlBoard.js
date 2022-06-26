@@ -26,6 +26,8 @@ type Props = {
   secureToken: string,
   questionnaireSubmissionUUID: string,
   comingFrom: string,
+  sraData: object,
+  scoresAndPaneltiesObj: object,
   dispatchUpdateCVAControlStatus?: (selectedOptionDetail: object) => void
 }
 
@@ -293,17 +295,19 @@ export default class Board extends Component<Props> {
     let controls = [];
 
     this.props.selectedControls.map((securityComponentObj) => {
+      const scoresAndPaneltiesObjForComponent = this.props.scoresAndPaneltiesObj[securityComponentObj.id];
       const securityComponentName = securityComponentObj.name;
       const controlsArray = securityComponentObj.controls;
-
       controlsArray.map(({id, ...control}) => {
         const uniqeKey = securityComponentName + "-{" + securityComponentObj.id + "}_"
           + control.name + "-{" + id + "}";
+        const scoresAndPaneltiesObjForControl = scoresAndPaneltiesObjForComponent ? scoresAndPaneltiesObjForComponent[id]: [];
         const key = uniqeKey.replace(/ /g,"_");
         controls = {
           ...controls,
           [key]: {
             id: key,
+            scoresAndPanelties: scoresAndPaneltiesObjForControl,
             ...control
           }
         }
@@ -381,7 +385,9 @@ export default class Board extends Component<Props> {
       secureToken,
       showSubmissionBreadcrumb,
       showApprovalBreadcrumb,
-      comingFrom
+      comingFrom,
+      sraData,
+      scoresAndPaneltiesObj
     } = { ...this.props };
 
     const informationTextData = {
@@ -488,6 +494,8 @@ export default class Board extends Component<Props> {
                     showApprovalBreadcrumb={showApprovalBreadcrumb}
                     comingFrom={comingFrom}
                     informationText={informationTextData[column.title]}
+                    sraData={sraData}
+                    scoresAndPaneltiesObj={scoresAndPaneltiesObj}
                   />
                 </div>
               );

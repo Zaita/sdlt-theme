@@ -94,7 +94,8 @@ function ControlDetailContainer(props) {
     sraTaskName,
     cvaTaskName,
     comingFrom,
-    productAspect
+    productAspect,
+    sraData
   } = { ...state.props };
 
   const {
@@ -111,7 +112,9 @@ function ControlDetailContainer(props) {
     evalutionRating,
     auditMethodUserInput,
     auditNotesAndFindingsUserInput,
-    auditRecommendationsUserInput
+    auditRecommendationsUserInput,
+    riskCategories,
+    scoresAndPanelties
   } = { ...state.props.control };
 
   if (!currentUser || !siteConfig) {
@@ -358,6 +361,67 @@ function ControlDetailContainer(props) {
                   className="implementation-guidance-content control-detail-link"
                   dangerouslySetInnerHTML={{ __html: implementationGuidance }}
                 />
+              </AccordionDetails>
+            </Accordion>
+          </div>
+
+          <div className="scores-and-penalties-container">
+            <Accordion>
+              <AccordionSummary
+                expandIcon={<ExpandMoreIcon />}
+                aria-controls="scores-and-penalties-content"
+                id="scores-and-penalties-header"
+              >
+                <Typography>Scores and penalties</Typography>
+              </AccordionSummary>
+              <AccordionDetails>
+                <p className="scores-and-penalties-message">
+                  Implementing this control will reduce certain risks in your Security Risk Assessment (SRA).&nbsp;
+                  {isKeyControl
+                    ? "As this is a key control, penalties will be applied to your SRA if it is not implemented."
+                    : ""}
+                </p>
+                <div className="table-responsive scores-and-penalties-table">
+                  <table className="table">
+                    <thead>
+                      <tr>
+                        <th>Risk name</th>
+                        <th>Likelihood score</th>
+                        <th>Impact score</th>
+                        <th>Likelihood penalty</th>
+                        <th>Impact penalty</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {
+                        scoresAndPanelties && scoresAndPanelties.map((obj, index) => {
+                          return (
+                            <tr key={index}>
+                              <td>{obj.riskName}</td>
+                              <td style={{color:"#579A36"}}>
+                                {obj.normaliseLikelihood > 0 ? "-" : ""}
+                                {obj.normaliseLikelihood}
+                              </td>
+                              <td>{obj.normaliseImpact}</td>
+                              <td style={{color:"#BD0A0A"}}>
+                                {obj.likelihoodPenalty > 0 ? "+" : ""}
+                                {obj.likelihoodPenalty}
+                              </td>
+                              <td>{obj.impactPenalty}</td>
+                            </tr>
+                          );
+                        })
+                      }
+                      {
+                        (!scoresAndPanelties || !scoresAndPanelties.length) && (
+                          <tr>
+                            <td><b>Sorry, no data to display.</b></td>
+                          </tr>
+                        )
+                      }
+                    </tbody>
+                  </table>
+                </div>
               </AccordionDetails>
             </Accordion>
           </div>

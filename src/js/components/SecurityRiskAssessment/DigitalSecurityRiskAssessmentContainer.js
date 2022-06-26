@@ -199,7 +199,8 @@ class DigitalSecurityRiskAssessmentContainer extends Component<Props> {
       selectedControls,
       questionnaireSubmissionProductName,
       likelihoodRatingThresholds,
-      riskRatingThresholds
+      riskRatingThresholds,
+      scoresAndPaneltiesObj
     } = { ...securityRiskAssessmentData };
 
     const cvaTaskSubmission = taskSubmissions.filter((taskSubmission) => {
@@ -307,6 +308,8 @@ class DigitalSecurityRiskAssessmentContainer extends Component<Props> {
                   secureToken={secureToken}
                   productName={questionnaireSubmissionProductName}
                   questionnaireSubmissionUUID={questionnaireSubmissionUUID}
+                  sraData={sraData}
+                  scoresAndPaneltiesObj={scoresAndPaneltiesObj}
                 />
               </div>
               <div className="bottom-container">
