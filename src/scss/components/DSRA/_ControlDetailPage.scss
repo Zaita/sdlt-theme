@@ -202,6 +202,10 @@
 
   .implementation-guidance-container {
     margin-top: 24px;
+  }
+
+  .implementation-guidance-container,
+  .scores-and-penalties-container {
     border-radius: 5px;
     box-shadow: 0px 4px 10px rgba(0, 63, 100, 0.12);
     line-height: 16px;
@@ -225,11 +229,30 @@
       box-shadow: none;
     }
 
-    .implementation-guidance-content {
+    .implementation-guidance-content,
+    .scores-and-penalties-content {
       padding-right: 20px;
     }
   }
+  .scores-and-penalties-container {
+    margin-top: 10px;
 
+    .MuiAccordionDetails-root {
+      display: block;
+    }
+
+    .scores-and-penalties-table {
+      border: 1px solid #D9D9D9;
+      border-radius: 5px;
+      border-top: none;
+      width: 80%;
+      margin-left: 4px;
+
+      .table {
+        margin-bottom: 0;
+      }
+    }
+  }
   .control-audit-container {
     margin-top: 28px;
     border-top: 2px solid #d9d9d9;
