@@ -21,7 +21,8 @@ type Props = {
   riskCategories: Array<string>,
   column: Object,
   control: Object,
-  cvaTaskSubmissionUUID: string
+  cvaTaskSubmissionUUID: string,
+  sraData: object,
 };
 
 export default function CardItem(props: Props) {
@@ -34,6 +35,7 @@ export default function CardItem(props: Props) {
     isKeyControl,
     evalutionRating,
     implementationEvidenceUserInput,
+    sraData
   } = props.control;
 
   const { column, index } = props;

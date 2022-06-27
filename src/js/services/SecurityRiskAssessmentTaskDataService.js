@@ -67,6 +67,8 @@ query {
       SecurityComponentParser.parseCVAFromJSONObject(selectedControlsJSONArray) :
       selectedControlsJSONArray;
 
+    const scoresAndPaneltiesObj = SecurityComponentParser.parseScoresAndPanelties(securityRiskAssessmentData);
+
     const data: TaskSubmission = {
       uuid: submissionJSONObject && submissionJSONObject.UUID ? submissionJSONObject.UUID : '',
       taskName: toString(get(submissionJSONObject, "TaskName", "")),
@@ -87,6 +89,7 @@ query {
       isBusinessOwner: get(submissionJSONObject, "QuestionnaireSubmission.IsBusinessOwner", "false") === "true",
       taskSubmissions: TaskParser.parseAlltaskSubmissionforQuestionnaire(submissionJSONObject),
       sraData: securityRiskAssessmentData,
+      scoresAndPaneltiesObj: scoresAndPaneltiesObj,
       selectedControls: selectedControls,
       likelihoodRatingThresholds: JSON.parse(get(submissionJSONObject, 'LikelihoodRatingsThresholds', '')),
       riskRatingThresholds: JSON.parse(get(submissionJSONObject, 'RiskRatingThresholdsMatix', ''))
@@ -148,10 +151,12 @@ query {
     const selectedControls = selectedControlsJSONArray.length > 0 ?
       SecurityComponentParser.parseCVAFromJSONObject(selectedControlsJSONArray) : selectedControlsJSONArray;
     const securityRiskAssessmentData = JSON.parse(get(submissionJSONObject, 'SecurityRiskAssessmentData', ''));
+    const scoresAndPaneltiesObj = SecurityComponentParser.parseScoresAndPanelties(securityRiskAssessmentData);
 
     const data = {
       sraData: securityRiskAssessmentData,
-      selectedControls: selectedControls
+      selectedControls: selectedControls,
+      scoresAndPaneltiesObj: scoresAndPaneltiesObj
     };
 
     return data;

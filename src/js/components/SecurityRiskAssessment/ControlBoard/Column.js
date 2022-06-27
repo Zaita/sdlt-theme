@@ -25,7 +25,8 @@ class InnerList extends React.Component {
       comingFrom,
       sraTaskName,
       productAspect,
-      column
+      column,
+      sraData,
     } = this.props;
 
     return this.props.controls.map((control, index) => (
@@ -44,6 +45,7 @@ class InnerList extends React.Component {
         questionnaireSubmissionUUID={questionnaireSubmissionUUID}
         comingFrom={comingFrom}
         sraTaskName={sraTaskName}
+        sraData={sraData}
       />
     ))
   }
@@ -75,6 +77,7 @@ export default class Column extends Component {
       showApprovalBreadcrumb,
       comingFrom,
       informationText,
+      sraData
     } = { ...this.props };
 
     let columnIsEmpty
@@ -118,6 +121,7 @@ export default class Column extends Component {
                     questionnaireSubmissionUUID={questionnaireSubmissionUUID}
                     comingFrom={comingFrom}
                     sraTaskName={sraTaskName}
+                    sraData={sraData}
                   />
                   ) : null
                 }
