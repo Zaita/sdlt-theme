@@ -398,16 +398,25 @@ function ControlDetailContainer(props) {
                           return (
                             <tr key={index}>
                               <td>{obj.riskName}</td>
-                              <td style={{color:"#579A36"}}>
+                              <td className="green">
                                 {obj.normaliseLikelihood > 0 ? "-" : ""}
                                 {obj.normaliseLikelihood}
                               </td>
-                              <td>{obj.normaliseImpact}</td>
-                              <td style={{color:"#BD0A0A"}}>
+
+                              <td className="green">
+                                {obj.normaliseImpact > 0 ? "-" : ""}
+                                {obj.normaliseImpact}
+                              </td>
+
+                              <td className="red">
                                 {obj.likelihoodPenalty > 0 ? "+" : ""}
                                 {obj.likelihoodPenalty}
                               </td>
-                              <td>{obj.impactPenalty}</td>
+
+                              <td className="red">
+                                {obj.impactPenalty > 0 ? "+" : ""}
+                                {obj.impactPenalty}
+                              </td>
                             </tr>
                           );
                         })
