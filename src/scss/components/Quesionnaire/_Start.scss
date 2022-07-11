@@ -3,8 +3,11 @@
 .StartContainer {
   .Start {
     max-width: 1140px;
-    margin-left: auto;
-    margin-right: auto;
+    margin: 0 auto;
+
+    @media (max-width: 1200px) {
+      margin: 0% 5%;
+    }
 
     .start-form {
       display: flex;
