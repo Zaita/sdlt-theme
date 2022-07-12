@@ -35,12 +35,12 @@ export type TaskSubmission = {
   questionnaireSubmissionUUID: string,
   questionnaireSubmissionID: string,
   questionnaireSubmissionStatus: string,
+  questionnaireSubmissionProductName: string,
   submitter: User,
   approver: User,
   lockWhenComplete: boolean,
   isTaskApprovalRequired: boolean,
   isCurrentUserAnApprover: boolean,
-  hideWeightsAndScore: boolean,
   productAspects: Array<*>,
   taskRecommendations: Array<TaskRecommendation>
 };
@@ -49,7 +49,12 @@ export type SecurityRiskAssessment = {
   id: string,
   uuid: string,
   questionnaireSubmissionUUID: string,
-  likelihoodThresholds: Array<LikelihoodThreshold>,
+  likelihoodRatingThresholds: Array<LikelihoodThreshold>,
+  riskRatingThresholds: Array<RiskRatingThreshold>,
+  sraTaskNotApplicableInformationText: string,
+  sraTaskNotImplementedInformationText: string,
+  sraTaskPlannedInformationText: string,
+  sraTaskImplementedInformationText: string
 };
 
 export type LikelihoodThreshold = {

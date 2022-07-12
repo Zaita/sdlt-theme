@@ -1,0 +1,64 @@
+.control-board-container {
+  display: flex;
+  justify-content: center;
+  overflow-x: scroll;
+  min-height: 539.5px;
+
+  .no-search-results-container {
+    width: 100%;
+    min-height: 50vh;
+    margin-left: 2px;
+    margin-right: 2px;
+
+    .column-header-container {
+      display: flex;
+
+      .column-header {
+        margin-right: 14px;
+      }
+    }
+
+    .no-search-results-message-container {
+      color: #727272;
+      text-align: center;
+      margin-top: 35px;
+
+      img {
+        margin-bottom: 5px;
+      }
+
+      .no-search-results-message {
+        display: inline-block;
+        width: 260px;
+        line-height: 16px;
+      }
+    }
+  }
+}
+
+[role="alert"] {
+  margin:0 0 2em 0;
+  color:black;
+  box-shadow: 5px 5px 5px rgba(0,0,0,.25);
+
+  &.MuiAlert-standardError {
+    border: 1px solid #f44336;
+  }
+
+  &.MuiAlert-standardWarning {
+    border: 1px solid #ff9800;
+  }
+
+  &.MuiAlert-standardInfo {
+    border: 1px solid #2196f3;
+  }
+
+  &.MuiAlert-standardSuccess {
+    border: 1px solid #4caf50;
+  }
+
+  .MuiAlertTitle-root {
+    display: inline;
+    margin-right:.5em;
+  }
+}

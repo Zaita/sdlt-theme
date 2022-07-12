@@ -38,9 +38,12 @@
     border-radius: 5px;
     background-color: $dark-gray;
     color: $white;
-
+    cursor: default;
     &:hover {
-        background-color: $dark-gray;
-        color: $gray-200;
+      text-decoration: none;
+    }
+
+    &:hover:after {
+      opacity: 0;
     }
 }

@@ -5,11 +5,8 @@ import Pillar from "./Pillar";
 import TaskButton from "./TaskButton";
 import type {HomeState} from "../../store/HomeState";
 import type {SiteConfig} from "../../store/SiteConfig";
-import LogoutButton from "../Button/LogoutButton";
-import MySubmissionButton from "../Button/MySubmissionButton";
-import AwaitingApprovalsButton from "../Button/AwaitingApprovalsButton";
-import MyProductButton from "../Button/MyProductButton";
 import type {Task} from "../../types/Task";
+import Header from "../Header/Header";
 
 type Props = {
   homeState: HomeState,
@@ -20,18 +17,13 @@ class Home extends Component<Props> {
 
   render() {
     const {title, subtitle, pillars, tasks} = {...this.props.homeState};
-    const {logoPath} = {...this.props.siteConfig};
+    const {logoPath, homePageSubHeaderImagePath} = {...this.props.siteConfig};
 
     return (
       <div className="Home">
-        <LogoutButton classes={["clearfix","float-right", "mt-5", "mr-4"]}/>
-
-        <MySubmissionButton classes={["clearfix","float-right", "mt-5", "mr-1"]}/>
-
-        <AwaitingApprovalsButton classes={["clearfix","float-right", "mt-5", "mr-1"]}/>
-        <MyProductButton classes={["clearfix","float-right", "mt-5", "mr-1"]}/>
+        <Header logopath={logoPath} subHeaderImagePath={homePageSubHeaderImagePath}/>
         <div className="layout">
-          <a href="/"><img src={logoPath} className="logo"/></a>
+          <a href="/"><img src={logoPath} className="homepage-layout-logo"/></a>
           <h1>
             {title}
           </h1>

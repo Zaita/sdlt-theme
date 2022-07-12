@@ -16,6 +16,8 @@ query {
     UUID
     QuestionnaireSubmission {
       UUID
+      ProductName
+      IsBusinessOwner
       TaskSubmissions {
         UUID
         TaskType
@@ -54,6 +56,8 @@ query {
       status: toString(get(submissionJSONObject, "Status", "")),
       uuid: toString(get(submissionJSONObject, "UUID", "")),
       questionnaireSubmissionUUID: toString(get(submissionJSONObject, "QuestionnaireSubmission.UUID", "")),
+      questionnaireSubmissionProductName: toString(get(submissionJSONObject, "QuestionnaireSubmission.ProductName", "")),
+      isBusinessOwner: get(submissionJSONObject, "QuestionnaireSubmission.IsBusinessOwner", "false") === "true",
       taskName: toString(get(submissionJSONObject, "TaskName", "")),
       selectedComponents: components,
       submitterID: toString(get(submissionJSONObject, "Submitter.ID", "")),
@@ -119,5 +123,33 @@ mutation {
 
     const components = jsonArray.length > 0 ? SecurityComponentParser.parseCVAFromJSONObject(jsonArray) : jsonArray;
     return components;
+  }
+
+  static async updateCVAControlDetails(args, csrfToken): Promise {
+    const {componentID, controlID, productAspect, updatedControl, cvaTaskSubmissionUUID} = {...args};
+    const controlDataStr = window.btoa(
+      unescape(
+        encodeURIComponent(
+          JSON.stringify(
+            updatedControl
+          )
+        )
+      )
+    );
+    let query = `
+    mutation {
+      updateControlValidationAuditControlDetails(UUID: "${cvaTaskSubmissionUUID}", ComponentID: "${componentID}", ControlID: "${controlID}", ProductAspect: "${productAspect}", UpdatedControl: "${controlDataStr}") {
+        UUID
+      }
+    }`;
+
+    const responseJSONObject = await GraphQLRequestHelper.request({query, csrfToken});
+    const submissionHash = get(responseJSONObject, "data.updateControlValidationAuditControlDetails.UUID", null);
+
+    if (!submissionHash) {
+      throw DEFAULT_NETWORK_ERROR;
+    }
+
+    return submissionHash;
   }
 }

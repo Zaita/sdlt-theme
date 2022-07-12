@@ -103,13 +103,8 @@ class AwaitingApprovalList extends Component<Props> {
 
     return (
       <div className="AnswersPreview">
-        <Header
-          title="Awaiting Approvals"
-          username={currentUser.name}
-          subtitle={siteConfig.siteTitle}
-          logopath={siteConfig.logoPath}
-        />
-        <div className="container tab-container mb-0">
+        <Header pageTitle="My approvals" logopath={siteConfig.logoPath}/>
+        <div className="container tab-container mb-0 px-0">
           <button
             className={this.state.currentApprovalList == "QuestionnaireApproval" ? "tab-button active": "tab-button"}
             onClick={() => {
@@ -160,7 +155,7 @@ const questionnaireList = (
 
   if (_.isEmpty(questionnaireSubmissionList)) {
     return (
-      <div className="container">
+      <div className="container px-0">
         <div className="alert alert-danger">
           Sorry, No data to display for Questionnaire.
         </div>
@@ -169,7 +164,7 @@ const questionnaireList = (
   }
 
   return (
-    <div className="container">
+    <div className="container px-0">
       <div className="table-responsive">
         <table className="table table-hover table-approval-list">
           <thead>
@@ -248,7 +243,7 @@ const taskList = (
 
   if (_.isEmpty(taskSubmissionList)) {
     return (
-      <div className="container">
+      <div className="container px-0">
         <div className="alert alert-danger">
           Sorry, No data to display for Task.
         </div>
@@ -257,7 +252,7 @@ const taskList = (
   }
 
   return (
-    <div className="container">
+    <div className="container px-0">
       <div className="table-responsive">
         <table className="table table-hover table-approval-list">
           <thead>

@@ -9,7 +9,7 @@ type Props = {
 
 class RiskResultContainer extends Component<Props> {
   render() {
-    const {riskResults, hideWeightsAndScore} = {...this.props};
+    const {riskResults} = {...this.props};
 
     if (!riskResults || riskResults.length === 0) {
       return null;
@@ -17,24 +17,15 @@ class RiskResultContainer extends Component<Props> {
 
     return (
       <div className="risk-result-container">
-        <h4>Risk Result</h4>
+        <h4>Initial Risk Rating</h4>
 
         <div className="table-responsive table-continer">
           <table className="table">
             <thead className="">
               <tr key="risk_table_header">
-                <th>Risk Name</th>
-                {
-                  (!hideWeightsAndScore) && (
-                    <th>Weights</th>
-                  )
-                }
-                {
-                  (!hideWeightsAndScore) && (
-                    <th>Score</th>
-                  )
-                }
-                <th>Rating</th>
+                <th>Risk</th>
+                <th>Initial Rating</th>
+                <th>Description</th>
               </tr>
             </thead>
             <tbody>
@@ -44,22 +35,11 @@ class RiskResultContainer extends Component<Props> {
                     <td>
                       {riskResult.riskName}
                     </td>
-                    {
-                      !hideWeightsAndScore && (
-                        <td>
-                          {riskResult.weights}
-                        </td>
-                      )
-                    }
-                    {
-                      !hideWeightsAndScore && (
-                        <td>
-                          {riskResult.score}
-                        </td>
-                      )
-                    }
-                    <td style={{color:'#' + riskResult.colour}}>
+                    <td style={{backgroundColor:'#' + riskResult.colour, width:'10%', color: '#000000'}}>
                       {riskResult.rating}
+                    </td>
+                    <td style={{width: '59%'}}>
+                      {riskResult.description}
                     </td>
                   </tr>
                 );

@@ -7,6 +7,7 @@ import DefaultLogoImage from "../../img/Logo.svg";
 import DefaultBackgroundImage from "../../img/Home/background.jpg";
 import DefaultPDFHeaderImage from "../../img/PDF/heading.jpg";
 import DefaultPDFFooterImage from "../../img/PDF/footer.jpg";
+import DefaultSubHeaderImage from "../../img/Home/subheader.jpg";
 
 export default class SiteConfigParser {
   static parseSiteConfigFromJSON(siteConfigJSON: string | Object): Siteconfig {
@@ -22,6 +23,7 @@ export default class SiteConfigParser {
       pdfHeaderImageLink: toString(get(jsonObject, "PdfHeaderImageLink", '') || DefaultPDFHeaderImage),
       pdfFooterImageLink: toString(get(jsonObject, "PdfFooterImageLink", '') || DefaultPDFFooterImage),
       securityTeamEmail: toString(get(jsonObject, "SecurityTeamEmail") || ''),
+      homePageSubHeaderImagePath: toString(get(jsonObject, "HomePageSubHeaderImagePath", '') || DefaultSubHeaderImage),
     }
   }
 }

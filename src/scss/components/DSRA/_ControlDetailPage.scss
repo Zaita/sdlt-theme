@@ -1,0 +1,359 @@
+@import "../../variables";
+
+.ControlDetailContainer {
+  .ControlDetail {
+    max-width: map_get($container-max-widths, xl);
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 80px;
+  }
+
+  .alert.key-control-banner {
+    display: flex;
+    align-items: center;
+    height: 44px;
+    font-size: 11px;
+    line-height: 16px;
+    border-radius: 0;
+    background-color: #ffddbe;
+
+    .key-control-icon {
+      width: 14px;
+      margin-right: 12px;
+      margin-bottom: 2px;
+      filter: invert(54%) sepia(76%) saturate(723%) hue-rotate(344deg)
+        brightness(102%) contrast(101%);
+    }
+  }
+
+  .control-description-container {
+    border-bottom: 2px solid #d9d9d9;
+    margin-top: 24px;
+
+    .control-description {
+      margin-bottom: 25px;
+    }
+  }
+
+  h5, .MuiTypography-body1 {
+    color: #0E0E0E;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 16px;
+  }
+
+  h5 {
+    margin-bottom: 10px;
+  }
+
+  .help-text {
+    font-size: 11px;
+    line-height: 16px;
+    white-space: pre-wrap;
+  }
+
+  .control-detail-link {
+    a {
+      color: $light-blue;
+      text-decoration: underline;
+      font-weight: bold;
+    }
+  }
+
+  .control-implementation-status-container,
+  .evaluation-rating-container {
+    .react-select-container {
+      max-width: 147px;
+      font-size: 11px;
+      margin-top: 15px;
+
+      .react-select__control {
+        border: solid 1px $light-blue;
+        border-radius: 5px;
+        min-height: 30px;
+        height: 30px;
+
+        &--menu-is-open {
+          border-bottom-right-radius: 0;
+          border-bottom-left-radius: 0;
+        }
+
+        &--is-focused {
+          box-shadow: none !important;
+        }
+
+        .react-select__single-value {
+          color: $black;
+        }
+
+        .react-select__indicator {
+          color: $light-blue;
+          padding: 5px;
+          margin-right: 6px;
+          &-separator {
+            display: none;
+          }
+          svg {
+            width: 16px;
+          }
+        }
+      }
+
+      .react-select__menu {
+        margin-top: -1px;
+        border: solid 1px $light-blue;
+        border-radius: 0 0 5px 5px;
+
+        .react-select__menu-list {
+          height: fit-content;
+          padding-bottom: 0;
+          padding-top: 0;
+          border-radius: 0 0 5px 5px;
+
+          .react-select__option {
+            line-height: 16px;
+            &--is-selected {
+              background-color: #e1e7eb;
+              color: $black;
+            }
+
+            &--is-focused {
+              background-color: $light-blue;
+              color: $white;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .control-implementation-container {
+    margin-top: 24px;
+    color: $black;
+  }
+
+  .control-implementation-status-container,
+  .implementation-audit-container {
+    flex: 1;
+  }
+
+  .control-owner-details-container,
+  .evaluation-rating-container {
+    flex: 2;
+  }
+
+  .control-implementation-status-and-owner-subcontainer,
+  .implementation-audit-and-evaluation-rating-subcontainer {
+    display: flex;
+  }
+
+  .control-implementation-status-and-owner-subcontainer {
+    .control-owner-team {
+      display: block;
+    }
+
+    .control-implementation-status-container {
+      h5 {
+        margin-bottom: 15px;
+      }
+    }
+
+    .control-owner-details-container {
+      h5 {
+        margin-bottom: 11px;
+      }
+
+      .control-owner-email {
+        display: inline;
+      }
+    }
+  }
+
+  .editor-container {
+    margin-top: 24px;
+    p {
+      margin-bottom: 14px;
+    }
+
+    h5 {
+      color: $black;
+    }
+  }
+
+  .editor-text-field {
+    border: 1px solid #808080;
+    border-radius: 5px;
+    overflow: hidden;
+  }
+
+  .editor-text-field.focus {
+    border-color: $light-blue;
+  }
+
+  .mce-panel {
+    background-color: $white;
+    border: none;
+  }
+
+  .mce-container * {
+    max-height: 72px;
+    border-radius: 5px;
+  }
+
+  .implementation-guidance-container {
+    margin-top: 24px;
+  }
+
+  .implementation-guidance-container,
+  .scores-and-penalties-container {
+    border-radius: 5px;
+    box-shadow: 0px 4px 10px rgba(0, 63, 100, 0.12);
+    line-height: 16px;
+    color: $black;
+
+    .MuiSvgIcon-root {
+      fill: $light-blue;
+      width: 20px;
+    }
+
+    .MuiAccordionSummary-root {
+      min-height: 43px;
+      height: 43px;
+    }
+
+    .MuiTypography-body1 {
+      letter-spacing: 0;
+    }
+
+    .MuiPaper-elevation1 {
+      box-shadow: none;
+    }
+
+    .implementation-guidance-content,
+    .scores-and-penalties-content {
+      padding-right: 20px;
+    }
+  }
+  .scores-and-penalties-container {
+    margin-top: 10px;
+
+    .MuiAccordionDetails-root {
+      display: block;
+    }
+
+    .scores-and-penalties-table {
+      border: 1px solid #D9D9D9;
+      border-radius: 5px;
+      border-top: none;
+      width: 80%;
+      margin-left: 4px;
+
+      .table {
+        margin-bottom: 0;
+
+        .green {
+          color: #579A36;
+        }
+
+        .red {
+          color: #BD0A0A;
+        }
+      }
+    }
+  }
+  .control-audit-container {
+    margin-top: 28px;
+    border-top: 2px solid #d9d9d9;
+    padding-top: 25px;
+
+    .implementation-audit-content {
+      width: 300px;
+    }
+  }
+
+  .evaluation-rating-container {
+    .evaluation-rating-heading {
+      display: flex;
+      align-items: center;
+      h5 {
+        margin-right: 2px;
+      }
+    }
+
+    .react-select-container.evaluation-dropdown-container {
+      margin-top: 4px;
+    }
+
+    .evaluation-rating-tooltip-info {
+      color: $white;
+      p:last-child {
+        margin-bottom: 0;
+      }
+
+      .evaluation-rating-label {
+        display: block;
+        font-weight: 700;
+      }
+    }
+  }
+
+  .bottom-container{
+    margin-top: 25px;
+    border-top: 2px solid $light-gray;
+    padding-top: 18px;
+
+    .button-container {
+      float: right;
+    }
+  }
+}
+
+.unsaved-changes-modal {
+  .ReactModal__Content {
+    width: 417px;
+    border-radius: 5px;
+
+    .modal-header {
+      margin: -20px -20px 14px -20px;
+      padding: 18px 19px 9px 19px;
+
+      h1 {
+        font-size: 18px;
+        font-weight: 700;
+        color: $dark-blue;
+      }
+
+      .close-icon-container {
+        cursor: pointer;
+      }
+    }
+
+    .content {
+      padding-top: 6px;
+      font-size: 11px;
+      color: #111;
+      width: 360px;
+
+      p {
+        margin-bottom: 11px;
+        line-height: 13px;
+      }
+
+      .confirmation-message {
+        font-weight: 700;
+        margin-bottom: 27px;
+      }
+    }
+
+    .button-container {
+      margin-top: 25px;
+      display: flex;
+      justify-content: center;
+      .confirm-save-button {
+        padding: 0px 20px;
+        width: 183px;
+        height: 34px;
+      }
+    }
+  }
+}

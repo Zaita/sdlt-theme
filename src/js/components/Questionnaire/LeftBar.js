@@ -6,19 +6,24 @@ import LeftBarItem from "./LeftBarItem";
 
 type Props = {
   questions: Array<Question>,
-  onItemClick: (question: Question) => void
+  onItemClick: (question: Question) => void,
+  component: string,
 };
 
 class LeftBar extends Component<Props> {
 
   render() {
-    const {questions, onItemClick} = {...this.props};
+    const {questions, onItemClick, component} = {...this.props};
 
     return (
       <div className="LeftBar">
           <div className="items">
           {questions.map((question, index) => {
-            return <LeftBarItem question={question} onItemClick={onItemClick} key={question.id} index={index}/>;
+            return (
+              <div>
+                <LeftBarItem question={question} onItemClick={onItemClick} key={question.id} index={index} component={component} />
+              </div>
+            );
           })}
         </div>
       </div>

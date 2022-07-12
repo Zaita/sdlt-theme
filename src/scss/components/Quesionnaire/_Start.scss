@@ -1,67 +1,148 @@
 @import "../../variables";
 
 .StartContainer {
-    .Start {
-        margin-bottom: 80px;
+  .Start {
+    max-width: 1140px;
+    margin: 0 auto;
 
-        .start-form {
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-start;
-            align-items: center;
-        }
-
-        .info-box {
-            width: 770px;
-            margin: 0 auto;
-            background-color: $white;
-            padding: 45px 50px;
-            font-size: 14px;
-            font-weight: normal;
-            font-style: normal;
-            font-stretch: normal;
-            line-height: 1.57;
-            letter-spacing: normal;
-            text-align: left;
-            color: $gray-800;
-
-            .info-line {
-                margin-bottom: 0.5rem;
-            }
-        }
-
-        .key-info-title {
-            font-size: 18px;
-            font-weight: bold;
-            color: $blue;
-        }
-
-        ol {
-            list-style-type: none;
-            padding-top: 1rem;
-            padding-left: 0;
-            margin-bottom: 2rem;
-            counter-reset: key-info-counter;
-
-            li {
-                margin-left: 0;
-                margin-bottom: 0.5rem;
-                position: relative;
-                counter-increment: key-info-counter;
-
-                &::before {
-                    content: counter(key-info-counter) ". ";
-                    font-weight: bold;
-                    color: $blue;
-                }
-            }
-        }
-
-        .actions {
-            display: flex;
-            flex-direction: row;
-            justify-content: flex-end;
-            align-items: flex-start;
-        }
+    @media (max-width: 1200px) {
+      margin: 0% 5%;
     }
+
+    .start-form {
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+    }
+
+    .submission-title {
+      font-size: 18px;
+      font-weight: 700;
+      line-height: 21px;
+      color: #0E0E0E;
+    }
+
+    .info-box {
+      width: 100%;
+      background-color: $white;
+      padding: 20px 20px;
+      padding-bottom: 10px;
+      font-size: 14px;
+      font-weight: normal;
+      font-style: normal;
+      font-stretch: normal;
+      line-height: 1.57;
+      letter-spacing: normal;
+      text-align: left;
+      color: $gray-800;
+
+      .user-info {
+        display: grid;
+        grid-template-columns: 100px;
+        grid-template-rows: repeat(2, 1fr);
+        grid-column-gap: 0px;
+        grid-row-gap: 0px;
+        margin-bottom: 0.5rem;
+
+        b.submitted-by {
+          grid-area: 1 / 1 / 2 / 2;
+        }
+
+        span.name {
+          grid-area: 1 / 2 / 2 / 3;
+        }
+
+        b.email {
+          grid-area: 2 / 1 / 3 / 2;
+        }
+
+        span.user-email {
+          grid-area: 2 / 2 / 3 / 3;
+        }
+      }
+
+    }
+
+    .key-info-title {
+      font-size: 14px;
+      font-weight: bold;
+      color: #0E0E0E;
+      margin-top: 1.5rem;
+      margin-bottom: 1rem;
+    }
+
+    ol {
+      list-style-type: none;
+      padding-left: 0;
+      counter-reset: key-info-counter;
+      margin-left: 1rem;
+
+      li {
+        margin-left: 0;
+        margin-bottom: 0.5rem;
+        position: relative;
+        counter-increment: key-info-counter;
+        text-indent: -1.4em;
+
+        &::before {
+          content: counter(key-info-counter) ". ";
+          font-weight: bold;
+          font-size: 12px;
+          line-height: 16px;
+          color: #0E0E0E;
+          margin-right: 0.25rem;
+        }
+      }
+    }
+
+    .actions {
+      display: flex;
+      flex-direction: row;
+      justify-content: flex-end;
+      align-items: flex-start;
+      margin-top: 15px;
+      margin-bottom: 45px;
+
+      .DarkButton {
+        width: 90px;
+      }
+    }
+  }
+
+  .submission-detail-container {
+    flex: 1;
+    padding-bottom: 1.5rem;
+    border-bottom: 2px solid hsla(0, 0%, 83%, 0.685);
+    color: #0E0E0E;
+  }
+
+  .submission-details-label {
+    margin-right: 13px;
+    font-weight: 500;
+  }
+
+  .submission-details-data {
+    height: 14px;
+  }
+
+  .submission-details-data,
+  .submission-details-label {
+    min-width: 80px;
+    display: inline-block;
+  }
+
+  .submission-date {
+    font-size: 14px;
+    margin-top: 4px;
+    color: #0E0E0E;
+  }
+
+  .submitter-name {
+    margin-top: 5px;
+  }
+
+  .key-info {
+    font-size: 12px;
+    color: black;
+  }
 }

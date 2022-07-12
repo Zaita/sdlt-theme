@@ -21,8 +21,8 @@ import CertificationAndAccreditationResultContainer from "./CertificationAndAccr
 
 type Props = {
   taskSubmission: TaskSubmissionType,
-  saveAnsweredQuestion: (answeredQuestion: Question) => void,
-  moveToPreviousQuestion: (targetQuestion: Question) => void,
+  saveAnsweredQuestion: (answeredQuestion: Question, component: string) => void,
+  moveToPreviousQuestion: (targetQuestion: Question, component: string) => void,
   handleApproveButtonClick: () => void,
   handleSendBackForChangesButtonClick: () => void,
   handleDenyButtonClick: () => void,
@@ -32,7 +32,8 @@ type Props = {
   showBackButton: boolean,
   showEditButton: boolean,
   canUpdateAnswers: boolean,
-  secureToken: string
+  secureToken: string,
+  component: string
 };
 
 class TaskSubmission extends Component<Props> {
@@ -52,7 +53,8 @@ class TaskSubmission extends Component<Props> {
       showEditButton,
       canUpdateAnswers,
       viewAs,
-      secureToken
+      secureToken,
+      component
     } = {...this.props};
 
     const taskRecommendationContainer = (
@@ -65,25 +67,70 @@ class TaskSubmission extends Component<Props> {
       />
     );
 
-    const backLink = showBackLink ? (
-      <div className="back-link" onClick={() => this.sendBackToQestionnaire()}>
-        <img src={BackArrow}/>
-        Back
-      </div>
-    ) : null;
+    const backLinkSelector = () => {
+      if (taskSubmission.isCurrentUserAnApprover) {
+        return backLinkTaskApprover();
+      } else if (displayPreviousQuestionBackLink) {
+        return previousQuestionBackLink();
+      } else {
+        return backLink();
+      }
+    }
+
+
+    const currentQuestion = taskSubmission.questions.find(question => question.isCurrent);
+    const currentQuestionIndex = taskSubmission.questions.indexOf(currentQuestion);
+    const previousQuestion = taskSubmission.questions[currentQuestionIndex - 1];
+    const displayPreviousQuestionBackLink = taskSubmission.taskType == "risk questionnaire" && currentQuestionIndex !== 0 && taskSubmission.status !== "complete";
+
+    const backLink = () => {
+      return (
+        <div className="back-link" onClick={() => this.sendBackToQestionnaire()}>
+          <img src={BackArrow}/>
+          Back
+        </div>
+      );
+    };
+
+    const previousQuestionBackLink = () => {
+      return (
+        <div
+          className="back-link"
+          onClick={() => moveToPreviousQuestion(previousQuestion, component)}
+        >
+          <img src={BackArrow} />
+          Back
+        </div>
+      );
+    };
+
+    const backLinkTaskApprover = () => {
+      return (
+        <div
+          className="back-link"
+          onClick={() => URLUtil.redirectToApprovals()}
+        >
+          <img src={BackArrow} />
+          Back
+        </div>
+      );
+    };
 
     const isSRATaskFinalised = taskSubmission.taskType === 'risk questionnaire' && SecurityRiskAssessmentUtil.isSRATaskFinalised(taskSubmission.siblingSubmissions);
 
     const editButton = showEditButton && !isSRATaskFinalised && taskSubmission.taskType !== "certification and accreditation"? (
       <LightButton
         title="Edit"
-        onClick={editAnswers}
+        onClick={() => {editAnswers(component)}}
         iconImage={editIcon}
       />
     ) : null;
 
     const resultStatus = ["complete", "waiting_for_approval", "approved", "denied"];
-    const pdfButton = (resultStatus.indexOf(taskSubmission.status) > -1) ? (
+    const pdfButton = (
+      resultStatus.includes(taskSubmission.status) ||
+      resultStatus.includes(taskSubmission.taskStatusForComponent)
+    ) ? (
       <LightButton title={"PDF"} iconImage={pdfIcon} onClick={() => this.downloadPdf()}/>
     ) : null;
 
@@ -94,10 +141,9 @@ class TaskSubmission extends Component<Props> {
       </div>
     ) : null;
 
-    const riskResult = taskSubmission.riskResults && (resultStatus.indexOf(taskSubmission.status) > -1) ? (
+    const riskResult = taskSubmission.riskResults && (resultStatus.indexOf(taskSubmission.taskStatusForComponent) > -1) ? (
       <RiskResultContainer
         riskResults={taskSubmission.riskResults}
-        hideWeightsAndScore={taskSubmission.hideWeightsAndScore}
       />
     ) : null;
 
@@ -119,7 +165,7 @@ class TaskSubmission extends Component<Props> {
         <h4>Summary</h4>
         {
           taskSubmission.taskType !== "certification and accreditation" &&
-          <AnswersPreview questions={taskSubmission.questions}/>
+          <AnswersPreview questions={taskSubmission.questions} component={component}/>
         }
         {
           !taskSubmission.isDisplayPreventMessage &&
@@ -160,6 +206,9 @@ class TaskSubmission extends Component<Props> {
           saveAnsweredQuestion={saveAnsweredQuestion}
           onLeftBarItemClick={moveToPreviousQuestion}
           handleTaskSaveDraftButtonClick={this.handleTaskSaveDraftButtonClick.bind(this)}
+          component={component}
+          questionnaireTitle={taskSubmission.taskName}
+          taskSubmissionTaskType={taskSubmission.taskType}
         />
       );
     }
@@ -174,7 +223,7 @@ class TaskSubmission extends Component<Props> {
                 taskSubmission.taskType === 'risk questionnaire' &&
                 isSRATaskFinalised ? SecurityRiskAssessmentUtil.getSraIsFinalisedAlert() : false
               }
-              {backLink}
+              {backLinkSelector()}
               {body}
               <div className={`buttons ${viewAs != "approver" ? 'buttons-hideborder': ''}`}>
                 <div className="buttons-left">
@@ -213,7 +262,7 @@ class TaskSubmission extends Component<Props> {
     if (taskSubmission.taskType === "certification and accreditation") {
       PDFUtil.downloadCertificate({
         siteConfig: siteConfig,
-        resultForCertificationAndAccreditation:taskSubmission.resultForCertificationAndAccreditation
+        resultForCertificationAndAccreditation: taskSubmission.resultForCertificationAndAccreditation
       });
     } else {
       PDFUtil.generatePDF({

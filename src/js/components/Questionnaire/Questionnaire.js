@@ -9,18 +9,20 @@ import _ from "lodash";
 
 type Props = {
   questions: Array<Question>,
-  saveAnsweredQuestion: (question: Question) => void,
-  onLeftBarItemClick: (question: Question) => void,
+  saveAnsweredQuestion: (question: Question, component: string) => void,
+  onLeftBarItemClick: (question: Question, component: string) => void,
   serviceRegister: Array<*>,
   informationClassificationTaskResult: string,
   riskProfileData: Array<*>,
-  resultForCertificationAndAccreditation: Array<*>
+  resultForCertificationAndAccreditation: Array<*>,
+  component: string,
+  taskSubmissionTaskType: string,
 };
 
 class Questionnaire extends Component<Props> {
 
   handleFormSubmit(formik: FormikBag, values: Object) {
-    const {questions, saveAnsweredQuestion} = {...this.props};
+    const {questions, saveAnsweredQuestion, component} = {...this.props};
 
     // Generate new question with data
     const currentQuestion = questions.find((question) => {
@@ -40,11 +42,11 @@ class Questionnaire extends Component<Props> {
     answeredQuestion.hasAnswer = true;
     answeredQuestion.isApplicable = true;
 
-    saveAnsweredQuestion(answeredQuestion)
+    saveAnsweredQuestion(answeredQuestion, component)
   }
 
   handleActionClick(action: AnswerAction) {
-    const {questions, saveAnsweredQuestion} = {...this.props};
+    const {questions, saveAnsweredQuestion, component} = {...this.props};
 
     // Generate new question with data
     const currentQuestion = questions.find((question) => {
@@ -62,7 +64,7 @@ class Questionnaire extends Component<Props> {
     answeredQuestion.hasAnswer = true;
     answeredQuestion.isApplicable = true;
 
-    saveAnsweredQuestion(answeredQuestion);
+    saveAnsweredQuestion(answeredQuestion, component);
   }
 
   handleNextButtonClickForDisplayField() {
@@ -93,7 +95,10 @@ class Questionnaire extends Component<Props> {
       resultForCertificationAndAccreditation,
       handleTaskSaveDraftButtonClick,
       handleTaskSubmitButtonClick,
-      loadResultForCertificationAndAccreditation
+      loadResultForCertificationAndAccreditation,
+      component,
+      questionnaireTitle,
+      taskSubmissionTaskType
     } = {...this.props};
 
     const currentQuestion = questions.find((question) => {
@@ -101,19 +106,50 @@ class Questionnaire extends Component<Props> {
     });
 
     const currentQuestionIndex = questions.findIndex((question) => question.id === currentQuestion.id);
+    const isRiskQuestionnaire = taskSubmissionTaskType == "risk questionnaire";
+
+    const hideLeftBar = () => {
+      if (currentQuestionIndex === 0 && isRiskQuestionnaire) {
+        return;
+      }
+      return (
+        <LeftBar
+        questions={questions}
+        onItemClick={onLeftBarItemClick}
+        component={component}
+      />
+      )
+    }
+
+    const title = () => {
+      if (currentQuestionIndex === 0 && isRiskQuestionnaire) {
+        return "Key information"
+      }
+      return "Questions";
+    }
+
+    const questionnaireContainer = () => {
+      if (currentQuestionIndex === 0 && isRiskQuestionnaire) {
+        return "key-information-form-container"
+      } else {
+        return "form-container"
+      }
+    }
 
     return (
       <div className="Questionnaire mx-1">
         <div className="major">
-          <div className="title">Questions</div>
-          <div className="form-container">
-            <LeftBar questions={questions} onItemClick={onLeftBarItemClick}/>
+          <div className="title">{title()}</div>
+          <div className={questionnaireContainer()}>
+            {hideLeftBar()}
             {
               currentQuestion &&
               <QuestionForm
+                taskSubmissionTaskType={taskSubmissionTaskType}
                 index={currentQuestionIndex}
                 key={currentQuestion.id}
                 question={currentQuestion}
+                questionnaireTitle={questionnaireTitle}
                 serviceRegister={serviceRegister}
                 riskProfileData={riskProfileData}
                 resultForCertificationAndAccreditation={resultForCertificationAndAccreditation}

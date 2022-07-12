@@ -24,11 +24,17 @@ import {
   DEFAULT_CVA_CONTROLS_ANSWER_YES,
   DEFAULT_CVA_CONTROLS_ANSWER_NO,
   DEFAULT_CVA_CONTROLS_ANSWER_NOT_APPLICABLE,
+  DEFAULT_CVA_CONTROLS_ANSWER_PLANNED,
   DEFAULT_NO_CONTROLS_MESSAGE,
   DEFAULT_CVA_UNFINISHED_TASKS_MESSAGE,
   CTL_STATUS_1,
   CTL_STATUS_2,
-  CTL_STATUS_3
+  CTL_STATUS_3,
+  CTL_STATUS_4,
+  EVALUTION_RATING_1,
+  EVALUTION_RATING_2,
+  EVALUTION_RATING_3,
+  EVALUTION_RATING_4
 } from '../../constants/values.js';
 import SecurityRiskAssessmentUtil from "../../utils/SecurityRiskAssessmentUtil";
 import {loadSiteConfig} from "../../actions/siteConfig";
@@ -86,6 +92,7 @@ const mapDispatchToProps = (dispatch: Dispatch, props: *) => {
 type Props = {
   uuid: string,
   secureToken: string,
+  component: string,
   currentUser?: User | null,
   controlValidationAuditData?: CVATaskSubmission | null,
   dispatchLoadDataAction?: (uuid: string, secureToken: string) => void,
@@ -97,9 +104,7 @@ type Props = {
 };
 
 type State = {
-  isCVATaskEditable: boolean,
-  isSRATaskFinalised: boolean,
-  canEdit: boolean
+  isCVATaskEditable: boolean
 };
 
 let autoSaveCVATask;
@@ -108,9 +113,7 @@ class ControlValidationAuditContainer extends Component<Props, State> {
   constructor(props) {
     super(props);
     this.state = {
-      isCVATaskEditable: false,
-      isSRATaskFinalised: false,
-      canEdit: false
+      isCVATaskEditable: false
     }
   }
 
@@ -133,15 +136,12 @@ class ControlValidationAuditContainer extends Component<Props, State> {
       } = {...this.props};
 
       const isSubmitter = controlValidationAuditData.submitterID === currentUser.id;
-      const canEdit = (isSubmitter || controlValidationAuditData.isTaskCollborator);
-      const isSRATaskFinalised = SecurityRiskAssessmentUtil.isSRATaskFinalised(controlValidationAuditData.siblingSubmissions);
-      const isCVATaskEditable = (canEdit && !isSRATaskFinalised);
+      const isCVATaskEditable = (isSubmitter || controlValidationAuditData.isTaskCollborator);
 
       this.setState({
-        canEdit: canEdit,
-        isSRATaskFinalised: isSRATaskFinalised,
         isCVATaskEditable: isCVATaskEditable
       });
+
 
       this.autoSaveCVATask = setInterval(
         async () => {
@@ -152,7 +152,7 @@ class ControlValidationAuditContainer extends Component<Props, State> {
         600000
       );
     } catch(e) {
-      ErrorUtil.displayError(error);
+      ErrorUtil.displayError(e);
     }
   }
 
@@ -162,7 +162,6 @@ class ControlValidationAuditContainer extends Component<Props, State> {
   componentWillUnmount() {
     clearInterval(this.autoSaveCVATask);
   }
-
 
   /**
    * Call db save Api logic in every 10 mins
@@ -293,39 +292,78 @@ class ControlValidationAuditContainer extends Component<Props, State> {
     const options = [
       {'value': CTL_STATUS_1, 'label': DEFAULT_CVA_CONTROLS_ANSWER_YES},
       {'value':CTL_STATUS_2, 'label': DEFAULT_CVA_CONTROLS_ANSWER_NO},
-      {'value':CTL_STATUS_3, 'label': DEFAULT_CVA_CONTROLS_ANSWER_NOT_APPLICABLE}
+      {'value':CTL_STATUS_3, 'label': DEFAULT_CVA_CONTROLS_ANSWER_NOT_APPLICABLE},
+      {'value':CTL_STATUS_4, 'label': DEFAULT_CVA_CONTROLS_ANSWER_PLANNED}
     ];
+
+    const evalution_rating_options = [
+      {'value': EVALUTION_RATING_1, 'label': 'Not Validated'},
+      {'value':EVALUTION_RATING_2, 'label': 'Not Effective'},
+      {'value':EVALUTION_RATING_3, 'label': 'Partially Effective'},
+      {'value':EVALUTION_RATING_4, 'label': 'Effective'}
+    ];
+
     return(
       <div className="my-0 container row" key={controlKey}>
 
-        <div className="col-xs-2">
-          {
-            options.map((option, optionIndex) => {
-              return (
-                <label key={`optionlabel_${controlKey}_${optionIndex}`}>
-                  <input
-                    type="radio"
-                    key={`radiobutton_${controlKey}_${optionIndex}`}
-                    name={controlKey}
-                    value={option.value}
-                    defaultChecked={control.selectedOption === option.value}
-                    disabled={!this.state.isCVATaskEditable}
-                    onClick={() => this.props.dispatchUpdateControlValidationQuestionDataAction({
-                      "selectedOption": option.value,
-                      "controlID":control.id,
-                      "componentID":component.id,
-                      "productAspect":component.productAspect,
-                      "implementationEvidenceUserInput": control.implementationEvidenceUserInput
-                  })}
-                  />
-                  {option.label}
-                </label>
-              );
-            })
-          }
+        <div className="col-xs-6">
+          <div>
+            {
+              options.map((option, optionIndex) => {
+                return (
+                  <label key={`optionlabel_${controlKey}_${optionIndex}`}>
+                    <input
+                      type="radio"
+                      key={`radiobutton_${controlKey}_${optionIndex}`}
+                      name={controlKey}
+                      value={option.value}
+                      defaultChecked={control.selectedOption === option.value}
+                      disabled={!this.state.isCVATaskEditable}
+                      onClick={() => this.props.dispatchUpdateControlValidationQuestionDataAction({
+                        "selectedOption": option.value,
+                        "evalutionRating": control.evalutionRating,
+                        "controlID":control.id,
+                        "componentID":component.id,
+                        "productAspect":component.productAspect,
+                        "implementationEvidenceUserInput": control.implementationEvidenceUserInput
+                    })}
+                    />
+                    {option.label}
+                  </label>
+                );
+              })
+            }
+          </div>
+          <div>
+            {
+              evalution_rating_options.map((option, optionIndex) => {
+                return (
+                  <label key={`evalution_rating_optionlabel_${controlKey}_${optionIndex}`}>
+                    <input
+                      type="radio"
+                      key={`evalution_rating_radiobutton_${controlKey}_${optionIndex}`}
+                      name={`evalution_rating_${controlKey}`}
+                      value={option.value}
+                      defaultChecked={control.evalutionRating === option.value}
+                      disabled={!this.state.isCVATaskEditable}
+                      onClick={() => this.props.dispatchUpdateControlValidationQuestionDataAction({
+                        "selectedOption": control.selectedOption,
+                        "evalutionRating": option.value,
+                        "controlID":control.id,
+                        "componentID":component.id,
+                        "productAspect":component.productAspect,
+                        "implementationEvidenceUserInput": control.implementationEvidenceUserInput
+                    })}
+                    />
+                    {option.label}
+                  </label>
+                );
+              })
+            }
+          </div>
         </div>
 
-        <div className="col-10">
+        <div className="col-7">
           <label key={control.id}>
             <strong>{control.name}</strong>
           </label>
@@ -344,6 +382,7 @@ class ControlValidationAuditContainer extends Component<Props, State> {
             updateEvidenceTextareaData={
               (value) => this.props.dispatchUpdateControlValidationQuestionDataAction({
                 "selectedOption": control.selectedOption,
+                "evalutionRating": control.evalutionRating,
                 "controlID":control.id,
                 "componentID":component.id,
                 "productAspect":component.productAspect,
@@ -377,7 +416,8 @@ class ControlValidationAuditContainer extends Component<Props, State> {
       secureToken,
       dispatchSaveControlValidationAuditDataAction,
       cvaSelectedComponents,
-      dispatchReSyncWithJira
+      dispatchReSyncWithJira,
+      component,
     } = {...this.props};
     if (!currentUser || !controlValidationAuditData || !siteConfig) {
       return null;
@@ -411,13 +451,35 @@ class ControlValidationAuditContainer extends Component<Props, State> {
       />
     ) : null;
 
+    // used to display breadcrumbs
+    let showSubmissionBreadcrumb = false;
+    let showApprovalBreadcrumb = false;
+    let isSubmitter = (controlValidationAuditData.submitterID === currentUser.id);
+
+    if (isSubmitter || controlValidationAuditData.isTaskCollborator) {
+      showSubmissionBreadcrumb = true;
+    }
+
+    if (!showSubmissionBreadcrumb) {
+      if (currentUser.isSA ||
+        currentUser.isCISO ||
+        controlValidationAuditData.isBusinessOwner ||
+        currentUser.isAccreditationAuthority ||
+        currentUser.isCertificationAuthority) {
+        showApprovalBreadcrumb = true;
+      }
+    }
+
     return (
       <div className="ControlValidationAuditContainer">
         <Header
-          title={controlValidationAuditData.taskName}
-          subtitle={siteConfig.siteTitle}
-          username={currentUser.name}
+          pageTitle={controlValidationAuditData.taskName}
           logopath={siteConfig.logoPath}
+          productName={controlValidationAuditData.questionnaireSubmissionProductName}
+          questionnaireSubmissionUUID={controlValidationAuditData.questionnaireSubmissionUUID}
+          showSubmissionBreadcrumb={showSubmissionBreadcrumb}
+          showApprovalBreadcrumb={showApprovalBreadcrumb}
+          component={component}
         />
 
         {
@@ -431,16 +493,15 @@ class ControlValidationAuditContainer extends Component<Props, State> {
                 <h3>Have These Controls Been Implemented?</h3>
                 {
                   ['start','in_progress'].includes(controlValidationAuditData.status)
-                  && !this.state.canEdit
+                  && !this.state.isCVATaskEditable
                   && (
                         <SubmissionNotCompleted/>
                     )
                 }
                 {
-                  (this.state.canEdit || controlValidationAuditData.status == "complete") &&
+                  (this.state.isCVATaskEditable || controlValidationAuditData.status == "complete") &&
                   (
                     <div>
-                      {this.state.isSRATaskFinalised ? SecurityRiskAssessmentUtil.getSraIsFinalisedAlert() : false}
                       {this.renderCVAQuestionsForm()}
                     </div>
                   )

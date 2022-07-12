@@ -1,7 +1,7 @@
 // @flow
 // site wide loading Icon
 
-import { Icon } from 'react-fa';
+import Icon from 'react-fontawesome';
 import React, {Component} from "react";
 
 export class Loading extends Component {

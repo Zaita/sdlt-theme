@@ -34,6 +34,7 @@ import SecurityRiskAssessmentUtil from "../../utils/SecurityRiskAssessmentUtil";
 import {loadSiteConfig} from "../../actions/siteConfig";
 import {SubmissionExpired} from "../Common/SubmissionExpired";
 import {SubmissionNotCompleted} from "../Common/SubmissionNotCompleted";
+import BackArrow from "../../../img/icons/back-arrow.svg";
 
 type OwnProps = {
   uuid: string,
@@ -51,7 +52,7 @@ type Props = OwnProps & {
   dispatchSaveLocalControlsAction?: () => void,
   dispatchAddComponentAction?: (id: string) => void,
   dispatchRemoveComponentAction?: (id: string) => void,
-  dispatchFinishAction?: () => void,
+  dispatchFinishAction?: (uuid: string) => void,
   dispatchEditAnswersAction?: () => void,
   dispatchLoadSelectedComponents?: (selectedComponents: Array<SecurityComponent>) => void
 }
@@ -87,8 +88,9 @@ const mapDispatchToProps = (dispatch: Dispatch, props: OwnProps) => {
     dispatchSaveLocalControlsAction() {
       dispatch(saveSelectedComponents(""));
     },
-    dispatchFinishAction() {
-      dispatch(completeTaskSubmission());
+    async dispatchFinishAction(uuid: string, secureToken: string) {
+      await dispatch(completeTaskSubmission());
+      URLUtil.redirectToQuestionnaireSummary(uuid, secureToken);
     },
     dispatchEditAnswersAction() {
       dispatch(editCompletedTaskSubmission({type: "componentSelection"}));
@@ -97,9 +99,39 @@ const mapDispatchToProps = (dispatch: Dispatch, props: OwnProps) => {
 };
 
 class ComponentSelectionContainer extends Component<Props> {
+  constructor(props: *) {
+    super(props);
+    this.state = {
+      isLastComponentSelectionCompleted: false,
+      enableDoneButton: false
+    };
+  }
+
   componentDidMount() {
     const {dispatchLoadDataAction} = {...this.props};
     dispatchLoadDataAction();
+  }
+
+  componentDidUpdate(prevProps) {
+    if (prevProps.selectedComponents !== this.props.selectedComponents) {
+      this.updateEnableDoneButton();
+    }
+  }
+
+  updateEnableDoneButton()  {
+    if (this.props.selectedComponents.length > 0) {
+      this.setState({ enableDoneButton: true })
+    } else {
+      this.setState({ enableDoneButton: false })
+    }
+  }
+
+  updateIsLastComponentSelectionCompleted = isLastComponentSelectionCompleted => {
+    this.setState({ isLastComponentSelectionCompleted: isLastComponentSelectionCompleted })
+  }
+
+  sendBackToQestionnaire() {
+    URLUtil.redirectToQuestionnaireSummary(this.props.taskSubmission.questionnaireSubmissionUUID, this.props.secureToken)
   }
 
   render() {
@@ -122,6 +154,7 @@ class ComponentSelectionContainer extends Component<Props> {
     if (!currentUser || !taskSubmission || !siteConfig) {
       return null;
     }
+
     const isCurrentUserSubmitter = parseInt(currentUser.id) === parseInt(taskSubmission.submitter.id);
     const canEdit =  isCurrentUserSubmitter || currentUser.isSA || taskSubmission.isTaskCollborator;
     const isSRATaskFinalised = SecurityRiskAssessmentUtil.isSRATaskFinalised(taskSubmission.siblingSubmissions);
@@ -129,14 +162,14 @@ class ComponentSelectionContainer extends Component<Props> {
       (taskSubmission.status === "complete" || taskSubmission.status === "waiting_for_approval" ||taskSubmission.status === "denied") &&
       (taskSubmission.questionnaireSubmissionStatus === "submitted") &&
       (canEdit) && !taskSubmission.lockWhenComplete;
-    const backButton = (
-      <DarkButton key="back"
-        title={"BACK TO QUESTIONNAIRE SUMMARY"}
-        onClick={() => {
-        URLUtil.redirectToQuestionnaireSummary(taskSubmission.questionnaireSubmissionUUID, secureToken);
-        }}
-      />
+
+    const backLink = (
+      <div className="back-link" onClick={() => this.sendBackToQestionnaire()}>
+        <img src={BackArrow} />
+        Back
+      </div>
     );
+
     const editControlButton = showEditControlButton && !isSRATaskFinalised ? (
       <LightButton
         title="EDIT CONTROLS"
@@ -146,6 +179,35 @@ class ComponentSelectionContainer extends Component<Props> {
       />
     ) : null;
 
+    const doneButton = (
+      <DarkButton
+        title="Done"
+        onClick={() =>
+          dispatchFinishAction(taskSubmission.questionnaireSubmissionUUID,this.props.secureToken)
+        }
+        disabled={!this.state.enableDoneButton}
+      />
+    );
+
+    // used to display breadcrumbs
+    let showSubmissionBreadcrumb = false;
+    let showApprovalBreadcrumb = false;
+
+    if (isCurrentUserSubmitter || taskSubmission.isTaskCollborator) {
+      showSubmissionBreadcrumb = true;
+    }
+
+    if (!showSubmissionBreadcrumb) {
+      if (taskSubmission.isCurrentUserAnApprover ||
+        currentUser.isSA ||
+        currentUser.isCISO ||
+        taskSubmission.isBusinessOwner ||
+        currentUser.isAccreditationAuthority ||
+        currentUser.isCertificationAuthority) {
+        showApprovalBreadcrumb = true;
+      }
+    }
+
     let body = null;
     switch (taskSubmission.status) {
       case "start":
@@ -153,13 +215,11 @@ class ComponentSelectionContainer extends Component<Props> {
          if (!canEdit){
            body = (
             <div className="ComponentSelectionReview">
+              {backLink}
               <div className="section">
                 <h4>Selected Components</h4>
                 <br />
                 <SubmissionNotCompleted/>
-              </div>
-              <div className="buttons">
-                {backButton}
               </div>
             </div>
              );
@@ -168,11 +228,15 @@ class ComponentSelectionContainer extends Component<Props> {
          else {
           body = (
             <ComponentSelection
+              key={taskSubmission.productAspects}
               availableComponents={availableComponents}
               selectedComponents={selectedComponents}
               componentTarget={taskSubmission.componentTarget}
               productAspects={taskSubmission.productAspects}
-              extraButtons={backButton}
+              questionnaireSubmissionUUID={taskSubmission.questionnaireSubmissionUUID}
+              controlSetSelectionTaskHelpText={taskSubmission.controlSetSelectionTaskHelpText}
+              updateIsLastComponentSelectionCompleted={this.updateIsLastComponentSelectionCompleted}
+              backLink={backLink}
               createJIRATickets={(jiraKey) => {
                 dispatchCreateJIRATicketsAction(jiraKey);
               }}
@@ -185,33 +249,20 @@ class ComponentSelectionContainer extends Component<Props> {
               addComponent={(id, productAspect) => {
                 dispatchAddComponentAction(id, productAspect);
               }}
-              finishWithSelection={() => {
-                dispatchFinishAction();
-              }}
             />
           );
         break;
        }
       case "complete":
         body = (
-          <div>
-            <div className="ComponentSelectionReview">
-              {isSRATaskFinalised ? SecurityRiskAssessmentUtil.getSraIsFinalisedAlert() : false}
-            </div>
-
           <ComponentSelectionReview
+            isSRATaskFinalised={isSRATaskFinalised}
             selectedComponents={taskSubmission.selectedComponents}
             jiraTickets={taskSubmission.jiraTickets}
             componentTarget={taskSubmission.componentTarget}
             productAspects={taskSubmission.productAspects}
-            buttons={[(
-              <div key="component-selection-review-button-container">
-                {editControlButton}
-                {backButton}
-              </div>
-            )]}
+            backLink={backLink}
           />
-          </div>
         );
         break;
         case "expired":
@@ -219,9 +270,31 @@ class ComponentSelectionContainer extends Component<Props> {
         break;
     }
 
+    if (this.state.isLastComponentSelectionCompleted) {
+      body = (
+        <ComponentSelectionReview
+          key={this.state.enableDoneButton}
+          selectedComponents={selectedComponents}
+          jiraTickets={taskSubmission.jiraTickets}
+          componentTarget={taskSubmission.componentTarget}
+          productAspects={taskSubmission.productAspects}
+          backLink={backLink}
+          doneButton={doneButton}
+        />
+      )
+    }
+
     return (
       <div className="ComponentSelectionContainer">
-        <Header title="Component Selection" subtitle={siteConfig.siteTitle} logopath={siteConfig.logoPath} username={currentUser.name} />
+        <Header
+          pageTitle={taskSubmission.taskName}
+          logopath={siteConfig.logoPath}
+          productName={taskSubmission.questionnaireSubmissionProductName}
+          questionnaireSubmissionUUID={taskSubmission.questionnaireSubmissionUUID}
+          isTaskApprover={taskSubmission.isCurrentUserAnApprover}
+          showSubmissionBreadcrumb={showSubmissionBreadcrumb}
+          showApprovalBreadcrumb={showApprovalBreadcrumb}
+        />
         {body}
         <Footer footerCopyrightText={siteConfig.footerCopyrightText}/>
       </div>

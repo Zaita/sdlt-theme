@@ -1,0 +1,127 @@
+.material-card {
+  margin: 3px 10px 10px 0px;
+  border-radius: 5px;
+  padding: 15px 0px 10px 10px;
+  height: auto;
+  box-shadow: 2px 2px 3px #949494;
+  cursor: move;
+  cursor: grab;
+  cursor: -webkit-grab;
+  cursor: -moz-grab
+}
+
+.card-content {
+  display: flex;
+  flex-direction: column;
+  cursor: move;
+  cursor: grab;
+  cursor: -webkit-grab;
+  cursor: -moz-grab
+}
+
+.card-header {
+  display: flex;
+  padding: 0;
+  background-color: inherit;
+  position: relative;
+  overflow-wrap: anywhere;
+  border: none;
+}
+
+.card-title {
+  word-wrap: break-word;
+  flex: 1;
+  font-weight: bold;
+  font-size: 12px;
+}
+
+.card-chevron {
+  padding-right: 5px;
+
+  .MuiSvgIcon-root {
+    fill: $light-blue;
+    padding: 0;
+  }
+
+  button {
+    padding: 0;
+  }
+}
+
+.card-key-control {
+  padding-right: 25px;
+  img {
+    margin-right: 5px;
+    padding-bottom: 3px;
+    width: 12px;
+  }
+}
+
+.card-footer {
+  display: flex;
+  position: relative;
+  padding: 0;
+  background-color: inherit;
+  border: none;
+  margin-bottom: 5px;
+
+  .evidence-status {
+    margin-right: 15px;
+    p {
+      color: #565656;
+      size: 10px;
+      margin-bottom: 0;
+    }
+  }
+
+  .effectiveness-icon {
+    float: left;
+    margin-right: 5px;
+  }
+
+  .evidence-evaluation-rating {
+    float: right
+  }
+
+  .evidence-text {
+    font-size: 10px;
+    font-weight: 400;
+    float: right;
+    color: #565656;
+    margin-bottom: 0;
+    margin-top: 2px;
+  }
+
+}
+
+.card-risk-category {
+  padding: 0px 5px;
+  margin-bottom: 1rem;
+  margin-right: 0.5rem;
+  color: $light-blue;
+  border: 1px solid $light-blue;
+  border-radius: 2px;
+  word-wrap: break-word;
+  margin-right: 10px;
+  width: fit-content;
+  cursor: pointer;
+  font-weight: 400;
+  font-size: 10px;
+  height: fit-content;
+}
+
+.flex-column {
+  flex-direction: column;
+
+  .card-risk-category {
+    margin-bottom: 0.5rem;
+  }
+}
+
+.card-weight {
+  color: $light-blue;
+  font-size: 10px;
+  font-weight: bold;
+  margin-top: 1px;
+  margin-left: -5px;
+}

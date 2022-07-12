@@ -13,27 +13,17 @@
     margin-bottom: 1rem;
   }
 
+  .back-link {
+    @include backLink;
+  }
+
+  .title {
+    @include title;
+  }
+
   .LeftBar {
     padding-right: 23px;
     padding-bottom: 0;
-
-    .search {
-      font-size: 14px;
-      width: 100%;
-      margin-top: 0.5rem;
-      margin-bottom: 0.5rem;
-      display: flex;
-      align-items: center;
-
-      i {
-        margin-right: 2px;
-        color: $blue;
-      }
-
-      input {
-        width: 100%;
-      }
-    }
 
     .items {
       max-height: 800px;
@@ -44,21 +34,96 @@
   .main-content {
     background-color: $white;
     width: 840px;
-    padding: 45px 45px 25px;
+    padding: 25px 25px 25px;
     font-size: 14px;
     color: $black;
 
     .heading {
-      font-size: 24px;
+      margin-bottom: 20px;
+      font-weight: 700;
+      font-size: 14px;
+      line-height: 16px;
       color: $blue;
-      margin-bottom: 1.5rem;
-      font-weight: bold;
+      margin-top: 5px
+    }
+
+    .save-components-container {
+      display: flex;
+      margin-top: 62px;
+      .save-message {
+        font-size: 11px;
+        font-weight: 400;
+        padding-top: 15px;
+        margin: 0;
+      }
+
+      .buttons-wrapper {
+        margin-left: auto;
+      }
+    }
+
+    .help-text {
+      font-size: 12px;
+      margin-bottom: 30px;
     }
 
     .selected-components {
-      max-height: 700px;
-      overflow-y: auto;
-      margin-bottom: 1.5rem;
+      border: 1px solid #D9D9D9;
+      border-radius: 4px;
+      border-top: none;
+
+      table {
+        margin-bottom: 0;
+        tbody {
+          display: block;
+          max-height: 249px;
+          overflow-y: scroll;
+          scrollbar-color: $light-blue transparent;
+        }
+
+        thead, tr {
+          display: table;
+          width: 100%;
+        }
+
+        thead {
+          border-bottom: 1px solid #d9d9d9;
+        }
+
+        input {
+          accent-color: $light-blue;
+          vertical-align: sub;
+        }
+
+        th:first-child, td:first-child {
+          width: 6%;
+        }
+
+        th:nth-child(2), td:nth-child(2) {
+          width: 30%;
+        }
+
+        th {
+          font-size: 12px;
+          border-bottom: none;
+        }
+
+        td {
+          font-size: 11px;
+        }
+
+        td:first-child {
+          text-align: center;
+        }
+
+        .td-component-name {
+          color: #0E0E0E;
+        }
+
+        .td-component-description {
+          color: $black;
+        }
+      }
 
       @import "ComponentInfo";
 
@@ -69,17 +134,14 @@
         padding-bottom: 15px;
       }
     }
-  }
 
-  .buttons-wrapper {
-      display: flex;
-      flex-direction: row;
-      justify-content: flex-start;
-      align-items: stretch;
-
-      .extra-buttons {
-          width: 290px;
-          margin-right: 5px;
-      }
+    ::-webkit-scrollbar {
+      width: 4px;
+      background-color: transparent;
     }
+
+    ::-webkit-scrollbar-track {
+      background-color: transparent;
+    }
+  }
 }

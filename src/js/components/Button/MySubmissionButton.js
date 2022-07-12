@@ -1,6 +1,6 @@
 // @flow
 import React, {Component} from "react";
-import Icon from "../../../img/icons/question-editing.svg";
+import Icon from "../../../img/icons/submissions-icon.svg";
 
 class MySubmissionButton extends Component<Props> {
 
@@ -9,17 +9,26 @@ class MySubmissionButton extends Component<Props> {
   };
 
   render() {
-    const {classes} = {...this.props};
+    const {
+      classes,
+      showSubmissionBreadcrumb
+    } = {...this.props};
+
+    let isSubmissionsButtonActive = false;
+
+    if (window.location.hash == `#/MySubmissions` || showSubmissionBreadcrumb) {
+      isSubmissionsButtonActive = true;
+    }
 
     return (
-      <button className={`HeaderButton ${classes.join(" ")}`}
+      <button className={`HeaderButton ${classes.join(" ")}${isSubmissionsButtonActive ? 'active' : ''}`}
         onClick={() => {
           this.allSubmission();
         }}
       >
         <div>
           <img src={Icon} />
-          My Submissions
+            Submissions
         </div>
       </button>
     );

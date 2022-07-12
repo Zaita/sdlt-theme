@@ -32,8 +32,14 @@ import AddIcon from "../../../img/icons/add-circle.svg";
 import CloseIcon from '@material-ui/icons/Close';
 import ReactModal from "react-modal";
 import IconButton from '@material-ui/core/IconButton';
-import Select from 'react-select'
+import Select from 'react-select';
 import moment from "moment";
+import Accordion from '@material-ui/core/Accordion';
+import AccordionSummary from '@material-ui/core/AccordionSummary';
+import AccordionDetails from '@material-ui/core/AccordionDetails';
+import Typography from '@material-ui/core/Typography';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import TableAccordion from "./TableAccordion";
 
 type Props = {
   submission: Submission | null,
@@ -107,7 +113,91 @@ const prettifyApprovalStatus = (status: string, role:string) => {
   }
 
   return prettifyStatus(status);
+};
+
+const getRedirectUrlForTask = (uuid, token, taskType, component) => {
+  let taskRedirectURL = URLUtil.redirectToTaskSubmission(uuid, token, "urlString", component);
+
+  if (taskType === "selection") {
+    taskRedirectURL = URLUtil.redirectToComponentSelectionSubmission(uuid, token, "urlString", component);
+  }
+
+  if (taskType === "security risk assessment") {
+    taskRedirectURL = URLUtil.redirectToSecurityRiskAssessment(uuid, token, "urlString", component);
+  }
+
+  if (taskType === "control validation audit") {
+    taskRedirectURL = URLUtil.redirectToControlValidationAudit(uuid, token, "urlString", component);
+  }
+
+  return taskRedirectURL;
+};
+
+const getIconForStatus = (status) => {
+  let statusIcon = startIcon;
+  if (status == "in_progress") {
+    statusIcon = inProgressIcon;
+  }
+
+  if (status == "waiting_for_approval") {
+    statusIcon = awaitingApprovalIcon;
+  }
+
+  if (status == "approved" || status == "complete") {
+    statusIcon = approveIcon;
+  }
+
+  if (status == "denied") {
+    statusIcon = notApprovedIcon;
+  }
+
+  return statusIcon;
 }
+
+const taskTableData = (taskSubmission, unfinshedRQTaskMessage, className, component) => {
+  const {
+  uuid,
+  token,
+  taskName,
+  taskType,
+  status,
+  approver,
+  isTaskApprovalRequired,
+  timeToComplete,
+  timeToReview,
+  canTaskCreateNewTasks
+  } = {...taskSubmission}
+
+  const link = (
+    <Link to={getRedirectUrlForTask(uuid, token, taskType, component)}>
+      <img src={chevronRightIcon}/>
+    </Link>
+  );
+
+  return (
+    <tr key={uuid} className={component ? className : ""}>
+    <React.Fragment>
+      <td className={component ? "tr-taskName" : "task-table-title-data"}>
+        {taskName}
+        {canTaskCreateNewTasks ? (<span className='multiple-tasks-created'> *</span>) : null}
+      </td>
+      <td>{timeToComplete}</td>
+      <td>{isTaskApprovalRequired? approver.name: "No approval needed"}</td>
+      <td>{timeToReview}</td>
+      <td>
+        <img src={getIconForStatus(status)} />
+        <span className="task-status">
+          {status == "start" ? prettifyStatus("To do") : prettifyStatus(status)}
+        </span>
+      </td>
+      <td>
+        {unfinshedRQTaskMessage && taskType === 'security risk assessment' ? null : link}
+      </td>
+    </React.Fragment>
+    </tr>
+  )
+}
+
 
 class Summary extends Component<Props> {
 
@@ -318,7 +408,6 @@ class Summary extends Component<Props> {
         {this.renderApprovals(submission)}
         <RiskResultContainer
           riskResults={submission.riskResults}
-          hideWeightsAndScore={submission.hideWeightsAndScore}
         />
         {this.renderSkipCheckbox(submission, viewAs, user)}
         {this.renderAcknowledgements(submission, viewAs, user)}
@@ -450,7 +539,7 @@ class Summary extends Component<Props> {
         {this.props.viewAs === "submitter" && (
           <div>
             <button className="btn add-collaborators-btn" onClick={this.handleOpenModalForCollaborators.bind(this)}>
-             <img src={AddIcon}/> Add collaborators
+              <img src={AddIcon}/> Add collaborators
             </button>
           </div>
         )}
@@ -487,19 +576,71 @@ class Summary extends Component<Props> {
     );
   }
 
+  addProductAspectsToTaskSubmissions(pa: array, arr: array) {
+    let newData = arr.map(item => {
+      if (!item.createOnceInstancePerComponent) {
+        return
+      }
+      let taskSubmissionsCopy = Object.assign({}, item);
+      taskSubmissionsCopy.productAspect = pa;
+      return taskSubmissionsCopy;
+    }).filter(item => item !== undefined)
+    return newData;
+  }
+
   renderTasks(submission: Submission) {
     const taskSubmissions = submission.taskSubmissions;
+    const productAspects = submission.productAspects;
+    const {token} = {...this.props};
     const isSRATaskFinalised = SecurityRiskAssessmentUtil.isSRATaskFinalised(submission.taskSubmissions);
 
     if (taskSubmissions.length === 0) {
       return null;
     }
 
+    let taskSubmissionsHasFlag = []
+    let taskSubmissionsHasNoFlag = []
+    let taskSubmissionGroupByComponent = []
+    let finalTaskSubmissionArray = taskSubmissions;
+
+    if(productAspects && productAspects.length > 0 ) {
+      taskSubmissions.map(taskSubmission => {
+        if (taskSubmission.createOnceInstancePerComponent === true) {
+          taskSubmissionsHasFlag.push(taskSubmission)
+        } else {
+          taskSubmissionsHasNoFlag.push(taskSubmission)
+        }
+      })
+
+      if (taskSubmissionsHasFlag.length > 0) {
+        productAspects.map(productAspect => {
+          const updatedTaskSubmissions = taskSubmissionsHasFlag.map(taskSubmission => {
+            if (taskSubmission.createOnceInstancePerComponent && taskSubmission.answerData) {
+              const answerDataArray = JSON.parse(taskSubmission.answerData);
+              const answerDataForComponent =  answerDataArray.filter((answerData) => answerData.productAspect === productAspect);
+              const copyTaskSubmission = Object.assign({}, taskSubmission);
+              copyTaskSubmission.status = answerDataForComponent[0] ? answerDataForComponent[0].status : 'start';
+              return copyTaskSubmission;
+            } else {
+              return taskSubmission;
+            }
+          })
+
+          taskSubmissionGroupByComponent.push({
+            component: productAspect,
+            tasks: updatedTaskSubmissions
+          })
+        })
+
+        finalTaskSubmissionArray = taskSubmissionsHasNoFlag.concat(taskSubmissionGroupByComponent)
+      }
+    }
+
     const unfinshedRQTaskMessage = this.unfinishedTaskSubmissionMessage() ? (
       <div className="alert alert-warning">{this.unfinishedTaskSubmissionMessage()}</div>
     ) : null;
 
-    return (
+      return (
       <div className="tasks-container">
         <h4>Tasks</h4>
         <div className="task-instruction-message">
@@ -511,7 +652,7 @@ class Summary extends Component<Props> {
         <div className="table-responsive table-continer">
           <table className="table">
             <thead className="task-thead">
-              <tr key="task-table-header">
+              <tr className="task-table-header">
                 <th>Task</th>
                 <th className="completion-time-col">Time to complete</th>
                 <th>Approved by</th>
@@ -521,87 +662,37 @@ class Summary extends Component<Props> {
               </tr>
             </thead>
             <tbody>
-              {taskSubmissions.map(({uuid, taskName, taskType, status, approver, isTaskApprovalRequired, timeToComplete, timeToReview, canTaskCreateNewTasks}) => {
-              let statusIcon = startIcon;
-
-              if (status == "start") {
-                status = "To do";
+              {
+                finalTaskSubmissionArray.map(taskSubmission => {
+                  if (taskSubmission.component && taskSubmission.tasks.length > 0) {
+                      return (
+                        <TableAccordion
+                          key={`accordion_${taskSubmission.component}_${taskSubmission.uuid}`}
+                          tasks={taskSubmission.tasks}
+                          component={taskSubmission.component}
+                          prettifyStatus={prettifyStatus}
+                          getRedirectUrlForTask={getRedirectUrlForTask}
+                          token={token}
+                          taskTableData={taskTableData}
+                          unfinshedRQTaskMessage={unfinshedRQTaskMessage}
+                        />
+                      )
+                    } else {
+                      return (taskTableData(taskSubmission, unfinshedRQTaskMessage))
+                    }
+                })
               }
-
-              if (status == "in_progress") {
-                statusIcon = inProgressIcon;
-              }
-
-              if (status == "waiting_for_approval") {
-                statusIcon = awaitingApprovalIcon;
-              }
-
-              if (status == "approved" || status == "complete") {
-                statusIcon = approveIcon;
-              }
-
-              if (status == "denied") {
-                statusIcon = notApprovedIcon;
-              }
-
-              const {token} = {...this.props};
-
-              let taskRedirectURL = URLUtil.redirectToTaskSubmission(uuid, token, "urlString");
-
-              if (taskType === "selection") {
-                taskRedirectURL = URLUtil.redirectToComponentSelectionSubmission(uuid, token, "urlString");
-              }
-
-              if (taskType === "security risk assessment") {
-                taskRedirectURL = URLUtil.redirectToSecurityRiskAssessment(uuid, token, "urlString");
-              }
-
-              if (taskType === "control validation audit") {
-                taskRedirectURL = URLUtil.redirectToControlValidationAudit(uuid, token, "urlString");
-              }
-
-              const links = (
-                <Link to={taskRedirectURL}>
-                  <img src={chevronRightIcon}/>
-                </Link>
-              );
-
-              let approvedBy = "";
-
-              if (isTaskApprovalRequired) {
-                approvedBy = approver.name;
-              } else {
-                approvedBy = "No approval needed";
-              }
-
-              return (
-                <tr key={uuid}>
-                  <td className="task-table-title-data">
-                    {taskName}
-                    {canTaskCreateNewTasks ? (<span className='multiple-tasks-created'> *</span>) : null}
-                  </td>
-                  <td>{timeToComplete}</td>
-                  <td>{approvedBy}</td>
-                  <td>{timeToReview}</td>
-                  <td>
-                    <img src={statusIcon} />
-                    <span className="task-status">{prettifyStatus(status)}</span>
-                  </td>
-                  <td>
-                  {unfinshedRQTaskMessage && taskType === 'security risk assessment' ? null : links}
-                  </td>
-                </tr>
-              );
-            })}
           </tbody>
-         </table>
-        </div>
-        {/**TODO: Add FAQ link */}
-        {/* <div className = "task-faq">
-        <a href="#"> Learn more about the task descriptions and statuses</a>
-          <img src={chevronRightIcon}/>
-        </div> */}
-        </div>
+        </table>
+      </div>
+
+      {/**TODO: Add FAQ link */}
+      {/* <div className = "task-faq">
+      <a href="#"> Learn more about the task descriptions and statuses</a>
+        <img src={chevronRightIcon}/>
+      </div> */}
+
+      </div>
     );
   }
 
@@ -612,7 +703,6 @@ class Summary extends Component<Props> {
     ) {
       return null;
     }
-
 
     const approvalStatus = submission.approvalStatus;
     const securityArchitectApprover = submission.securityArchitectApprover;

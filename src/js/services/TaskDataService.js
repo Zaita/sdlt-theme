@@ -24,8 +24,8 @@ type BatchUpdateTaskSubmissionDataArgument = {
 
 export default class TaskDataService {
 
-  static async fetchTaskSubmission(args: { uuid: string, secureToken?: string }): Promise<TaskSubmission> {
-    const {uuid, secureToken} = {...args};
+  static async fetchTaskSubmission(args: { uuid: string, secureToken?: string, component?: string }): Promise<TaskSubmission> {
+    const {uuid, secureToken, component} = {...args};
     const query = `
 query {
   readTaskSubmission(UUID: "${uuid}", SecureToken: "${secureToken || ""}") {
@@ -41,6 +41,8 @@ query {
       ID
       UUID
       QuestionnaireStatus
+      ProductName
+      IsBusinessOwner
       TaskSubmissions {
         UUID
         Status
@@ -81,14 +83,15 @@ query {
     }
     IsTaskApprovalRequired
     IsCurrentUserAnApprover
+    CreateOnceInstancePerComponent
     RiskResultData
     IsDisplayPreventMessage
     PreventMessage
     TaskRecommendationData
     ComponentTarget
     ProductAspects
-    HideWeightsAndScore
     InformationClassificationTaskResult
+    ControlSetSelectionTaskHelpText
   }
   readServiceInventory {
     ID
@@ -104,12 +107,44 @@ query {
       throw DEFAULT_NETWORK_ERROR;
     }
 
+    let answerData = toString(get(submissionJSONObject, "AnswerData", ""));
+    const taskStatus = toString(get(submissionJSONObject, "Status", ""));
+    let taskStatusForComponent = taskStatus;
+
+    if (component && answerData) {
+      const answerDataArray = JSON.parse(answerData);
+      if (answerDataArray.length > 0) {
+        const answerDataObj = answerDataArray.find(answer => answer.productAspect === component);
+
+        if(answerDataObj) {
+          answerData = JSON.stringify(answerDataObj.result);
+          taskStatusForComponent = answerDataObj.status;
+        }
+      }
+    }
+
+    let riskResultData = _.has(submissionJSONObject, 'RiskResultData') ?
+      JSON.parse(get(submissionJSONObject, "RiskResultData", "[]")) : "[]";
+
+    if (component && riskResultData) {
+      if (riskResultData.length > 0) {
+        const riskResultForComponentObj = riskResultData.find(
+          riskResultForComponent => riskResultForComponent.productAspect === component
+        );
+
+        if(riskResultForComponentObj) {
+          riskResultData = riskResultForComponentObj.riskResult;
+        }
+      }
+    }
+
     const data: TaskSubmission = {
       id: toString(get(submissionJSONObject, "ID", "")),
       uuid: toString(get(submissionJSONObject, "UUID", "")),
       taskName: toString(get(submissionJSONObject, "TaskName", "")),
       taskType: toString(get(submissionJSONObject, "TaskType", "")),
-      status: toString(get(submissionJSONObject, "Status", "")),
+      taskStatusForComponent: taskStatusForComponent,
+      status: taskStatus,
       result: toString(get(submissionJSONObject, "Result", "")),
       informationClassificationTaskResult: toString(get(submissionJSONObject, "InformationClassificationTaskResult", "")),
       submitter: UserParser.parseUserFromJSON(get(submissionJSONObject, "Submitter")),
@@ -117,26 +152,29 @@ query {
       questionnaireSubmissionUUID: toString(get(submissionJSONObject, "QuestionnaireSubmission.UUID", "")),
       questionnaireSubmissionID: toString(get(submissionJSONObject, "QuestionnaireSubmission.ID", "")),
       questionnaireSubmissionStatus: toString(get(submissionJSONObject, "QuestionnaireSubmission.QuestionnaireStatus", "")),
+      questionnaireSubmissionProductName: toString(get(submissionJSONObject, "QuestionnaireSubmission.ProductName", "")),
+      isBusinessOwner: get(submissionJSONObject, "QuestionnaireSubmission.IsBusinessOwner", "false") === "true",
       questions: QuestionParser.parseQuestionsFromJSON({
         schemaJSON: toString(get(submissionJSONObject, "QuestionnaireData", "")),
-        answersJSON: toString(get(submissionJSONObject, "AnswerData", "")),
+        answersJSON: answerData,
       }),
       selectedComponents: SecurityComponentParser.parseFromJSONOArray(get(submissionJSONObject, "SelectedComponents", [])),
       jiraTickets: JiraTicketParser.parseFromJSONArray(get(submissionJSONObject, "JiraTickets", [])),
       isCurrentUserAnApprover:  get(submissionJSONObject, "IsCurrentUserAnApprover", "false") === "true",
       isTaskApprovalRequired: get(submissionJSONObject, "IsTaskApprovalRequired", false) === "true",
-      riskResults: _.has(submissionJSONObject, 'RiskResultData') ? JSON.parse(get(submissionJSONObject, "RiskResultData", "[]")) : "[]",
+      riskResults: riskResultData,
       taskRecommendations: _.has(submissionJSONObject, 'TaskRecommendationData') ? JSON.parse(_.defaultTo(get(submissionJSONObject, "TaskRecommendationData", "[]"), "[]")) : "[]",
       productAspects:  _.has(submissionJSONObject, 'ProductAspects') ? JSON.parse(get(submissionJSONObject, "ProductAspects", [])) : [],
       componentTarget: toString(get(submissionJSONObject, "ComponentTarget", "")),
-      hideWeightsAndScore: _.get(submissionJSONObject, "HideWeightsAndScore", "false") === "true",
       isTaskCollborator: _.get(submissionJSONObject, "IsTaskCollborator", "false") === "true",
       isDisplayPreventMessage: _.get(submissionJSONObject, "IsDisplayPreventMessage", "false") === "true",
+      createOnceInstancePerComponent: Boolean(get(submissionJSONObject, "CreateOnceInstancePerComponent", false)),
       preventMessage: toString(get(submissionJSONObject, "PreventMessage", "")),
       siblingSubmissions: TaskParser.parseAlltaskSubmissionforQuestionnaire(submissionJSONObject),
       serviceRegister: TaskParser.parseServiceRegister(serviceRegister),
       riskProfileData:  _.has(submissionJSONObject, 'RiskProfileData') ? JSON.parse(get(submissionJSONObject, "RiskProfileData", [])) : [],
-      resultForCertificationAndAccreditation:  _.has(submissionJSONObject, 'ResultForCertificationAndAccreditation') ? JSON.parse(get(submissionJSONObject, "ResultForCertificationAndAccreditation", [])) : []
+      resultForCertificationAndAccreditation:  _.has(submissionJSONObject, 'ResultForCertificationAndAccreditation') ? JSON.parse(get(submissionJSONObject, "ResultForCertificationAndAccreditation", [])) : [],
+      controlSetSelectionTaskHelpText: toString(get(submissionJSONObject, "ControlSetSelectionTaskHelpText", "")),
     };
 
     return data;
@@ -170,7 +208,7 @@ query {
   }
 
   static async batchUpdateTaskSubmissionData(args: BatchUpdateTaskSubmissionDataArgument): Promise<void> {
-    const {uuid, questionIDList, answerDataList, csrfToken, secureToken} = {...args};
+    const {uuid, questionIDList, answerDataList, csrfToken, secureToken, component} = {...args};
 
     if (questionIDList.length !== answerDataList.length) {
       throw DEFAULT_NETWORK_ERROR;
@@ -181,12 +219,14 @@ query {
       const questionID = questionIDList[index];
       const answerData = answerDataList[index];
       const answerDataStr = window.btoa(unescape(encodeURIComponent(JSON.stringify(answerData))));
+
       let singleQuery = `
 updateQuestion${questionID}: updateTaskSubmission(
   UUID: "${uuid}",
   QuestionID: "${questionID}",
   AnswerData: "${answerDataStr}",
-  SecureToken: "${secureToken || ""}"
+  SecureToken: "${secureToken || ""}",
+  Component: "${component || ""}",
 ) {
   UUID
   Status
@@ -212,12 +252,13 @@ mutation {
     uuid: string,
     result: string,
     csrfToken: string,
-    secureToken: string
+    secureToken: string,
+    component: string,
   }): Promise<{ uuid: string }> {
-    const {uuid, result, csrfToken, secureToken} = {...args};
+    const {uuid, result, csrfToken, secureToken, component} = {...args};
     let query = `
 mutation {
- completeTaskSubmission(UUID: "${uuid}", Result: "${result}", SecureToken: "${secureToken || ""}") {
+ completeTaskSubmission(UUID: "${uuid}", Result: "${result}", SecureToken: "${secureToken || ""}", Component: "${component || ""}") {
    UUID
    Status
  }
@@ -230,12 +271,12 @@ mutation {
     return {uuid};
   }
 
-  static async editTaskSubmission(args: { uuid: string, csrfToken: string, secureToken?: string }): Promise<{ uuid: string }> {
-    const {uuid, csrfToken, secureToken} = {...args};
+  static async editTaskSubmission(args: { uuid: string, csrfToken: string, secureToken?: string, component?: string }): Promise<{ uuid: string }> {
+    const {uuid, csrfToken, secureToken, component} = {...args};
 
     const query = `
 mutation {
- editTaskSubmission(UUID: "${uuid}", SecureToken: "${secureToken || ""}") {
+ editTaskSubmission(UUID: "${uuid}", SecureToken: "${secureToken || ""}", Component: "${component || ""}") {
    UUID
    Status
  }

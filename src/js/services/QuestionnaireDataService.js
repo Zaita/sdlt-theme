@@ -75,9 +75,10 @@ query {
       keyInformation: _.get(questionnaireData, "KeyInformation", ""),
       user: UserParser.parseUserFromJSON(memberData),
     };
+
   }
 
-  static async fetchSubmissionData(submissionHash: string, secureToken:string): Promise<QuestionnaireSubmissionState> {
+  static async fetchSubmissionData(submissionHash: string, secureToken:string, component:string): Promise<QuestionnaireSubmissionState> {
     const query = `
 query {
   readMember(Type: "Current") {
@@ -119,7 +120,6 @@ query {
     IsCurrentUserAnApprover
     ProductName
     IsCurrentUserABusinessOwnerApprover
-    HideWeightsAndScore
     TaskSubmissions {
       UUID
       TaskName
@@ -129,6 +129,8 @@ query {
       TimeToComplete
       TimeToReview
       CanTaskCreateNewTasks
+      CreateOnceInstancePerComponent
+      AnswerData
       ResultForCertificationAndAccreditation
       TaskApprover {
         ID
@@ -158,6 +160,7 @@ query {
     CollaboratorList
     Created
     ReleaseDate
+    IsBusinessOwner
   }
   readSiteConfig {
     Title
@@ -186,7 +189,6 @@ query {
       isCurrentUserABusinessOwnerApprover: _.get(submissionJSON, "IsCurrentUserABusinessOwnerApprover", "false") === "true",
       submission: {
         isApprovalOverrideBySecurityArchitect: Boolean(_.get(submissionJSON, "ApprovalOverrideBySecurityArchitect", false)),
-        hideWeightsAndScore: _.get(submissionJSON, "HideWeightsAndScore", "false") === "true",
         questionnaireID: _.toString(_.get(submissionJSON, "Questionnaire.ID", "")),
         questionnaireTitle: _.toString(_.get(submissionJSON, "Questionnaire.Name", "")),
         submissionID: _.toString(_.get(submissionJSON, "ID", "")),
@@ -236,6 +238,7 @@ query {
         taskSubmissions: _
           .toArray(_.get(submissionJSON, "TaskSubmissions", []))
           .map((item) => {
+
             const taskSubmission: TaskSubmissionDisplay = {
               uuid: _.toString(_.get(item, "UUID", "")),
               taskName: _.toString(_.get(item, "TaskName", "")),
@@ -245,7 +248,9 @@ query {
               isTaskApprovalRequired: _.get(item, "IsTaskApprovalRequired", "false") === "true",
               timeToComplete: _.toString(_.get(item, "TimeToComplete", "")),
               timeToReview: _.toString(_.get(item, "TimeToReview", "")),
+              answerData: _.toString(_.get(item, "AnswerData", "")),
               canTaskCreateNewTasks: _.get(item, "CanTaskCreateNewTasks", "false") === "true",
+              createOnceInstancePerComponent: Boolean(_.get(item, "CreateOnceInstancePerComponent", false)),
               resultForCertificationAndAccreditation: _.get(item, "ResultForCertificationAndAccreditation", "[]"),
             };
             return taskSubmission;
@@ -255,6 +260,7 @@ query {
         created: _.toString(_.get(submissionJSON, "Created", "")),
         releaseDate: _.toString(_.get(submissionJSON, "ReleaseDate", "")),
         productAspects: _.has(submissionJSON, 'ProductAspects') ? JSON.parse(_.get(submissionJSON, "ProductAspects", "[]")) : "[]",
+        isBusinessOwner: _.get(submissionJSON, "IsBusinessOwner", "false") === "true",
       }
     };
 

@@ -1,0 +1,25 @@
+@import "../variables";
+
+@mixin backLink {
+  color: $light-blue;
+  text-decoration: underline;
+  margin-bottom: 30px;
+  font-weight: 500;
+  cursor: pointer;
+  &:hover {
+    color:$dark-blue;
+  }
+
+  img {
+    margin-right: 8px;
+  }
+}
+
+@mixin title {
+  color: $black;
+  margin-bottom: 18px;
+  font-weight: bold;
+  font-size: 14px;
+  line-height: 16px;
+  display: flex;
+}
