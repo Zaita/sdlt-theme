@@ -68,9 +68,7 @@ class TaskSubmission extends Component<Props> {
     );
 
     const backLinkSelector = () => {
-      if (taskSubmission.isCurrentUserAnApprover) {
-        return backLinkTaskApprover();
-      } else if (displayPreviousQuestionBackLink) {
+      if (displayPreviousQuestionBackLink) {
         return previousQuestionBackLink();
       } else {
         return backLink();
