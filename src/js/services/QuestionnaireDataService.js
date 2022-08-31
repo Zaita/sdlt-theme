@@ -161,6 +161,7 @@ query {
     Created
     ReleaseDate
     IsBusinessOwner
+    TicketLink
   }
   readSiteConfig {
     Title
@@ -261,6 +262,7 @@ query {
         releaseDate: _.toString(_.get(submissionJSON, "ReleaseDate", "")),
         productAspects: _.has(submissionJSON, 'ProductAspects') ? JSON.parse(_.get(submissionJSON, "ProductAspects", "[]")) : "[]",
         isBusinessOwner: _.get(submissionJSON, "IsBusinessOwner", "false") === "true",
+        ticketLink: _.toString(_.get(submissionJSON, "TicketLink", ""))
       }
     };
 

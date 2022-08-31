@@ -486,11 +486,19 @@ class Summary extends Component<Props> {
       productName = "Product Name: Please add a product name";
     }
 
+    let ticketLink = submission.ticketLink;
+    if (ticketLink == '') {
+      ticketLink = "Product Name: No Link Defined";
+    }
+
     return (
       <div className="submission-details-container">
         <div className="submission-detail-left-container">
           <div>
-            <span className="product-name">{productName}</span>
+            <span className="product-name">{productName}</span>            
+          </div>
+          <div>
+            <span><a href={ticketLink} target="_new">{ticketLink}</a></span>
           </div>
           <span>{submission.questionnaireTitle}</span>
           <div className="submitter-name-created-date-row">
