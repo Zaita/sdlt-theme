@@ -3,7 +3,7 @@
 import type {Siteconfig} from "../types/SiteConfig";
 import get from "lodash/get";
 import toString from "lodash/toString";
-import DefaultLogoImage from "../../img/Logo.svg";
+import DefaultLogoImage from "../../img/sdlt_base_logo.png";
 import DefaultBackgroundImage from "../../img/Home/background.jpg";
 import DefaultPDFHeaderImage from "../../img/PDF/heading.jpg";
 import DefaultPDFFooterImage from "../../img/PDF/footer.jpg";
@@ -18,8 +18,8 @@ export default class SiteConfigParser {
     return {
       siteTitle: toString(get(jsonObject, "Title") || 'SDLT'),
       footerCopyrightText: toString(get(jsonObject, "FooterCopyrightText", '') || defaultFooterText),
-      logoPath: toString(get(jsonObject, "LogoPath", '')), // || DefaultLogoImage),
-      homePageBackgroundImagePath: toString(get(jsonObject, "HomePageBackgroundImagePath", '')), // || DefaultBackgroundImage),
+      logoPath: toString(get(jsonObject, "LogoPath", '') || DefaultLogoImage),
+      homePageBackgroundImagePath: toString(get(jsonObject, "HomePageBackgroundImagePath", '') || DefaultBackgroundImage),
       pdfHeaderImageLink: toString(get(jsonObject, "PdfHeaderImageLink", '')), // || DefaultPDFHeaderImage),
       pdfFooterImageLink: toString(get(jsonObject, "PdfFooterImageLink", '')), // || DefaultPDFFooterImage),
       securityTeamEmail: toString(get(jsonObject, "SecurityTeamEmail") || ''),

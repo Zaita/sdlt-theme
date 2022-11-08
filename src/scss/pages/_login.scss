@@ -18,7 +18,14 @@ html.security {
 
         #ForgotPassword a {
           color: var(--theme-link-colour);
-        }      
+        }       
+    }
+
+    .login-image {
+      display: flex;
+      background-color: var(--header-colour);
+      padding-top: 5px;
+      padding-bottom: 5px;
     }
 
     .security {

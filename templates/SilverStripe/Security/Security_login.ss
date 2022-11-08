@@ -28,7 +28,7 @@
 
   <div class="row align-items-center">
     <div class="col login ">
-      <img src="$SiteConfig.AuthLogo.URL"/>
+      <div class="login-image"><img src="$SiteConfig.AuthLogo.URL"/></div>
       <hr/>
       $Form
       <% if $CurrentMember %>
