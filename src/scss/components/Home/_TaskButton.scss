@@ -1,7 +1,7 @@
 @import "../../variables";
 
 a.TaskButton {
-    border: solid 2px $blue;
+    border: solid 2px var(--header-colour);
     background-color: #ffffff;
     padding: 15px 20px;
     margin-bottom: 10px;
@@ -13,7 +13,7 @@ a.TaskButton {
     line-height: 1.78;
     letter-spacing: normal;
     text-align: center;
-    color: $blue;
+    color: var(--header-colour);
     overflow: visible;
     white-space: nowrap;
 

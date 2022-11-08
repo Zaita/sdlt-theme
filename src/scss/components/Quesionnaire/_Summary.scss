@@ -26,7 +26,7 @@
         }
 
         .add-collaborators-btn {
-          color: $light-blue;
+          color: var(--subheader-colour);
           font-size: 12px;
           font-weight: bold;
           margin-left: -15px;
@@ -163,7 +163,7 @@
     }
 
     .task-faq {
-      color: $light-blue;
+      color: var(--subheader-colour);
       font-weight: bold;
       text-decoration: underline;
       margin-top: 15px;
@@ -216,6 +216,10 @@
       font-size: 14px;
     }
 
+    .ticket-link a {
+      color: var(--theme-link-colour);
+    }
+
     .submission-status {
       background: $white;
       border-radius: 5px;
@@ -263,7 +267,7 @@
   .collaborator-message {
     margin-right: 60px;
     a {
-      color: $light-blue;
+      color: var(--theme-link-colour);
       font-weight: bold;
       text-decoration: underline;
     }
@@ -325,7 +329,7 @@
     }
 
     .react-select__control {
-      border: solid 1px $light-blue;
+      border: solid 1px var(--subheader-colour);
       min-width: 190px;
     }
 
@@ -334,24 +338,24 @@
     }
 
     .react-select__indicator {
-      color: $light-blue;
+      color: var(--subheader-colour);
       height: 30px;
       padding: 5px;
     }
 
     .react-select__control--is-focused {
       box-shadow: none !important;
-      border: solid 1px $light-blue;
+      border: solid 1px var(--subheader-colour);
     }
 
     .react-select__menu {
       max-width: 190px;
       margin-top: -4px;
-      border: solid 1px $light-blue;
+      border: solid 1px var(--subheader-colour);
     }
 
     .react-select__option--is-selected {
-      background-color: $light-blue;
+      background-color: var(--subheader-colour);
       color: $white;
     }
 
@@ -382,14 +386,14 @@
       border-left:4px solid transparent;
       -webkit-border-radius: 5px;
       border-radius: 5px;
-      background: $light-blue;
+      background: var(--subheader-colour);
       background-clip: padding-box;
-      -webkit-box-shadow: inset 0 0 5px $light-blue;
+      -webkit-box-shadow: inset 0 0 5px var(--subheader-colour);
     }
 
     // for firefox
     .acknowledgement-text-dropdown {
-      scrollbar-color: $light-blue $white;
+      scrollbar-color: var(--subheader-colour) $white;
       scrollbar-width: thin;
       border-radius: 5px;
     }

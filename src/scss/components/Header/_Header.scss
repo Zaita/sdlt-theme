@@ -5,7 +5,7 @@ header.Header {
     padding-bottom: 45px;
 
     .main-header {
-      background-color: #005485;
+      background-color: var(--header-colour);
       height: 50px;
       display: flex;
       flex-direction: row;
@@ -44,7 +44,7 @@ header.Header {
     }
 
     .breadcrumbs-subheader {
-      background-color: #004771;
+      background-color: var(--subheader-colour);
       height: 104px;
 
       nav, h1 {

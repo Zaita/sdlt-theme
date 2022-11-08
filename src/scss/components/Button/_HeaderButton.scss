@@ -3,7 +3,7 @@
 .HeaderButton {
     height: 50px;
     border: none;
-    background-color: #005485;
+    background-color: var(--header-colour);
     font-size: 12px;
     color: $white;
     font-weight: 400;
@@ -19,12 +19,12 @@
     }
 
     &:hover {
-      background-color: #236FA6;
+      background-color: var(--subheader-colour);
       font-weight: 700;
     }
 }
 
 button.HeaderButton.active {
-  background-color:#236FA6;
+  background-color: var(--subheader-colour);
   font-weight: 700;
 }

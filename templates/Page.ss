@@ -10,6 +10,16 @@
     content="width=device-width, initial-scale=1, shrink-to-fit=no"
   />
   <% include FavIcon %>
+  <style>
+  :root {
+    --background-colour: #$SiteConfig.ThemeBGColour;
+    --header-colour: #$SiteConfig.ThemeHeaderColour;
+    --subheader-colour: #$SiteConfig.ThemeSubHeaderColour;
+    --theme-link-colour: #$SiteConfig.ThemeLinkColour;
+    --home-text-colour: #$SiteConfig.ThemeHomePageTextColour;
+  }
+
+  </style>
   <% require themedCSS('dist/css/main') %>
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
 </head>

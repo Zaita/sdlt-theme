@@ -9,6 +9,8 @@ import editIcon from "../../../img/icons/edit-icon.svg";
 import AnswersPreview from "./AnswersPreview";
 import SubmissionDataUtil from "../../utils/SubmissionDataUtil";
 import URLUtil from "../../utils/URLUtil";
+import EditPencilSVG from "@material-ui/icons/Edit";
+import DownloadSVG from "@material-ui/icons/GetApp";
 
 type Props = {
   secureToken: string,
@@ -43,11 +45,11 @@ class Review extends Component<Props> {
     const buttons = (
       <div className="buttons">
       <LightButton title="Edit"
-                   iconImage={editIcon}
+                   svgImage={<EditPencilSVG/>}
                    classes={["button"]}
                    onClick={handleEditAnswerButtonClick}/>
       <LightButton title="PDF"
-                   iconImage={pdfIcon}
+                   svgImage={<DownloadSVG/>}
                    classes={["button"]}
                    onClick={handlePDFDownloadButtonClick}/>
       <DarkButton title="SUBMIT QUESTIONNAIRE"

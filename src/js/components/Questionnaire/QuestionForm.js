@@ -17,6 +17,7 @@ import 'tinymce/plugins/advlist';
 import 'tinymce/plugins/lists';
 import Select from 'react-select';
 import CertificationAndAccreditationResultContainer from "../Task/CertificationAndAccreditationResultContainer";
+import InfoSVG from "@material-ui/icons/InfoOutlined";
 
 type Props = {
   question: Question,
@@ -221,7 +222,7 @@ class QuestionForm extends Component<Props> {
         <div className="bottom-container">
           <div className="message-container">
             <span>
-              <img src={InfoIcon} />
+              <InfoSVG/>
               <span className="saveMessage">
                 Your answers will be saved when you continue to the next
                 question.
@@ -335,7 +336,7 @@ class QuestionForm extends Component<Props> {
           <div className="bottom-container">
             <div className="message-container">
               <span>
-                <img src={InfoIcon} />
+                <InfoSVG/>
                 <span className="saveMessage">
                   Your answers will be saved when you continue to the next
                   question.
@@ -380,7 +381,7 @@ class QuestionForm extends Component<Props> {
           <div className="bottom-container">
             <div className="message-container">
               <span>
-                <img src={InfoIcon} />
+                <InfoSVG/>
                 <span className="saveMessage">
                   Your answers will be saved when you continue to the next
                   question.
@@ -912,7 +913,7 @@ class QuestionForm extends Component<Props> {
               <div className="bottom-container">
                 <div className="message-container">
                   <span>
-                    <img src={InfoIcon} />
+                    <InfoSVG/>
                     <span className="saveMessage">
                       Your answers will be saved when you continue to the next
                       question.

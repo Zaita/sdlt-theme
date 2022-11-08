@@ -59,6 +59,10 @@
     @include backLink;
   }
 
+  .back-link svg {
+    font-size: medium;
+  }
+
   .approver-action {
     font-weight: bold;
     font-size: 12px;
@@ -84,7 +88,7 @@
         margin: -20px;
         padding-left: 20px;
         margin-bottom: 10px;
-        color: $dark-blue;
+        color: var(--header-colour);
 
         .header-title {
           font-size: 1.125rem;
@@ -123,7 +127,7 @@
       }
 
       input, select, textarea {
-        border: 1px solid $light-blue;
+        border: 1px solid var(--subheader-colour);
         border-radius: 5px;
         margin-top: 5px;
         width: 100%;
@@ -179,7 +183,7 @@
   }
 
   .add-recommendation-link {
-      color: $light-blue;
+      color: var(--subheader-colour);
       vertical-align: middle;
       margin-top: 15px;
       font-weight: bold;

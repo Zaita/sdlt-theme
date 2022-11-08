@@ -6,6 +6,7 @@ import BackArrow from "../../../img/icons/back-arrow.svg";
 import DarkButton from "../Button/DarkButton";
 import chevronRightIcon from "../../../img/icons/chevron-right.svg";
 import { Link } from "react-router-dom";
+import ArrowBackSVG from "@material-ui/icons/ArrowBack";
 
 type Props = {
   title: string,
@@ -16,7 +17,7 @@ type Props = {
 const backLink = (
   <Link to={'/'}>
     <div className="back-link">
-      <img src={BackArrow} />
+      <ArrowBackSVG/>
       Back
     </div>
   </Link>

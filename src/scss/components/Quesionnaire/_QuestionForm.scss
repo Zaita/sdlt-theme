@@ -12,7 +12,7 @@
   .heading {
     font-size: 14px;
     font-weight: bold;
-    color: $blue;
+    color: var(--header-colour);
     margin-bottom: 20px;
     white-space: pre-line;
     line-height: 16px;
@@ -36,7 +36,7 @@
 
     input, textarea {
       @extend .rounded-0;
-      border: solid 1px $light-blue;
+      border: solid 1px var(--subheader-colour);
       width: 355px;
       font-size: 12px;
       height: 30px;
@@ -45,11 +45,21 @@
       border-radius: 5px !important;
     }
 
+    input:focus, input:active, input:focus-visible {      
+      outline: none;
+      border: solid 2px var(--subheader-colour);            
+    }
+
+    textarea:focus, textarea:active, textarea:focus-visible {      
+      outline: none;
+      border: solid 2px var(--subheader-colour);            
+    }
+
     .dropdown-container {
       width: 380px;
 
       .react-select__control {
-        border: solid 1px $light-blue;
+        border: solid 1px var(--subheader-colour);
         font-size: 11px;
         min-height: 30px;
         height: 30px;
@@ -65,7 +75,7 @@
 
       .react-select__control--is-focused {
         box-shadow: none !important;
-        border: solid 1px $light-blue;
+        border: solid 1px var(--subheader-colour);
       }
 
       .react-select__control--menu-is-open {
@@ -89,7 +99,7 @@
       }
 
       .react-select__indicator {
-        color: $light-blue;
+        color: var(--subheader-colour);
         height: 30px;
         padding: 5px;
       }
@@ -101,14 +111,14 @@
 
       .react-select__menu {
         margin-top: -1px;
-        border: solid 1px $light-blue;
+        border: solid 1px var(--subheader-colour);
         border-top-right-radius: 0;
         border-top-left-radius: 0;
         font-size: 11px;
       }
 
       .react-select__option--is-selected {
-        background-color: $light-blue;
+        background-color: var(--subheader-colour);
         color: $white;
       }
 
@@ -203,7 +213,7 @@
       width: auto;
       margin: 0 7px 7px 0;
       top: 11px;
-      accent-color: $light-blue;
+      accent-color: var(--subheader-colour);
     }
 
     .required:after {
@@ -212,14 +222,14 @@
     }
 
     .mce-panel {
-      border: solid 1px $light-blue;
+      border: solid 1px var(--subheader-colour);
       background-color: $white;
     }
 
     .mce-btn {
       border: none;
       background: none;
-      color: $light-blue;
+      color: var(--subheader-colour);
     }
     .mce-first{
       border: none;
@@ -239,6 +249,10 @@
         font-size: 10px;
         line-height: 14px;
         margin-left: 5px;
+      }
+
+      svg {
+        fill: var(--header-colour);
       }
     }
     .button-container {
@@ -272,14 +286,14 @@
     border-left:4px solid transparent;
     -webkit-border-radius: 5px;
     border-radius: 5px;
-    background: $light-blue;
+    background: var(--subheader-colour);
     background-clip: padding-box;
-    -webkit-box-shadow: inset 0 0 5px $light-blue;
+    -webkit-box-shadow: inset 0 0 5px var(--subheader-colour);
   }
 
   // for firefox
   .scroller {
-    scrollbar-color: $light-blue $white;
+    scrollbar-color: var(--subheader-colour) $white;
     scrollbar-width: thin;
   }
 

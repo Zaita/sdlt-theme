@@ -16,7 +16,9 @@ import RiskResultContainer from "../Common/RiskResultContainer";
 import TaskRecommendationContainer from "./TaskRecommendationContainer";
 import SecurityRiskAssessmentUtil from "../../utils/SecurityRiskAssessmentUtil";
 import {SubmissionExpired} from "../Common/SubmissionExpired";
-import BackArrow from "../../../img/icons/back-arrow.svg";
+import ArrowBackSVG from "@material-ui/icons/ArrowBack";
+import EditPencilSVG from "@material-ui/icons/Edit";
+import DownloadSVG from "@material-ui/icons/GetApp";
 import CertificationAndAccreditationResultContainer from "./CertificationAndAccreditationResultContainer";
 
 type Props = {
@@ -84,7 +86,7 @@ class TaskSubmission extends Component<Props> {
     const backLink = () => {
       return (
         <div className="back-link" onClick={() => this.sendBackToQestionnaire()}>
-          <img src={BackArrow}/>
+          <ArrowBackSVG/>          
           Back
         </div>
       );
@@ -96,7 +98,7 @@ class TaskSubmission extends Component<Props> {
           className="back-link"
           onClick={() => moveToPreviousQuestion(previousQuestion, component)}
         >
-          <img src={BackArrow} />
+          <ArrowBackSVG/>
           Back
         </div>
       );
@@ -108,7 +110,7 @@ class TaskSubmission extends Component<Props> {
           className="back-link"
           onClick={() => URLUtil.redirectToApprovals()}
         >
-          <img src={BackArrow} />
+          <ArrowBackSVG/>
           Back
         </div>
       );
@@ -120,7 +122,7 @@ class TaskSubmission extends Component<Props> {
       <LightButton
         title="Edit"
         onClick={() => {editAnswers(component)}}
-        iconImage={editIcon}
+        svgImage={<EditPencilSVG/>}
       />
     ) : null;
 
@@ -129,7 +131,7 @@ class TaskSubmission extends Component<Props> {
       resultStatus.includes(taskSubmission.status) ||
       resultStatus.includes(taskSubmission.taskStatusForComponent)
     ) ? (
-      <LightButton title={"PDF"} iconImage={pdfIcon} onClick={() => this.downloadPdf()}/>
+      <LightButton title={"PDF"} svgImage={<DownloadSVG/>} onClick={() => this.downloadPdf()}/>
     ) : null;
 
     const result = taskSubmission.result && (resultStatus.indexOf(taskSubmission.status) > -1) ? (

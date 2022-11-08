@@ -6,6 +6,7 @@ import QuestionEditingIcon from "../../../img/icons/create.svg";
 import QuestionPendingIcon from "../../../img/icons/check-box-blank.svg";
 import QuestionCompletedIcon from "../../../img/icons/check-box.svg";
 import QuestionNotApplicableIcon from "../../../img/icons/not-applicable.svg";
+import EditPencilSVG from "@material-ui/icons/Edit";
 
 type Props = {
   question: Question,
@@ -39,7 +40,7 @@ export default class LeftBarItem extends Component<Props> {
 
     if (isCurrent) {
       return (
-        <img src={QuestionEditingIcon} />
+        <EditPencilSVG/> //<img src={QuestionEditingIcon} />
       );
     }
 

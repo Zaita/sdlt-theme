@@ -12,18 +12,18 @@ import DefaultSubHeaderImage from "../../img/Home/subheader.jpg";
 export default class SiteConfigParser {
   static parseSiteConfigFromJSON(siteConfigJSON: string | Object): Siteconfig {
     const jsonObject = (typeof siteConfigJSON === "string" ? JSON.parse(siteConfigJSON) : siteConfigJSON);
-    const defaultFooterText = String.fromCharCode(169) + ' NZTA ' + (new Date()).getFullYear();
+    const defaultFooterText = String.fromCharCode(169) + ' SDLT ' + (new Date()).getFullYear();
 
     // Ensure defaults are configured for when user-contributed config doesn't yet exist
     return {
-      siteTitle: toString(get(jsonObject, "Title") || 'NZTA SDLT'),
+      siteTitle: toString(get(jsonObject, "Title") || 'SDLT'),
       footerCopyrightText: toString(get(jsonObject, "FooterCopyrightText", '') || defaultFooterText),
-      logoPath: toString(get(jsonObject, "LogoPath", '') || DefaultLogoImage),
-      homePageBackgroundImagePath: toString(get(jsonObject, "HomePageBackgroundImagePath", '') || DefaultBackgroundImage),
-      pdfHeaderImageLink: toString(get(jsonObject, "PdfHeaderImageLink", '') || DefaultPDFHeaderImage),
-      pdfFooterImageLink: toString(get(jsonObject, "PdfFooterImageLink", '') || DefaultPDFFooterImage),
+      logoPath: toString(get(jsonObject, "LogoPath", '')), // || DefaultLogoImage),
+      homePageBackgroundImagePath: toString(get(jsonObject, "HomePageBackgroundImagePath", '')), // || DefaultBackgroundImage),
+      pdfHeaderImageLink: toString(get(jsonObject, "PdfHeaderImageLink", '')), // || DefaultPDFHeaderImage),
+      pdfFooterImageLink: toString(get(jsonObject, "PdfFooterImageLink", '')), // || DefaultPDFFooterImage),
       securityTeamEmail: toString(get(jsonObject, "SecurityTeamEmail") || ''),
-      homePageSubHeaderImagePath: toString(get(jsonObject, "HomePageSubHeaderImagePath", '') || DefaultSubHeaderImage),
+      homePageSubHeaderImagePath: toString(get(jsonObject, "HomePageSubHeaderImagePath", '')), // || DefaultSubHeaderImage),
     }
   }
 }

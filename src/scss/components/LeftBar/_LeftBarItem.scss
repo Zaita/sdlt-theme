@@ -14,7 +14,7 @@
     }
 
     i.not-applicable {
-        color: #93c3e8;
+        color: #646464;
     }
 
     .btn {
@@ -27,4 +27,10 @@
           box-shadow: none  !important;
         }
     }
+
+  svg {
+    width: 14px;
+    height: 14px;
+    fill: var(--header-colour);
+  }
 }

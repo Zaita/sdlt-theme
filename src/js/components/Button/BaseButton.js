@@ -21,7 +21,7 @@ class BaseButton extends Component<Props> {
   };
 
   render() {
-    const {title, classes, disabled, onClick, iconImage, rightIconImage} = {...this.props};
+    const {title, classes, disabled, onClick, iconImage, rightIconImage, svgImage} = {...this.props};
 
     let icon = null;
     let rightIcon = null;
@@ -45,6 +45,7 @@ class BaseButton extends Component<Props> {
               }}
       >
         {icon}
+        {svgImage}
         {title}
         {rightIcon}
       </button>

@@ -17,11 +17,11 @@ class LightButton extends Component<Props> {
     title: "",
     disabled: false,
     classes: [],
-    onClick: () => {},
+    onClick: () => {}
   };
 
   render() {
-    return <BaseButton {...this.props} classes={["LightButton", ...this.props.classes]} />;
+    return <BaseButton {...this.props} classes={["LightButton", ...this.props.classes]}/>;
   }
 }
 

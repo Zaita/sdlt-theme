@@ -17,6 +17,8 @@ import submittedIcon from "../../../img/icons/submitted.svg";
 import incompleteTasksIcon from "../../../img/icons/incomplete-tasks.svg";
 import chevronRightIcon from "../../../img/icons/chevron-right-link.svg";
 import submitSubmissionIcon from "../../../img/icons/submit-submission.svg";
+import EditPencilSVG from "@material-ui/icons/Edit";
+import DownloadSVG from "@material-ui/icons/GetApp";
 import _ from "lodash";
 import URLUtil from "../../utils/URLUtil";
 import SubmissionDataUtil from "../../utils/SubmissionDataUtil";
@@ -465,6 +467,7 @@ class Summary extends Component<Props> {
     } else if (status == "Submitted" &&
       !SubmissionDataUtil.existsIncompleteTaskSubmission(submission.taskSubmissions)) {
       status = "Ready to submit"
+      // statusIcon = <EditPencilSVG/>
       statusIcon = submittedIcon
     }
 
@@ -487,8 +490,8 @@ class Summary extends Component<Props> {
     }
 
     let ticketLink = submission.ticketLink;
-    if (ticketLink == '') {
-      ticketLink = "Product Name: No Link Defined";
+    if (ticketLink != '') {
+      ticketLink = "";
     }
 
     return (
@@ -497,7 +500,7 @@ class Summary extends Component<Props> {
           <div>
             <span className="product-name">{productName}</span>            
           </div>
-          <div>
+          <div className="ticket-link">
             <span><a href={ticketLink} target="_new">{ticketLink}</a></span>
           </div>
           <span>{submission.questionnaireTitle}</span>
@@ -886,7 +889,7 @@ class Summary extends Component<Props> {
 
     const downloadPDFButton = (
       <LightButton title="PDF"
-                   iconImage={pdfIcon}
+                   svgImage={<DownloadSVG/>}
                    classes={["button"]}
                    onClick={handlePDFDownloadButtonClick}/>
     );
@@ -904,7 +907,7 @@ class Summary extends Component<Props> {
       // Render edit answers button for submitter in all cases
       const editAnswersButton = (
         <LightButton title="Edit"
-                     iconImage={editIcon}
+                     svgImage={<EditPencilSVG/>}
                      classes={["button"]}
                      onClick={handleEditButtonClick}
         />

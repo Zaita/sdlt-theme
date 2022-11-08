@@ -15,6 +15,10 @@ html.security {
             background: white;
             padding: 2rem;
         }
+
+        #ForgotPassword a {
+          color: var(--theme-link-colour);
+        }      
     }
 
     .security {
@@ -34,16 +38,56 @@ html.security {
             @extend .btn;
             @extend .btn-primary;
             @extend .btn-block;
-        }
 
+            background-color: var(--header-colour);
+        }
+      
         input[name=Email], input[name=Password] {
             @extend .form-control;
+        }
+
+        input[name=Email]:focus, input[name=Password]:focus {
+          border-color: var(--header-colour);
+        }     
+        
+        input[type=checkbox] {
+          display: none;
+        }
+
+        .checkbox label {
+          display: inline-block;
+          position: relative;
+          padding-left: 25px;
+          font-size: 16px;
+          line-height: 20px;
+          margin: 5px;
+        }
+
+        .checkbox label:before {
+          line-height: 20px;
+          content: "";
+          display: inline-block;
+          width: 16px;
+          height: 16px;
+          position: absolute;
+          left: 0;
+          background-color: #ffffff;
+          border: 1px solid #666666;
+        }
+
+        input[type=checkbox]:checked + label:before,
+        .checkbox label:hover:before {
+          content: "\2713";
+          color: white;
+          text-align: center;
+          line-height: 16px;
+          background-color: var(--header-colour);
         }
 
         .field {
             @extend .form-group;
             &.checkbox {
-                @extend .form-check;
+                @extend .form-check;                
             }
             input[name=Remember] {
 

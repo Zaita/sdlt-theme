@@ -2,7 +2,7 @@
 
 footer.Footer {
     height: 72px;
-    background-color: $blue;
+    background-color: var(--header-colour);
     color: $white;
     display: flex;
     justify-content: center;

@@ -1,13 +1,13 @@
 @import "../variables";
 
 @mixin backLink {
-  color: $light-blue;
+  color: var(--theme-link-colour);
   text-decoration: underline;
   margin-bottom: 30px;
   font-weight: 500;
   cursor: pointer;
   &:hover {
-    color:$dark-blue;
+    color: var(--header-colour);
   }
 
   img {
