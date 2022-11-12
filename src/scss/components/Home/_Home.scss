@@ -1,9 +1,9 @@
 @import "../../variables";
 
 .HomeContainer {
+  background-color: #E5E5E5;
 
     .Home {
-
         .homepage-layout-logo {
             width: 370px;
             height: 82px;
@@ -18,29 +18,57 @@
             @extend .w-100;
             @extend .h-100;
             padding-top: 0;
-
         }
 
-        h1 {
-            font-size: 50px;
-            font-weight: 300;
-            font-style: normal;
-            font-stretch: normal;
-            letter-spacing: normal;
-            text-align: center;
-            color: var(--home-text-colour);
-            margin-bottom: 40px;
+        .title-box, .sdlt-description, .create-text, .create-help, .submissions, .submission-text,
+        .view-all-submissions {
+          width: 60%;
+          min-width: 1024px;
+          font-family: 'Roboto';
+          font-style: normal;
         }
 
-        h2 {
-            font-size: 30px;
-            font-weight: normal;
-            font-style: normal;
-            font-stretch: normal;
-            letter-spacing: normal;
-            text-align: center;
-            color: var(--home-text-colour);
-            margin-bottom: 30px;
+        .title-box {
+          font-weight: 900;
+          font-size: 20px;
+          line-height: 23px;
+          text-align: left;
+          color: var(--home-text-colour);
+          margin-bottom: 15px;
+        }
+
+        .sdlt-description, .create-help, .submission-text,
+        .view-all-submissions {
+          font-weight: 400;
+          font-size: 12px;
+          line-height: 20px;
+          color: var(--home-text-colour);
+        }     
+
+        .create-help, .submission-text {
+          margin-top: 15px;
+        }
+
+        .create-text {
+          margin-top: 35px;
+        }
+        
+        .create-text, .submission-text {
+          font-weight: 700;
+          font-size: 14px;
+          line-height: 16px;
+          color: var(--home-text-colour);
+        }   
+
+        .submission-text {
+          margin-bottom: 15px;
+        }
+
+        .view-all-submissions {
+          margin-bottom: 40px;
+          font-weight: 700;
+          font-size: 12px;
+          line-height: 14px;
         }
 
         .pillars {
@@ -49,6 +77,16 @@
             margin-bottom: 40px;
 
             @import "Pillar";
+
+            .pillar-row {
+              display: flex;              
+              margin-top: 20px;
+              justify-content: space-evenly;
+
+              .pillar-col {
+                display: inline;
+              }
+            }
         }
 
         .tasks {
@@ -58,9 +96,24 @@
             justify-content: center;
             align-items: flex-start;
             flex-wrap: wrap;
-            margin-bottom: 110px;
+            // margin-bottom: 110px;
 
             @import "TaskButton";
         }
+    }
+
+
+    .submission-list {
+      background-color: white;
+    }
+
+    .submittion-list table {
+      margin-bottom: 0px;
+      overflow-x: unset;
+    }
+
+    .submission-list th, .submission-list td {
+      border: 0px;
+      border-bottom: 2px solid #efefef;
     }
 }

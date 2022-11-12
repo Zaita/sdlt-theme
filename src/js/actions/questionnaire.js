@@ -343,7 +343,7 @@ export function editQuestionnaireSubmission(submissionID: string): ThunkAction {
 }
 
 // load all the Questionnaire Submissions of the logged in user
-export function loadMySubmissionList(): ThunkAction {
+export function loadMySubmissionList(limit: number): ThunkAction {
   return async (dispatch: any, getState: () => RootState) => {
     const user = getState().currentUserState.user;
     if (!user) {
@@ -354,7 +354,7 @@ export function loadMySubmissionList(): ThunkAction {
     try {
       // Call re sync with jira data api
       // limit and offset for pagination query set to 0
-      const data = await QuestionnaireDataService.fetchQuestionnaireSubmissionList(user.id, 'my_submission_list', 0, 0);
+      const data = await QuestionnaireDataService.fetchQuestionnaireSubmissionList(user.id, 'my_submission_list', limit, 0);
 
       dispatch({
         type: ActionType.QUESTIONNAIRE.FETCH_MY_SUBMISSION_LIST_SUCCESS,

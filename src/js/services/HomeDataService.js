@@ -15,6 +15,7 @@ import {DEFAULT_NETWORK_ERROR} from "../constants/errors";
 import type {Pillar} from "../types/Pillar";
 import type {Task} from "../types/Task";
 import TaskParser from "../utils/TaskParser";
+import SubmissionList from "../components/QuestionnaireSubmissionList/MySubmissionList";
 
 export default class HomeDataService {
 
@@ -27,6 +28,7 @@ query {
     Subtitle
     Pillars {
       Label
+      Caption
       Type
       Disabled
       Questionnaire {
@@ -41,6 +43,7 @@ query {
     }
   }
 }`;
+    
 
     // Send request
     const json = await GraphQLRequestHelper.request({query});
@@ -60,6 +63,9 @@ query {
 
     const taskJSONArray = get(dashboardJSON, "Tasks", []);
     const tasks = this.parseTasks(taskJSONArray);
+
+
+    // const submissionList = 
 
     return {
       title,
@@ -95,6 +101,7 @@ query {
 
       return {
         title: toString(get(item, "Label", "")),
+        caption: toString(get(item, "Caption", "")),
         disabled: Boolean(get(item, "Disabled", true)),
         questionnaireID: toString(get(item, "Questionnaire.0.ID", "")),
         icon: icon,

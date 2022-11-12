@@ -7,6 +7,8 @@ import type {HomeState} from "../../store/HomeState";
 import type {SiteConfig} from "../../store/SiteConfig";
 import type {Task} from "../../types/Task";
 import Header from "../Header/Header";
+import MySubmissionList from "../QuestionnaireSubmissionList/DashboardSubmissionList";
+import NavigateNextIcon from "@material-ui/icons/NavigateNext";
 
 type Props = {
   homeState: HomeState,
@@ -20,22 +22,21 @@ class Home extends Component<Props> {
     const {logoPath, homePageSubHeaderImagePath} = {...this.props.siteConfig};
 
     return (
-      <div className="Home">
+      <div className="Home">        
         <Header logopath={logoPath} subHeaderImagePath={homePageSubHeaderImagePath}/>
         <div className="layout">
-          <a href="/"><img src={logoPath} className="homepage-layout-logo"/></a>
-          <h1>
-            {title}
-          </h1>
-          <h2>
-            {subtitle}
-          </h2>
+          <div className="title-box">{title}</div>
+          <div className="sdlt-description">Short sentence to describe what SDLT is and how it's helpful</div>  
+
+          <div className="create-text">{subtitle}</div>
+          <div className="create-help">Now sure which option to choose? <a href="#">Find out more here</a></div>       
           <div className="pillars">
-            <div className="row">
+            
+            <div className="pillar-row">
               {pillars.map((pillar, index) => {
                 return (
                   <Pillar link={`/questionnaire/start/${pillar.questionnaireID}`}
-                          classes={["col", "mx-1"]}
+                          classes={["pillar-col", "mx-1"]}
                           pillar={pillar}
                           key={'pillar_'+(index+1)}
                   />
@@ -54,6 +55,11 @@ class Home extends Component<Props> {
               );
             })}
           </div>
+          <div className="submissions">
+            <div className="submission-text">Your latest submissions</div>
+            <MySubmissionList/>
+          </div>
+            <div className="view-all-submissions"><a href="#">See all submissions <NavigateNextIcon/></a></div>
         </div>
       </div>
     );

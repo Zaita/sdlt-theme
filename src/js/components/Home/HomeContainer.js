@@ -53,10 +53,7 @@ class HomeContainer extends Component<Props> {
     }
 
     return (
-      <div className="HomeContainer" style={{
-        backgroundImage: `url("${siteConfig.homePageBackgroundImagePath}")`,
-        backgroundSize: "cover"
-      }}>
+      <div className="HomeContainer">
         <Home homeState={homeState} siteConfig={siteConfig}/>
         <Footer footerCopyrightText={siteConfig.footerCopyrightText}/>
       </div>

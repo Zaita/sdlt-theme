@@ -1,46 +1,63 @@
 @import "../../variables";
 
 a.Pillar {
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: center;
-    background: rgba(255,255,255,0.7);
-    padding-top: 30px;
-    margin-top: 10px;
-    flex: 1 1 8%;
+  background: #FFFFFF;
+  box-shadow: 0px 4px 10px rgba(0, 63, 100, 0.12);
+  border-radius: 5px;
+  width: 170px;
+  height: 170px;
+  align-items: center;
+  vertical-align: center;
+  flex-grow: 0;
+  color: var(--header-colour);  
+ 
+    .title {
+      font-family: 'Roboto';
+      font-style: normal;
+      font-weight: 900;
+      font-size: 13px;
+      line-height: 15px;
+      display: inherit;
+      align-items: center;
+      text-align: center; 
+      color: var(--header-colour);  
+      margin-top: 29px;   
+    }
+
+    .icon-container {
+      display: flex;
+      justify-content: center;
+      margin-top: 25px;
+    }
 
     .icon {
-        @extend .rounded-circle;
-        height: 101px;
-        width: 101px;
+        // @extend .rounded-circle;
+        height: 20px;
+        width: 20px;
         margin-bottom: 28px;
-        background-color: var(--header-colour);
+        // background-color: var(--subheader-colour);
         display: flex;
         flex-direction: column;
         justify-content: center;
-        align-items: center;
+        align-items: center;        
     }
 
-    .title {
-        font-size: 16px;
-        font-weight: bold;
-        font-style: normal;
-        font-stretch: normal;
-        line-height: 1.38;
-        letter-spacing: normal;
-        text-align: center;
-        color: #333333;
-        text-transform: uppercase;
-        padding-bottom: 5px;
-        max-width: 100%;
+    .caption {
+      font-family: 'Roboto';
+      font-style: normal;
+      font-weight: 400;
+      font-size: 11px;
+      line-height: 13px;
+      display: inherit;
+      align-items: center;
+      text-align: center;
+      color: var(--home-text-colour);
+      padding-left: 25px;
+      padding-right: 25px;
     }
 
     &:hover {
         text-decoration: none;
-
-        .icon {
-            background-color: $orange;
-        }
+        background-color: #CCCCCC;
     }
 }
