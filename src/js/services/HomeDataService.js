@@ -1,12 +1,14 @@
 // @flow
 
+import React, {Component} from "react";
 import type {HomeState} from "../store/HomeState";
 
-import PocIcon from "../../img/Home/poc-icon.svg";
-import SaasIcon from "../../img/Home/saas-icon.svg";
-import ProdIcon from "../../img/Home/prod-icon.svg";
-import BugIcon from "../../img/Home/bug-icon.svg";
-import RiskIcon from "../../img/Home/risk-icon.svg";
+import QuestionAnswerRoundedIcon from "@mui/icons-material/QuestionAnswerRounded";
+import LightBulbIcon from "@mui/icons-material/Lightbulb";
+import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
+import SecurityIcon from '@mui/icons-material/Security';
+import BugReportIcon from '@mui/icons-material/BugReport';
+import CloseIcon from '@mui/icons-material/Close';
 
 import get from "lodash/get";
 import toString from "lodash/toString";
@@ -16,6 +18,7 @@ import type {Pillar} from "../types/Pillar";
 import type {Task} from "../types/Task";
 import TaskParser from "../utils/TaskParser";
 import SubmissionList from "../components/QuestionnaireSubmissionList/MySubmissionList";
+
 
 export default class HomeDataService {
 
@@ -80,23 +83,23 @@ query {
       return [];
     }
     const pillars = pillarsJSONArray.map(item => {
-      let icon = PocIcon;
+      let icon = <CloseIcon/>;
       switch (item["Type"]) {
-        case "proof_of_concept":
-          icon = PocIcon;
+        case "question_answer":
+          icon =  <QuestionAnswerRoundedIcon/>;
           break;
-        case "software_as_service":
-          icon = SaasIcon;
+        case "lightbulb":
+          icon = <LightBulbIcon/>;
           break;
-        case "product_project_or_solution":
-          icon = ProdIcon;
+        case "cloud_download":
+          icon = <CloudDownloadIcon/>;
           break;
-        case "feature_or_bug_fix":
-          icon = BugIcon;
+        case "shield":
+          icon = <SecurityIcon/>;
           break;
-        case "risk_questionnaire":
-          icon = RiskIcon;
-          break;
+        case "bug":
+          icon = <BugReportIcon/>;
+          break;                  
       }
 
       return {

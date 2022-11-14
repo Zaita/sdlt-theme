@@ -3,7 +3,6 @@
 import React, {Component} from "react";
 import {Link} from "react-router-dom";
 import type {Pillar as PillarType} from "../../types/Pillar";
-import QuestionAnswerRoundedIcon from "@material-ui/icons/QuestionAnswerRounded";
 
 type Props = {
   link: string,
@@ -32,8 +31,7 @@ class Pillar extends Component<Props> {
         </div>
         <div className="icon-container">
           <div className="icon">
-            {/* <img src={this.props.pillar.icon} alt={this.props.pillar.title}/> */}
-            <QuestionAnswerRoundedIcon/>
+            {this.props.pillar.icon}
           </div>
         </div>
         <div className="caption">
