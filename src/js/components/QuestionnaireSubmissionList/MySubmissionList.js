@@ -27,7 +27,7 @@ const mapDispatchToProps = (dispatch: Dispatch, props: *) => {
   return {
     async dispatchLoadDataAction() {
       await dispatch(loadCurrentUser());
-      await dispatch(loadMySubmissionList());
+      await dispatch(loadMySubmissionList(0));
       await dispatch(loadSiteConfig());
     }
   };

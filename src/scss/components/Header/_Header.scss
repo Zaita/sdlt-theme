@@ -34,7 +34,11 @@ header.Header {
       margin-right: 0;
     }
 
-    .home-icon {
+    .home-icon, .awaiting-approvals-icon, .submissions-icon,
+    .logout-icon {
+      width: 18px;
+      height: 18px;
+      margin-right: 5px;
       margin-top: -2px;
     }
 

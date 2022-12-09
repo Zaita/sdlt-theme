@@ -18,7 +18,7 @@ type Props = {
 class Home extends Component<Props> {
 
   render() {
-    const {title, subtitle, pillars, tasks} = {...this.props.homeState};
+    const {title, titleText, subtitle, subtitleText, pillars, tasks} = {...this.props.homeState};
     const {logoPath, homePageSubHeaderImagePath} = {...this.props.siteConfig};
 
     return (
@@ -26,10 +26,10 @@ class Home extends Component<Props> {
         <Header logopath={logoPath} subHeaderImagePath={homePageSubHeaderImagePath}/>
         <div className="layout">
           <div className="title-box">{title}</div>
-          <div className="sdlt-description">Short sentence to describe what SDLT is and how it's helpful</div>  
+          <div className="sdlt-description">{titleText}</div>  
 
           <div className="create-text">{subtitle}</div>
-          <div className="create-help">Now sure which option to choose? <a href="#">Find out more here</a></div>       
+          <div className="create-help">{subtitleText}</div>       
           <div className="pillars">
             
             <div className="pillar-row">

@@ -29,6 +29,8 @@ query {
   readDashboard {
     Title
     Subtitle
+    TitleText
+    SubtitleText
     Pillars {
       Label
       Caption
@@ -60,6 +62,8 @@ query {
 
     const title = toString(get(dashboardJSON, "Title", ""));
     const subtitle = toString(get(dashboardJSON, "Subtitle", ""));
+    const titleText = toString(get(dashboardJSON, "TitleText", ""));
+    const subtitleText = toString(get(dashboardJSON, "SubtitleText", ""));
 
     const pillarsJSONArray = get(dashboardJSON, "Pillars", []);
     const pillars = this.parsePillars(pillarsJSONArray);
@@ -72,7 +76,9 @@ query {
 
     return {
       title,
+      titleText,
       subtitle,
+      subtitleText,
       pillars,
       tasks,
     };
