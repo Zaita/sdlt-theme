@@ -134,6 +134,13 @@ class TaskSubmission extends Component<Props> {
       <LightButton title={"PDF"} svgImage={<DownloadSVG/>} onClick={() => this.downloadPdf()}/>
     ) : null;
 
+    const doneButton = (
+      resultStatus.includes(taskSubmission.status) ||
+      resultStatus.includes(taskSubmission.taskStatusForComponent)
+    ) ? (
+      <LightButton title={"Done"} onClick={() => this.sendBackToQestionnaire()}/>
+    ) : null;
+
     const result = taskSubmission.result && (resultStatus.indexOf(taskSubmission.status) > -1) ? (
       <div className="result-container">
         <h4>Result</h4>
@@ -236,6 +243,7 @@ class TaskSubmission extends Component<Props> {
                     taskSubmission.status === "waiting_for_approval" &&
                     <span className="approver-action">Approver action: </span>
                   }
+                  {doneButton}
                   {sendBackForChangesButton}
                   {denyButton}
                   {approveButton}
