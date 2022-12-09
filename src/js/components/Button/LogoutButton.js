@@ -1,7 +1,7 @@
 // @flow
 
 import React, {Component} from "react";
-import Icon from "../../../img/icons/logout-icon.svg";
+import LogoutIcon from '@mui/icons-material/Logout';
 import CSRFTokenService from '../../services/CSRFTokenService';
 
 type Props = {
@@ -24,7 +24,7 @@ class LogoutButton extends Component<Props> {
         }}
       >
         <div>
-          <img src={Icon} />
+          <LogoutIcon className="logout-icon"/>
           Log out
         </div>
       </button>

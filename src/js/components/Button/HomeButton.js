@@ -1,6 +1,7 @@
 // @flow
 import React, {Component} from "react";
 import Icon from "../../../img/icons/home-icon.svg";
+import HomeIcon from '@mui/icons-material/Home';
 
 class HomeButton extends Component<Props> {
 
@@ -24,7 +25,7 @@ class HomeButton extends Component<Props> {
         }}
       >
         <div>
-          <img src={Icon} className="home-icon" />
+        <HomeIcon className="home-icon"/>
             Home
         </div>
       </button>

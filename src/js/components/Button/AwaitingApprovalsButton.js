@@ -1,6 +1,6 @@
 // @flow
 import React, {Component} from "react";
-import Icon from "../../../img/icons/approvals-icon.svg";
+import GppGoodIcon from '@mui/icons-material/GppGood';
 
 class AwaitingApprovalsButton extends Component<Props> {
   static defaultProps = {
@@ -26,7 +26,7 @@ class AwaitingApprovalsButton extends Component<Props> {
         }}
       >
         <div>
-          <img src={Icon} />
+          <GppGoodIcon className="awaiting-approvals-icon"/>
             Approvals
         </div>
       </button>
