@@ -1,6 +1,6 @@
 // @flow
 import React, {Component} from "react";
-import Icon from "../../../img/icons/submissions-icon.svg";
+import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
 
 class MySubmissionButton extends Component<Props> {
 
@@ -27,7 +27,7 @@ class MySubmissionButton extends Component<Props> {
         }}
       >
         <div>
-          <img src={Icon} />
+          <FormatListBulletedIcon className="submissions-icon"/>
             Submissions
         </div>
       </button>
