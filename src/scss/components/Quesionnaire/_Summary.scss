@@ -233,12 +233,12 @@
     }
   }
 
- .submission-details-data, .submission-details-label {
+ .submission-details-data, .submission-details-label, .submission-ticket-label, .submission-ticket-data {
     min-width: 110px;
     display: inline-block;
   }
 
-  .submission-details-label {
+  .submission-details-label, .submission-ticket-label {
     margin-right: 13px;
     font-weight: 500;
   }
@@ -247,7 +247,7 @@
     height: 14px;
   }
 
-  .submitter-name-created-date-row {
+  .submission-ticket-link-row {
     margin-top: 25px;
   }
 

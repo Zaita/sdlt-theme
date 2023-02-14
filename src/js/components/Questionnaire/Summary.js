@@ -490,9 +490,9 @@ class Summary extends Component<Props> {
     }
 
     let ticketLink = submission.ticketLink;
-    if (ticketLink != '') {
-      ticketLink = "";
-    }
+    // if (ticketLink != '') {
+    //   ticketLink = "";
+    // }
 
     return (
       <div className="submission-details-container">
@@ -500,10 +500,11 @@ class Summary extends Component<Props> {
           <div>
             <span className="product-name">{productName}</span>            
           </div>
-          <div className="ticket-link">
-            <span><a href={ticketLink} target="_new">{ticketLink}</a></span>
-          </div>
           <span>{submission.questionnaireTitle}</span>
+          <div className="submission-ticket-link-row">
+            <span className="submission-ticket-label">Ticket: </span>
+            <span className="submission-ticket-data"><a href={ticketLink} target="_new">{ticketLink}</a></span>
+          </div>
           <div className="submitter-name-created-date-row">
             <span className="submission-details-label">Submission created: </span>
             <span className="submission-details-data">{moment(submission.created).format("DD/MM/YYYY")}</span>
