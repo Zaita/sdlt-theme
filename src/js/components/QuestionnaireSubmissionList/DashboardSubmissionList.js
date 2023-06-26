@@ -11,7 +11,7 @@ import moment from "moment";
 import {loadSiteConfig} from "../../actions/siteConfig";
 import type {SiteConfig} from "../../types/SiteConfig";
 import _ from "lodash";
-import NavigateNextIcon from "@material-ui/icons/NavigateNext";
+import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 
 const mapStateToProps = (state: RootState) => {
   return {

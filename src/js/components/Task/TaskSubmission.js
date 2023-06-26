@@ -16,9 +16,9 @@ import RiskResultContainer from "../Common/RiskResultContainer";
 import TaskRecommendationContainer from "./TaskRecommendationContainer";
 import SecurityRiskAssessmentUtil from "../../utils/SecurityRiskAssessmentUtil";
 import {SubmissionExpired} from "../Common/SubmissionExpired";
-import ArrowBackSVG from "@material-ui/icons/ArrowBack";
-import EditPencilSVG from "@material-ui/icons/Edit";
-import DownloadSVG from "@material-ui/icons/GetApp";
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import EditIcon from '@mui/icons-material/Edit';
+import GetAppIcon from '@mui/icons-material/GetApp';
 import CertificationAndAccreditationResultContainer from "./CertificationAndAccreditationResultContainer";
 
 type Props = {
@@ -86,7 +86,7 @@ class TaskSubmission extends Component<Props> {
     const backLink = () => {
       return (
         <div className="back-link" onClick={() => this.sendBackToQestionnaire()}>
-          <ArrowBackSVG/>          
+          <ArrowBackIcon/>          
           Back
         </div>
       );
@@ -98,7 +98,7 @@ class TaskSubmission extends Component<Props> {
           className="back-link"
           onClick={() => moveToPreviousQuestion(previousQuestion, component)}
         >
-          <ArrowBackSVG/>
+          <ArrowBackIcon/>
           Back
         </div>
       );
@@ -110,7 +110,7 @@ class TaskSubmission extends Component<Props> {
           className="back-link"
           onClick={() => URLUtil.redirectToApprovals()}
         >
-          <ArrowBackSVG/>
+          <ArrowBackIcon/>
           Back
         </div>
       );
@@ -122,7 +122,7 @@ class TaskSubmission extends Component<Props> {
       <LightButton
         title="Edit"
         onClick={() => {editAnswers(component)}}
-        svgImage={<EditPencilSVG/>}
+        svgImage={<EditIcon/>}
       />
     ) : null;
 
@@ -131,7 +131,7 @@ class TaskSubmission extends Component<Props> {
       resultStatus.includes(taskSubmission.status) ||
       resultStatus.includes(taskSubmission.taskStatusForComponent)
     ) ? (
-      <LightButton title={"PDF"} svgImage={<DownloadSVG/>} onClick={() => this.downloadPdf()}/>
+      <LightButton title={"PDF"} svgImage={<GetAppIcon/>} onClick={() => this.downloadPdf()}/>
     ) : null;
 
     const doneButton = (

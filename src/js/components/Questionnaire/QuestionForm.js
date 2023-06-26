@@ -11,13 +11,13 @@ import "react-datepicker/dist/react-datepicker.css";
 import InfoIcon from "../../../img/icons/info.svg";
 import ChevronIcon from "../../../img/icons/chevron-right.svg";
 import tinymce from "tinymce";
-import 'tinymce/themes/modern';
+import 'tinymce/themes/silver';
 import { Editor } from "@tinymce/tinymce-react";
 import 'tinymce/plugins/advlist';
 import 'tinymce/plugins/lists';
 import Select from 'react-select';
 import CertificationAndAccreditationResultContainer from "../Task/CertificationAndAccreditationResultContainer";
-import InfoSVG from "@material-ui/icons/InfoOutlined";
+import InfoSVG from "@mui/icons-material/InfoOutlined";
 
 type Props = {
   question: Question,

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Droppable } from 'react-beautiful-dnd';
 import ControlCard from './ControlCard';
 import InformationTooltip from '../../Common/InformationTooltip';
-import OpenWithIcon from '@material-ui/icons/OpenWith';
+import OpenWithIcon from '@mui/icons-material/OpenWith';
 
 // optimization
 class InnerList extends React.Component {

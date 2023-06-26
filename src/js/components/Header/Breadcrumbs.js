@@ -2,8 +2,8 @@ import React, { Component } from "react";
 import {
   Breadcrumbs as MuiBreadcrumbs,
   Link
-} from "@material-ui/core";
-import NavigateNextIcon from "@material-ui/icons/NavigateNext";
+} from "@mui/material";
+import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import { withRouter } from "react-router-dom";
 import URLUtil from "../../utils/URLUtil";
 

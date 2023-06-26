@@ -9,8 +9,8 @@ import editIcon from "../../../img/icons/edit-icon.svg";
 import AnswersPreview from "./AnswersPreview";
 import SubmissionDataUtil from "../../utils/SubmissionDataUtil";
 import URLUtil from "../../utils/URLUtil";
-import EditPencilSVG from "@material-ui/icons/Edit";
-import DownloadSVG from "@material-ui/icons/GetApp";
+import EditPencilSVG from "@mui/icons-material/Edit";
+import DownloadSVG from "@mui/icons-material/GetApp";
 
 type Props = {
   secureToken: string,

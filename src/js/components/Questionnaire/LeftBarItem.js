@@ -6,7 +6,7 @@ import QuestionEditingIcon from "../../../img/icons/create.svg";
 import QuestionPendingIcon from "../../../img/icons/check-box-blank.svg";
 import QuestionCompletedIcon from "../../../img/icons/check-box.svg";
 import QuestionNotApplicableIcon from "../../../img/icons/not-applicable.svg";
-import EditPencilSVG from "@material-ui/icons/Edit";
+import EditPencilSVG from "@mui/icons-material/Edit";
 
 type Props = {
   question: Question,

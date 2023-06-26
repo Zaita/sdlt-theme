@@ -1,7 +1,6 @@
 // Gulp is used to build CSS for use in both SS templates and React
-
 const gulp = require("gulp");
-const sass = require("gulp-sass");
+const sass = require('gulp-sass')(require('sass'));
 const postcss = require("gulp-postcss");
 const sourcemaps = require("gulp-sourcemaps");
 const autoprefixer = require("autoprefixer");

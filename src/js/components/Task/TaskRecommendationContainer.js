@@ -15,7 +15,6 @@ import ReactModal from "react-modal";
 import Select from 'react-select';
 import tinymce from "tinymce";
 import { Editor } from "@tinymce/tinymce-react";
-import IconButton from '@material-ui/core/IconButton';
 
 type Props = {
   taskRecommendations: Array<TaskRecommendation> | null,

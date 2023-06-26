@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
-import InfoFilledIcon from '@material-ui/icons/Info';
-import Tooltip from '@material-ui/core/Tooltip';
-import Fade from '@material-ui/core/Fade';
-import { ClickAwayListener } from '@material-ui/core';
+import { makeStyles } from '@mui/styles';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
+import InfoFilledIcon from '@mui/icons-material/Info';
+import Tooltip from '@mui/material/Tooltip';
+import Fade from '@mui/material/Fade';
+import { ClickAwayListener } from '@mui/material';
 
 const useStyles = makeStyles(() => ({
   arrow: {

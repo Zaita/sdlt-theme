@@ -2,13 +2,13 @@
 
 import React, { useState } from "react";
 import { Draggable } from "react-beautiful-dnd";
-import { Card, IconButton } from "@material-ui/core";
-import ChevronRightIcon from "@material-ui/icons/ChevronRight";
-import KeyControlIcon from "../../../../img/icons/key-control-star.svg";
+import { Card, IconButton } from "@mui/material";
 import { Link } from "react-router-dom";
-import effectiveIconSvg from "../../../../img/icons/approve.svg";
-import partiallyEffectiveIconSvg from "../../../../img/icons/partially-effective.svg";
-import notEffectiveIconSvg from "../../../../img/icons/not-effective.svg";
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import KeyControlIcon from '@mui/icons-material/Star';
+import effectiveIconSvg from '@mui/icons-material/VerifiedUser';
+import partiallyEffectiveIconSvg from '@mui/icons-material/SecurityTwoTone';
+import notEffectiveIconSvg from '@mui/icons-material/GppBad';
 
 type Props = {
   evalutionRating: string,

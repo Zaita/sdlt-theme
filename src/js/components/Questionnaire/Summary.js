@@ -17,8 +17,8 @@ import submittedIcon from "../../../img/icons/submitted.svg";
 import incompleteTasksIcon from "../../../img/icons/incomplete-tasks.svg";
 import chevronRightIcon from "../../../img/icons/chevron-right-link.svg";
 import submitSubmissionIcon from "../../../img/icons/submit-submission.svg";
-import EditPencilSVG from "@material-ui/icons/Edit";
-import DownloadSVG from "@material-ui/icons/GetApp";
+import EditPencilSVG from "@mui/icons-material/Edit";
+import DownloadSVG from "@mui/icons-material/GetApp";
 import _ from "lodash";
 import URLUtil from "../../utils/URLUtil";
 import SubmissionDataUtil from "../../utils/SubmissionDataUtil";
@@ -31,16 +31,16 @@ import {
 import SecurityRiskAssessmentUtil from "../../utils/SecurityRiskAssessmentUtil";
 import {SubmissionExpired} from "../Common/SubmissionExpired";
 import AddIcon from "../../../img/icons/add-circle.svg";
-import CloseIcon from '@material-ui/icons/Close';
+import CloseIcon from '@mui/icons-material/Close';
 import ReactModal from "react-modal";
-import IconButton from '@material-ui/core/IconButton';
+import IconButton from '@mui/material/IconButton';
 import Select from 'react-select';
 import moment from "moment";
-import Accordion from '@material-ui/core/Accordion';
-import AccordionSummary from '@material-ui/core/AccordionSummary';
-import AccordionDetails from '@material-ui/core/AccordionDetails';
-import Typography from '@material-ui/core/Typography';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import Accordion from '@mui/material/Accordion';
+import AccordionSummary from '@mui/material/AccordionSummary';
+import AccordionDetails from '@mui/material/AccordionDetails';
+import Typography from '@mui/material/Typography';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import TableAccordion from "./TableAccordion";
 
 type Props = {

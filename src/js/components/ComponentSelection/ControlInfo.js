@@ -2,7 +2,7 @@
 import React, {Component} from "react";
 import Icon from 'react-fontawesome';
 import tinymce from "tinymce";
-import 'tinymce/themes/modern';
+import 'tinymce/themes/silver';
 import { Editor } from "@tinymce/tinymce-react";
 
 type Props = {

@@ -6,7 +6,7 @@ import BackArrow from "../../../img/icons/back-arrow.svg";
 import DarkButton from "../Button/DarkButton";
 import chevronRightIcon from "../../../img/icons/chevron-right.svg";
 import { Link } from "react-router-dom";
-import ArrowBackSVG from "@material-ui/icons/ArrowBack";
+import ArrowBackSVG from "@mui/icons-material/ArrowBack";
 
 type Props = {
   title: string,

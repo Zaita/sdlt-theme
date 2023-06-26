@@ -8,7 +8,7 @@ import type {SiteConfig} from "../../store/SiteConfig";
 import type {Task} from "../../types/Task";
 import Header from "../Header/Header";
 import MySubmissionList from "../QuestionnaireSubmissionList/DashboardSubmissionList";
-import NavigateNextIcon from "@material-ui/icons/NavigateNext";
+import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 
 type Props = {
   homeState: HomeState,

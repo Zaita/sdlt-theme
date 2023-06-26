@@ -1,8 +1,8 @@
 // @flow
 
 import React, {Component} from "react";
-import {Route, Switch} from "react-router-dom";
-import {parse} from "query-string";
+import {Route, Switch} from "react-router";
+import queryString from "query-string";
 import TaskSubmissionForVendorContainer from "../Task/TaskSubmissionForVendorContainer";
 
 class VendorApp extends Component<*> {
@@ -14,7 +14,7 @@ class VendorApp extends Component<*> {
           <Switch>
             <Route path='/task/submission/:uuid'>
               {({match, location}) => {
-                const query = parse(location.search);
+                const query = queryString.parse(location.search);
                 return (
                   <div className="gray-bg">
                     <TaskSubmissionForVendorContainer uuid={match.params.uuid} secureToken={query.token || ""}/>

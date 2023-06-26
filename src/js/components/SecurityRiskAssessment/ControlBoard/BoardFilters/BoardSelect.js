@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
-import { FormLabel, MenuItem, Select } from '@material-ui/core';
-import ChevronIcon from '@material-ui/icons/ChevronRight';
+import { FormLabel, MenuItem, Select } from '@mui/material';
+import ChevronIcon from '@mui/icons-material/ChevronRight';
 
 export default class BoardSelect extends Component {
   render() {

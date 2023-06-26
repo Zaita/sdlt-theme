@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { FormLabel, TextField } from '@material-ui/core';
+import { FormLabel, TextField } from '@mui/material';
 
 export default class BoardSearch extends Component {
   render() {

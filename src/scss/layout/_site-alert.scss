@@ -3,7 +3,7 @@
   @extend .bg-warning;
   @extend .flex-row;
   @extend .justify-content-between;
-  @extend .align-items-center;
+  @extend .align-items-center !optional;
   @extend .px-2;
   @extend .fixed-top;
 

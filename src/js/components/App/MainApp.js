@@ -18,9 +18,9 @@ import MyProductList from "../QuestionnaireSubmissionList/MyProductList";
 import SecurityRiskAssessmentContainer from "../SecurityRiskAssessment/DigitalSecurityRiskAssessmentContainer.js";
 import ControlValidationAuditContainer from "../ControlValidationAudit/ControlValidationAuditContainer.js";
 import ControlDetailContainer from "../ControlValidationAudit/ControlDetailContainer.js";
-import { parse } from "query-string";
+import queryString from 'query-string';
 import { Loading } from "../Common/Loading.js";
-import { withRouter } from 'react-router-dom';
+import { withRouter } from 'react-router';
 import _ from "lodash";
 
 const mapStateToProps = (state: RootState) => {
@@ -71,8 +71,8 @@ class MainApp extends Component<*> {
               {({ match, location }) => {
                 let secureToken = '';
                 if (location.search) {
-                  const queryString = parse(location.search);
-                  secureToken = queryString.token;
+                  const queryStringRs = queryString.parse(location.search);
+                  secureToken = queryStringRs.token;
                 }
                 return (
                   <div className="gray-bg">
@@ -85,8 +85,8 @@ class MainApp extends Component<*> {
               {({ match, location }) => {
                 let secureToken = '';
                 if (location.search) {
-                  const queryString = parse(location.search);
-                  secureToken = queryString.token;
+                  const queryStringRs = queryString.parse(location.search);
+                  secureToken = queryStringRs.token;
                 }
                 return (
                   <div className="gray-bg">
@@ -101,9 +101,9 @@ class MainApp extends Component<*> {
                 let component = '';
 
                 if (location.search) {
-                  const queryString = parse(location.search);
-                  secureToken = queryString.token;
-                  component = queryString.component;
+                  const queryStringRs = queryString.parse(location.search);
+                  secureToken = queryStringRs.token;
+                  component = queryStringRs.component;
                 }
 
                 return (
@@ -126,8 +126,8 @@ class MainApp extends Component<*> {
               {({ match, location }) => {
                 let componentTarget = '';
                 if (location.search) {
-                  const queryString = parse(location.search);
-                  componentTarget = queryString.componentTarget;
+                  const queryStringRs = queryString.parse(location.search);
+                  componentTarget = queryStringRs.componentTarget;
                 }
                 return (
                   <div className="gray-bg">
@@ -143,8 +143,8 @@ class MainApp extends Component<*> {
               {({ match, location }) => {
                 let secureToken = '';
                 if (location.search) {
-                  const queryString = parse(location.search);
-                  secureToken = queryString.token;
+                  const queryStringRs = queryString.parse(location.search);
+                  secureToken = queryStringRs.token;
                 }
                 return (
                   <div className="gray-bg">
@@ -160,9 +160,9 @@ class MainApp extends Component<*> {
                 let component = '';
 
                 if (location.search) {
-                  const queryString = parse(location.search);
-                  secureToken = queryString.token;
-                  component = queryString.component;
+                  const queryStringRs = queryString.parse(location.search);
+                  secureToken = queryStringRs.token;
+                  component = queryStringRs.component;
                 }
                 return (
                   <div className="gray-bg">
@@ -188,9 +188,9 @@ class MainApp extends Component<*> {
                 let component = '';
 
                 if (location.search) {
-                  const queryString = parse(location.search);
-                  secureToken = queryString.token;
-                  component = queryString.component;
+                  const querySqueryStringRstring = queryString.parse(location.search);
+                  secureToken = queryStringRs.token;
+                  component = queryStringRs.component;
                 }
                 return (
                   <div className="gray-bg">
