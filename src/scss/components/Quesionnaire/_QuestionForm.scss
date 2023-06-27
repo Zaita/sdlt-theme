@@ -35,7 +35,7 @@
     }
 
     input, textarea {
-      @extend .rounded-0;
+      @extend .rounded-0 !optional;
       border: solid 1px var(--subheader-colour);
       width: 355px;
       font-size: 12px;

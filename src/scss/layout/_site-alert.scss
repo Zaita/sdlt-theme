@@ -1,11 +1,11 @@
 #site-alert,
 #noscript-alert {
-  @extend .bg-warning;
-  @extend .flex-row;
-  @extend .justify-content-between;
+  @extend .bg-warning !optional;
+  @extend .flex-row !optional;
+  @extend .justify-content-between !optional;
   @extend .align-items-center !optional;
-  @extend .px-2;
-  @extend .fixed-top;
+  @extend .px-2 !optional;
+  @extend .fixed-top !optional;
 
   .alert-text {
     flex-grow: 1;

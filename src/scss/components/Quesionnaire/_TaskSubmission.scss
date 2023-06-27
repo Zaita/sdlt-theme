@@ -27,7 +27,7 @@
   }
 
   .result {
-    @extend .mx-0;
+    @extend .mx-0 !optional;
     background-color: rgba(255, 255, 255, 0.7);
     margin-bottom: 2rem;
     padding: 20px;

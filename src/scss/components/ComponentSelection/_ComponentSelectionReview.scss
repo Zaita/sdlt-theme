@@ -33,9 +33,9 @@
   }
 
   .section {
-    @extend .bg-white;
-    @extend .mb-3;
-    @extend .p-3;
+    @extend .bg-white !optional;
+    @extend .mb-3 !optional;
+    @extend .p-3 !optional;
 
     h4 {
       font-weight: 600;

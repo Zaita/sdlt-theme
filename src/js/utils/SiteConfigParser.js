@@ -23,7 +23,7 @@ export default class SiteConfigParser {
       pdfHeaderImageLink: toString(get(jsonObject, "PdfHeaderImageLink", '')), // || DefaultPDFHeaderImage),
       pdfFooterImageLink: toString(get(jsonObject, "PdfFooterImageLink", '')), // || DefaultPDFFooterImage),
       securityTeamEmail: toString(get(jsonObject, "SecurityTeamEmail") || ''),
-      homePageSubHeaderImagePath: toString(get(jsonObject, "HomePageSubHeaderImagePath", '')), // || DefaultSubHeaderImage),
+      homePageSubHeaderImagePath: toString(get(jsonObject, "HomePageSubHeaderImagePath", '') || DefaultSubHeaderImage),
     }
   }
 }

@@ -44,7 +44,7 @@ html.security {
         input.action {
             @extend .btn;
             @extend .btn-primary;
-            @extend .btn-block;
+            @extend .btn-block !optional;
 
             background-color: var(--header-colour);
         }
@@ -92,7 +92,7 @@ html.security {
         }
 
         .field {
-            @extend .form-group;
+            @extend .form-group !optional;
             &.checkbox {
                 @extend .form-check;                
             }
