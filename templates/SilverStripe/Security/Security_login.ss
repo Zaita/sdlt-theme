@@ -13,6 +13,10 @@
       --theme-link-colour: #$SiteConfig.ThemeLinkColour;
       --home-text-colour: #$SiteConfig.ThemeHomePageTextColour;
     }  
+  
+  #ForgotPassword { 
+    margin-left: 20px; 
+  }
   </style>
   <% require themedCSS('dist/css/main') %>
   <style type="text/css">      
