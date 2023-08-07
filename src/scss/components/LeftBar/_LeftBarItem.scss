@@ -28,6 +28,10 @@
         }
     }
 
+    .btn:disabled {
+      border: none;
+    }
+
   svg {
     width: 14px;
     height: 14px;

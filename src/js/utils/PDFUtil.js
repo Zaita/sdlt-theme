@@ -29,7 +29,7 @@ async function getImageDataByBlob(blob: Blob): Promise<string> {
 }
 
 async function getImageDataByURL(imageURL: string) {
-  const response = await fetch(imageURL || fallback);
+  const response = await fetch(imageURL);
   const blob = await response.blob();
   const data = await getImageDataByBlob(blob);
   return data;

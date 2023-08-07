@@ -20,8 +20,8 @@ export default class SiteConfigParser {
       footerCopyrightText: toString(get(jsonObject, "FooterCopyrightText", '') || defaultFooterText),
       logoPath: toString(get(jsonObject, "LogoPath", '') || DefaultLogoImage),
       homePageBackgroundImagePath: toString(get(jsonObject, "HomePageBackgroundImagePath", '') || DefaultBackgroundImage),
-      pdfHeaderImageLink: toString(get(jsonObject, "PdfHeaderImageLink", '')), // || DefaultPDFHeaderImage),
-      pdfFooterImageLink: toString(get(jsonObject, "PdfFooterImageLink", '')), // || DefaultPDFFooterImage),
+      pdfHeaderImageLink: toString(get(jsonObject, "PdfHeaderImageLink", '') || DefaultPDFHeaderImage),
+      pdfFooterImageLink: toString(get(jsonObject, "PdfFooterImageLink", '') || DefaultPDFFooterImage),
       securityTeamEmail: toString(get(jsonObject, "SecurityTeamEmail") || ''),
       homePageSubHeaderImagePath: toString(get(jsonObject, "HomePageSubHeaderImagePath", '') || DefaultSubHeaderImage),
     }
