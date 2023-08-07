@@ -63,6 +63,10 @@ header.Header {
         a:hover {
           font-weight: 600;
         }
+
+        a {
+          color: var(--subheader-breadcrumb-colour);
+        }
       }
 
       .MuiTypography-body1 {
@@ -74,7 +78,7 @@ header.Header {
         color: $white
       }
 
-      .MuiBreadcrumbs-li {
+      .MuiBreadcrumbs-li {        
         text-decoration: underline;
       }
 

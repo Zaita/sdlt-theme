@@ -74,7 +74,7 @@ class Breadcrumbs extends Component {
     } = this.props;
 
     return (
-      <MuiBreadcrumbs separator={<NavigateNextIcon fontSize="inherit" />} aria-label="breadcrumb">
+      <MuiBreadcrumbs separator={<NavigateNextIcon fontSize="inherit" />} aria-label="breadcrumb" color="inherit">
         <Link onClick={() => URLUtil.redirectToHome()}>Home</Link>
 
         {path == "/questionnaire/summary/:hash" ||

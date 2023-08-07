@@ -15,6 +15,7 @@
     --background-colour: #$SiteConfig.ThemeBGColour;
     --header-colour: #$SiteConfig.ThemeHeaderColour;
     --subheader-colour: #$SiteConfig.ThemeSubHeaderColour;
+    --subheader-breadcrumb-colour: #$SiteConfig.ThemeSubHeaderBreadcrumbColour;      
     --theme-link-colour: #$SiteConfig.ThemeLinkColour;
     --home-text-colour: #$SiteConfig.ThemeHomePageTextColour;
   }
