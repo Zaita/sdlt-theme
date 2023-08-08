@@ -59,7 +59,7 @@ class Home extends Component<Props> {
             <div className="submission-text">Your latest submissions</div>
             <MySubmissionList/>
           </div>
-            <div className="view-all-submissions"><a href="#">See all submissions <NavigateNextIcon/></a></div>
+            <div className="view-all-submissions"><a href="#/MySubmissions">See all submissions <NavigateNextIcon/></a></div>
         </div>
       </div>
     );

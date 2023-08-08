@@ -54,7 +54,7 @@
 
   .control-detail-link {
     a {
-      color: $light-blue;
+      color: var(--theme-link-colour);
       text-decoration: underline;
       font-weight: bold;
     }
@@ -68,7 +68,7 @@
       margin-top: 15px;
 
       .react-select__control {
-        border: solid 1px $light-blue;
+        border: solid 1px var(--theme-link-colour);
         border-radius: 5px;
         min-height: 30px;
         height: 30px;
@@ -87,7 +87,7 @@
         }
 
         .react-select__indicator {
-          color: $light-blue;
+          color: var(--theme-link-colour);
           padding: 5px;
           margin-right: 6px;
           &-separator {
@@ -101,7 +101,7 @@
 
       .react-select__menu {
         margin-top: -1px;
-        border: solid 1px $light-blue;
+        border: solid 1px var(--theme-link-colour);
         border-radius: 0 0 5px 5px;
 
         .react-select__menu-list {
@@ -118,7 +118,7 @@
             }
 
             &--is-focused {
-              background-color: $light-blue;
+              background-color: var(--theme-link-colour);
               color: $white;
             }
           }

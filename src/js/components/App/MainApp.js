@@ -230,6 +230,10 @@ class MainApp extends Component<*> {
                 );
               }}
             </Route>
+            <Route path={['/http:', '/https:']} component={props => {
+              window.location.replace(props.location.pathname.substr(1))
+              return null
+            }}/>            
           </Switch>
         </main>
       </div>

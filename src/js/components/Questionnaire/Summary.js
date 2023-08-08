@@ -15,7 +15,7 @@ import inProgressIcon from "../../../img/icons/in-progress.svg";
 import startIcon from "../../../img/icons/start.svg";
 import submittedIcon from "../../../img/icons/submitted.svg";
 import incompleteTasksIcon from "../../../img/icons/incomplete-tasks.svg";
-import chevronRightIcon from "../../../img/icons/chevron-right-link.svg";
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import submitSubmissionIcon from "../../../img/icons/submit-submission.svg";
 import EditPencilSVG from "@mui/icons-material/Edit";
 import DownloadSVG from "@mui/icons-material/GetApp";
@@ -171,8 +171,8 @@ const taskTableData = (taskSubmission, unfinshedRQTaskMessage, className, compon
   } = {...taskSubmission}
 
   const link = (
-    <Link to={getRedirectUrlForTask(uuid, token, taskType, component)}>
-      <img src={chevronRightIcon}/>
+    <Link to={getRedirectUrlForTask(uuid, token, taskType, component)}> 
+      <ChevronRightIcon />        
     </Link>
   );
 
@@ -192,7 +192,7 @@ const taskTableData = (taskSubmission, unfinshedRQTaskMessage, className, compon
           {status == "start" ? prettifyStatus("To do") : prettifyStatus(status)}
         </span>
       </td>
-      <td>
+      <td class="task-task-link">
         {unfinshedRQTaskMessage && taskType === 'security risk assessment' ? null : link}
       </td>
     </React.Fragment>
@@ -670,7 +670,7 @@ class Summary extends Component<Props> {
                 <th>Approved by</th>
                 <th>Time to review</th>
                 <th>Task status</th>
-                <th></th>
+                <th className="task-task-link"></th>
               </tr>
             </thead>
             <tbody>
