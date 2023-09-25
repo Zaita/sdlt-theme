@@ -1,6 +1,6 @@
 {
-    "name": "nzta/sdlt-theme",
-    "description": "NZTA SDLT Theme",
+    "name": "zaita/sdlt-theme",
+    "description": "Zaita SDLT Theme",
     "type": "silverstripe-theme",
     "keywords": ["silverstripe", "theme", "sdlt"],
     "license": "BSD-3-Clause",
