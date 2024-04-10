@@ -186,10 +186,10 @@ query {
       title: _.toString(_.get(submissionJSON, "Questionnaire.Name", "")),
       siteConfig: SiteConfigParser.parseSiteConfigFromJSON(siteData),
       user: UserParser.parseUserFromJSON(memberData),
-      isCurrentUserApprover: _.get(submissionJSON, "IsCurrentUserAnApprover", "false") === "true",
-      isCurrentUserABusinessOwnerApprover: _.get(submissionJSON, "IsCurrentUserABusinessOwnerApprover", "false") === "true",
+      isCurrentUserApprover: _.get(submissionJSON, "IsCurrentUserAnApprover", "false") === "1" || _.get(submissionJSON, "IsCurrentUserAnApprover", "false") === "true",
+      isCurrentUserABusinessOwnerApprover: _.get(submissionJSON, "IsCurrentUserABusinessOwnerApprover", "false") === "1" || _.get(submissionJSON, "IsCurrentUserABusinessOwnerApprover", "false") === "true",
       submission: {
-        isApprovalOverrideBySecurityArchitect: Boolean(_.get(submissionJSON, "ApprovalOverrideBySecurityArchitect", false)),
+        isApprovalOverrideBySecurityArchitect: Boolean(_.get(submissionJSON, "ApprovalOverrideBySecurityArchitect", false) === true),
         questionnaireID: _.toString(_.get(submissionJSON, "Questionnaire.ID", "")),
         questionnaireTitle: _.toString(_.get(submissionJSON, "Questionnaire.Name", "")),
         submissionID: _.toString(_.get(submissionJSON, "ID", "")),
@@ -246,11 +246,11 @@ query {
               taskType: _.toString(_.get(item, "TaskType", "")),
               status: _.toString(_.get(item, "Status", "")),
               approver: UserParser.parseUserFromJSON(_.get(item, "TaskApprover")),
-              isTaskApprovalRequired: _.get(item, "IsTaskApprovalRequired", "false") === "true",
+              isTaskApprovalRequired: _.get(item, "IsTaskApprovalRequired", "false") === "1" || _.get(item, "IsTaskApprovalRequired", "false") === "true",
               timeToComplete: _.toString(_.get(item, "TimeToComplete", "")),
               timeToReview: _.toString(_.get(item, "TimeToReview", "")),
               answerData: _.toString(_.get(item, "AnswerData", "")),
-              canTaskCreateNewTasks: _.get(item, "CanTaskCreateNewTasks", "false") === "true",
+              canTaskCreateNewTasks: _.get(item, "CanTaskCreateNewTasks", "false") === "1" || _.get(item, "CanTaskCreateNewTasks", "false") === "true",
               createOnceInstancePerComponent: Boolean(_.get(item, "CreateOnceInstancePerComponent", false)),
               resultForCertificationAndAccreditation: _.get(item, "ResultForCertificationAndAccreditation", "[]"),
             };
@@ -261,7 +261,7 @@ query {
         created: _.toString(_.get(submissionJSON, "Created", "")),
         releaseDate: _.toString(_.get(submissionJSON, "ReleaseDate", "")),
         productAspects: _.has(submissionJSON, 'ProductAspects') ? JSON.parse(_.get(submissionJSON, "ProductAspects", "[]")) : "[]",
-        isBusinessOwner: _.get(submissionJSON, "IsBusinessOwner", "false") === "true",
+        isBusinessOwner: _.get(submissionJSON, "IsBusinessOwner", "false") === "1",
         ticketLink: _.toString(_.get(submissionJSON, "TicketLink", ""))
       }
     };

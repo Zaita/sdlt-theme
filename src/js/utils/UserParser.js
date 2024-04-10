@@ -13,8 +13,8 @@ export default class UserParser {
       id: toString(get(jsonObject, "ID")),
       name: name,
       email: get(jsonObject, "Email"),
-      isSA: toString(get(jsonObject, "IsSA")) === "true",
-      isCISO: toString(get(jsonObject, "IsCISO")) === "true",
+      isSA: toString(get(jsonObject, "IsSA")) === "true" || toString(get(jsonObject, "IsSA")) === "1",
+      isCISO: toString(get(jsonObject, "IsCISO")) === "true" || toString(get(jsonObject, "IsCISO")) === "1",
       isCertificationAuthority: toString(get(jsonObject, "IsCertificationAuthority")) === "true",
       isAccreditationAuthority: toString(get(jsonObject, "IsAccreditationAuthority")) === "true",
     }
